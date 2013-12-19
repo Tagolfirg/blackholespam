@@ -1,0 +1,361 @@
+/* config.h.in.  Generated from configure.in by autoheader.  */
+
+/* One Box */
+#undef ALLINONE
+
+/* First config location */
+#undef BH_CONFIG
+
+/* BlackHole Spool Dir */
+#undef BH_SPOOL_DIR
+
+/* Bounce Messages */
+#undef BOUNCE_MSG
+
+/* DNS Helo */
+#undef CHECK_HELO
+
+/* DNS Reverse */
+#undef CHECK_REVERSE
+
+/* DNS Sender */
+#undef CHECK_SENDER
+
+/* ClamScan Args */
+#undef CLAMSCAN_ARGS
+
+/* ClamScan Binary */
+#undef CLAMSCAN_BIN
+
+/* Courier */
+#undef COURIER
+
+/* Custom Body Threshhold */
+#undef CUSTOM_BODY_THRESHHOLD
+
+/* Virus Disinfect */
+#undef DISINFECT
+
+/* DNS for RBL Lookups */
+#undef DNS_SRV
+
+/* Executable Check Args */
+#undef EXEC_CHECK_ARGS
+
+/* Executable Check Binary */
+#undef EXEC_CHECK_PROG
+
+/* Executable Check Ret */
+#undef EXEC_CHECK_RET
+
+/* Enable ERP */
+#undef EXEC_PROG
+
+/* Expire Time */
+#undef EXPIRE_TIME
+
+/* Define to 1 if you have the <arpa/inet.h> header file. */
+#undef HAVE_ARPA_INET_H
+
+/* Define to 1 if you have the <dirent.h> header file, and it defines `DIR'.
+   */
+#undef HAVE_DIRENT_H
+
+/* Define to 1 if you have the <errno.h> header file. */
+#undef HAVE_ERRNO_H
+
+/* Define to 1 if you have the <fcntl.h> header file. */
+#undef HAVE_FCNTL_H
+
+/* Define to 1 if you have the `gethostbyname' function. */
+#undef HAVE_GETHOSTBYNAME
+
+/* Define to 1 if you have the `inet_ntoa' function. */
+#undef HAVE_INET_NTOA
+
+/* Define to 1 if you have the <inttypes.h> header file. */
+#undef HAVE_INTTYPES_H
+
+/* Define to 1 if you have the `e' library (-le). */
+#undef HAVE_LIBE
+
+/* Define to 1 if you have the `inks' library (-links). */
+#undef HAVE_LIBINKS
+
+/* Define to 1 if you have the `m' library (-lm). */
+#undef HAVE_LIBM
+
+/* Define to 1 if you have the `mysqlclient' library (-lmysqlclient). */
+#undef HAVE_LIBMYSQLCLIENT
+
+/* Define to 1 if you have the `nsl' library (-lnsl). */
+#undef HAVE_LIBNSL
+
+/* Define to 1 if you have the `pcre' library (-lpcre). */
+#undef HAVE_LIBPCRE
+
+/* Define to 1 if you have the `pq' library (-lpq). */
+#undef HAVE_LIBPQ
+
+/* Define to 1 if you have the `resolv' library (-lresolv). */
+#undef HAVE_LIBRESOLV
+
+/* Define to 1 if you have the `socket' library (-lsocket). */
+#undef HAVE_LIBSOCKET
+
+/* Define to 1 if you have the `spamc' library (-lspamc). */
+#undef HAVE_LIBSPAMC
+
+/* Define to 1 if you have the `z' library (-lz). */
+#undef HAVE_LIBZ
+
+/* Define to 1 if you have the <memory.h> header file. */
+#undef HAVE_MEMORY_H
+
+/* Define to 1 if you have the <ndir.h> header file, and it defines `DIR'. */
+#undef HAVE_NDIR_H
+
+/* Define to 1 if you have the <netdb.h> header file. */
+#undef HAVE_NETDB_H
+
+/* Define to 1 if you have the <netinet/in.h> header file. */
+#undef HAVE_NETINET_IN_H
+
+/* Define to 1 if you have the <stdint.h> header file. */
+#undef HAVE_STDINT_H
+
+/* Define to 1 if you have the <stdlib.h> header file. */
+#undef HAVE_STDLIB_H
+
+/* Define to 1 if you have the `strchr' function. */
+#undef HAVE_STRCHR
+
+/* Define to 1 if you have the <strings.h> header file. */
+#undef HAVE_STRINGS_H
+
+/* Define to 1 if you have the <string.h> header file. */
+#undef HAVE_STRING_H
+
+/* Define to 1 if you have the `strncasecmp' function. */
+#undef HAVE_STRNCASECMP
+
+/* Define to 1 if you have the `strstr' function. */
+#undef HAVE_STRSTR
+
+/* Define to 1 if you have the <sys/dir.h> header file, and it defines `DIR'.
+   */
+#undef HAVE_SYS_DIR_H
+
+/* Define to 1 if you have the <sys/ndir.h> header file, and it defines `DIR'.
+   */
+#undef HAVE_SYS_NDIR_H
+
+/* Define to 1 if you have the <sys/socket.h> header file. */
+#undef HAVE_SYS_SOCKET_H
+
+/* Define to 1 if you have the <sys/stat.h> header file. */
+#undef HAVE_SYS_STAT_H
+
+/* Define to 1 if you have the <sys/types.h> header file. */
+#undef HAVE_SYS_TYPES_H
+
+/* Define to 1 if you have <sys/wait.h> that is POSIX.1 compatible. */
+#undef HAVE_SYS_WAIT_H
+
+/* Define to 1 if you have the `uname' function. */
+#undef HAVE_UNAME
+
+/* Define to 1 if you have the <unistd.h> header file. */
+#undef HAVE_UNISTD_H
+
+/* SpamAssassin libspamc.so */
+#undef LIBSPAMC
+
+/* Sendmail/Postfix lockfile binary */
+#undef LOCKFILE
+
+/* Use IPRELAY Logging */
+#undef LOG_IPRELAY
+
+/* Use OK Logging */
+#undef LOG_OK
+
+/* Use RECIPIENT Logging */
+#undef LOG_RECIPIENT
+
+/* Use SCORE Logging */
+#undef LOG_SCORE
+
+/* Use SENDER Logging */
+#undef LOG_SENDER
+
+/* Use SIZE Logging */
+#undef LOG_SIZE
+
+/* Log Type */
+#undef LOG_TYPE
+
+/* Maildir directory */
+#undef MAIL_DIR
+
+/* Max Options */
+#undef MAXOPTION
+
+/* McAfee ARGS */
+#undef MCAFEE_ARGS
+
+/* McAfee Dat Dir */
+#undef MCAFEE_DAT_DIR
+
+/* McAfee Binary */
+#undef MCAFEE_UVSCAN
+
+/* No Body Sig */
+#undef NO_BODY_CHECK_SIGNATURE
+
+/* Name of package */
+#undef PACKAGE
+
+/* Define to the address where bug reports for this package should be sent. */
+#undef PACKAGE_BUGREPORT
+
+/* Define to the full name of this package. */
+#undef PACKAGE_NAME
+
+/* Define to the full name and version of this package. */
+#undef PACKAGE_STRING
+
+/* Define to the one symbol short name of this package. */
+#undef PACKAGE_TARNAME
+
+/* Define to the version of this package. */
+#undef PACKAGE_VERSION
+
+/* Perl Binary */
+#undef PERL_BIN
+
+/* Porn Body Threshhold */
+#undef PORN_BODY_THRESHHOLD
+
+/* CPU Priority */
+#undef PRIORITY
+
+/* Executable Report Binary */
+#undef PROGEXEC
+
+/* Executable Report Binary ARGS */
+#undef PROGEXEC_ARGS
+
+/* Pyzor Binary */
+#undef PYZOR_BIN
+
+/* Qmail Queue */
+#undef QFILTER
+
+/* Qmail Queue */
+#undef QMAIL_QUEUE
+
+/* qmail-queue config */
+#undef QUEUE_CONFIG
+
+/* Racist Body Threshhold */
+#undef RACIST_BODY_THRESHHOLD
+
+/* Razor Binary */
+#undef RAZOR_BIN
+
+/* Sendmail/Postfix */
+#undef SENDMAIL
+
+/* Sendmail Binary */
+#undef SENDMAIL_BIN
+
+/* Sendmail/Postfix SetGID Spool */
+#undef SETGID_SENDMAIL
+
+/* Sendmail/Postfix Local Spool directory */
+#undef SM_LOCAL_SPOOL
+
+/* Sendmail/Postfix Spool directory */
+#undef SM_SPOOL_DIR
+
+/* Spam Body Threshhold */
+#undef SPAM_BODY_THRESHHOLD
+
+/* Spam mailbox file */
+#undef SPAM_MAIL_BOX
+
+/* Spam Maildir directory */
+#undef SPAM_MAIL_DIR
+
+/* NO RBL */
+#undef SPAM_SCAN
+
+/* Use sql Config */
+#undef SQL_CONFIG
+
+/* sql Domain */
+#undef SQL_DOMAIN
+
+/* sql Password */
+#undef SQL_PASS
+
+/* sql Server */
+#undef SQL_SERVER
+
+/* sql User */
+#undef SQL_USER
+
+/* Define to 1 if you have the ANSI C header files. */
+#undef STDC_HEADERS
+
+/* Store Email */
+#undef STORE_EMAIL
+
+/* Define to 1 if your <sys/time.h> declares `struct tm'. */
+#undef TM_IN_SYS_TIME
+
+/* Use Blocked/Defered Logging */
+#undef USE_LOG
+
+/* Sendmail/Postfix Maildir */
+#undef USE_MAILDIR
+
+/* Version number of package */
+#undef VERSION
+
+/* Virus Alert */
+#undef VIRUS_ALERT
+
+/* Virus mailbox */
+#undef VIRUS_MAIL_BOX
+
+/* Virus Maildir */
+#undef VIRUS_MAIL_DIR
+
+/* Virus Scan */
+#undef VIRUS_SCAN
+
+/* Virus Scanner */
+#undef VIRUS_SCANNER
+
+/* White List */
+#undef WHITE_LIST
+
+/* Extra Debugging */
+#undef WITH_DEBUG
+
+/* Mysql Active */
+#undef WITH_MYSQL
+
+/* Mysql Active */
+#undef WITH_PGSQL
+
+/* sql Active */
+#undef WITH_SQL
+
+/* Define to empty if `const' does not conform to ANSI C. */
+#undef const
+
+/* Define to `int' if <sys/types.h> does not define. */
+#undef pid_t

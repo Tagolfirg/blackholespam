@@ -1,0 +1,1279 @@
+# Process this file with autoconf to produce a configure script.
+AC_INIT(blackhole.c, 1.0.9,getdown@groovy.org)
+AM_INIT_AUTOMAKE(blackhole, 1.0.9)
+AM_CONFIG_HEADER(config.h)
+
+# Checks for programs.
+AC_PROG_CC
+AC_PROG_INSTALL
+AC_PROG_LN_S
+AC_PROG_MAKE_SET
+AC_PROG_RANLIB
+AM_MISSING_PROG(AUTOCONF, autoconf)
+AM_MISSING_PROG(AUTOMAKE, automake)
+AM_MISSING_PROG(AUTOHEADER, autoheader)
+AM_MISSING_PROG(ACLOCAL, aclocal)
+
+# Checks for libraries.
+# FIXME: Replace `main' with a function in `-le':
+AC_CHECK_LIB([e], [main])
+# FIXME: Replace `main' with a function in `-lnsl':
+AC_CHECK_LIB([nsl], [main])
+# FIXME: Replace `main' with a function in `-links':
+AC_CHECK_LIB([inks], [main])
+# FIXME: Replace `main' with a function in `-lm':
+AC_CHECK_LIB([m], [main])
+# FIXME: Replace `main' with a function in `-lpcre':
+AC_CHECK_LIB([pcre], [main])
+# FIXME: Replace `main' with a function in `-lresolv':
+AC_CHECK_LIB([resolv], [main])
+# Solaris
+AC_CHECK_LIB([nsl], [main])
+AC_CHECK_LIB([socket], [main])
+
+# Checks for header files.
+AC_HEADER_DIRENT
+AC_HEADER_STDC
+AC_HEADER_SYS_WAIT
+AC_CHECK_HEADERS([arpa/inet.h errno.h fcntl.h netdb.h netinet/in.h stdlib.h string.h sys/socket.h unistd.h])
+
+# Checks for typedefs, structures, and compiler characteristics.
+AC_C_CONST
+AC_TYPE_PID_T
+AC_STRUCT_TM
+
+# Checks for library functions.
+#AC_FUNC_FORK
+#AC_FUNC_MALLOC
+#AC_FUNC_STAT
+AC_CHECK_FUNCS([gethostbyname inet_ntoa strchr strncasecmp strstr uname])
+
+dnl =========================
+dnl BlackHole Config Defaults
+dnl =========================
+
+AC_PREFIX_DEFAULT(/opt/blackhole)
+
+# Default Settings
+def_debug=no
+def_libspamc=no
+def_libspamc_lib=/usr/local/lib
+def_maildir=Maildir
+def_spam_maildir=.Spam
+def_virus_maildir=.Virus
+def_spam_mailbox=Inbox.Spam
+def_virus_mailbox=Inbox.Virus
+def_sendmail=no
+def_courier=no
+def_sendmail_bin=/usr/sbin/sendmail
+def_qmailqueue=no
+def_qmailqfilter=no
+def_sendmail_maildir=no
+def_sendmail_local_spool=
+def_sendmail_setgid=no
+def_sm_spooldir=/var/spool/mail
+def_sm_lockfile=/usr/bin/lockfile
+def_config1=.blackhole
+def_queue_config=/etc/blackhole.conf
+def_sql_config=no
+def_sql_user=blackhole
+def_sql_pass=
+def_sql_server=127.0.0.1
+def_sql_domain=default
+def_expire_time=0
+def_maxoptions=500
+def_priority=0
+def_razor_bin=/usr/bin/razor-check
+def_pyzor_bin=/usr/bin/pyzor
+def_perl_bin=/usr/bin/perl
+def_mcafee_dat=/opt/uvscan
+def_mcafee_bin=/opt/uvscan/uvscan
+def_mcafee_args=\"--unzip\",\"--exit-on-error\",\"--noboot\",\"--norename\",\"--noexpire\",\"--ignore-links\",\"--mime\",
+def_sophos_libs=/opt/sophos/lib
+def_tmicro_libs=/lib
+def_use_log=no
+def_ok_log=no
+def_log_size=no
+def_log_score=no
+def_log_iprelay=no
+def_log_recipient=no
+def_log_sender=no
+def_log_type=2
+def_one_box=no
+def_delete_email=no
+def_virus_scan=no
+def_virus_alert=no
+def_disinfect=no
+def_no_rbl=no
+def_rbl_dnssrv=0
+def_bounce=no
+def_dns_sender=no
+def_dns_reverse=no
+def_dns_helo=no
+def_white_list=no
+def_custom_body_thresh=1
+def_spam_body_thresh=5
+def_porn_body_thresh=3
+def_racist_body_thresh=3
+def_no_body_sig=no
+def_virus_scanner=4
+def_clamscan_bin=/usr/local/bin/clamscan
+def_clamscan_args=\"--unzip=/usr/bin/unzip\",\"--tar=/bin/tar\",
+def_ripmime_lib=ripmime/ripmime.a
+def_blackhole_spool=/var/spool/blackhole
+def_sql_active=no
+def_mysql_active=no
+def_pgsql_active=no
+def_mysql_includes=/usr/include/mysql
+def_mysql_libs=/usr/lib/mysql
+def_pgsql_includes=/usr/include/postgresql
+def_pgsql_libs=/usr/lib/postgresql
+def_progexec=/usr/local/bin/spamcomplain
+def_exec_prog=no
+def_progexec_args=\"\",
+def_exec_check_ret=1
+def_exec_check_prog=/opt/blackhole/bin/spamcheck
+def_exec_check_args=\"\",
+
+echo
+echo "** BlackHole User Configurable Options Section **"
+echo
+
+dnl ========================
+dnl BlackHole Config Options
+dnl ========================
+
+dnl Enable Extra Debugging.
+dnl 
+AC_MSG_CHECKING(use Extended Debugging)
+AC_ARG_ENABLE(debug,
+        [  --enable-debug                 [[no]] Enable extra debugging],
+        debug=yes,
+        debug=no)
+AC_MSG_RESULT($debug)
+if test "$debug" = yes; then
+  debug=1 
+elif test "$debug" = no; then
+  debug=0
+else
+  debug=$def_debug
+fi
+AC_DEFINE_UNQUOTED(WITH_DEBUG, $debug, [ Extra Debugging ])
+
+dnl Enable SpamAssassins libspamc.so
+dnl
+AC_MSG_CHECKING(use SpamAssasin libspamc.so)
+AC_ARG_ENABLE(libspamc,
+        [  --enable-libspamc              [[no]] SpamAssasin libspamc.so],
+        libspamc=yes,
+        libspamc=no)
+AC_MSG_RESULT($libspamc)
+if test "$libspamc" = yes; then
+  libspamc=1
+elif test "$libspamc" = no; then
+  libspamc=0
+else
+  libspamc=$def_libspamc
+fi
+AC_DEFINE_UNQUOTED(LIBSPAMC, $libspamc, [ SpamAssassin libspamc.so ])
+if test "$libspamc" == 1; then
+  AC_CHECK_LIB([spamc], [main])
+fi
+
+dnl Choose spamc Lib.
+dnl
+AC_MSG_CHECKING(which spamc lib)
+AC_ARG_WITH(spamc_lib,
+        [  --with-spamc-lib=PATH             [[/usr/local/lib]] path to libspamc.so],
+        spamc_lib="-L$withval -lspamc",
+        spamc_lib="-L$def_libspamc_lib -lspamc")
+AC_MSG_RESULT($spamc_lib)
+if test "$libspamc" = 1; then
+  SPAMC_LIB=$spamc_lib
+  AC_SUBST(SPAMC_LIB)
+  echo
+fi
+
+
+dnl Enable Sendmail/Postfix.
+dnl 
+AC_MSG_CHECKING(use Sendmail/Postfix)
+AC_ARG_ENABLE(sendmail,
+        [  --enable-sendmail              [[no]] Sendmail/Postfix/Exim build],
+        sendmail=yes,
+        sendmail=no)
+AC_MSG_RESULT($sendmail)
+if test "$sendmail" = yes; then
+  sendmail=1 
+elif test "$sendmail" = no; then
+  sendmail=0
+else
+  sendmail=$def_sendmail
+fi
+AC_DEFINE_UNQUOTED(SENDMAIL, $sendmail, [ Sendmail/Postfix ])
+
+dnl Enable Courier.
+dnl 
+AC_MSG_CHECKING(use Courier)
+AC_ARG_ENABLE(courier,
+        [  --enable-courier               [[no]] Courier build],
+        courier=yes,
+        courier=no)
+AC_MSG_RESULT($courier)
+if test "$courier" = yes; then
+  courier=1 
+elif test "$courier" = no; then
+  courier=0
+else
+  courier=$def_courier
+fi
+AC_DEFINE_UNQUOTED(COURIER, $courier, [ Courier ])
+
+dnl Enable Qmail Queue.
+dnl
+AC_MSG_CHECKING(use Qmail Queue)
+AC_ARG_ENABLE(qmailqueue,
+        [  --enable-qmailqueue            [[no]] Enable Qmail Queue support],
+        qmailqueue=yes,
+        qmailqueue=no)
+AC_MSG_RESULT($qmailqueue)
+if test "$qmailqueue" = yes; then
+  qmailqueue=1 
+elif test "$qmailqueue" = no; then
+  qmailqueue=0
+else
+  qmailqueue=$def_qmailqueue
+fi
+AC_DEFINE_UNQUOTED(QMAIL_QUEUE, $qmailqueue, [ Qmail Queue ])
+
+dnl Enable Qmail Filter.
+dnl
+AC_MSG_CHECKING(use Qmail Filter)
+AC_ARG_ENABLE(qmailqfilter,
+        [  --enable-qmailqfilter          [[no]] Enable Qmail QFilter],
+        qmailqfilter=yes,
+        qmailqfilter=no)
+AC_MSG_RESULT($qmailqfilter)
+if test "$qmailqfilter" = yes; then
+  qmailqfilter=1 
+elif test "$qmailqfilter" = no; then
+  qmailqfilter=0
+else
+  qmailqfilter=$def_qmailqfilter
+fi
+AC_DEFINE_UNQUOTED(QFILTER, $qmailqfilter, [ Qmail Queue ])
+
+dnl Enable Sendmail Maildir.
+dnl Enable Sendmail Maildir.
+dnl
+AC_MSG_CHECKING(use Sendmail Maildir)
+AC_ARG_ENABLE(sendmail_maildir,
+        [  --enable-sendmail-maildir      [[no]] Enable Sendmail/Postfix Maildir support],
+        sendmail_maildir=yes,
+        sendmail_maildir=no)
+AC_MSG_RESULT($sendmail_maildir)
+if test "$sendmail_maildir" = yes; then
+  sendmail_maildir=1 
+elif test "$sendmail_maildir" = no; then
+  sendmail_maildir=0
+else
+  sendmail_maildir=$def_sendmail_maildir
+fi
+AC_DEFINE_UNQUOTED(USE_MAILDIR, $sendmail_maildir, [ Sendmail/Postfix Maildir ])
+
+dnl Enable Sendmail/Postfix SetGID Spool.
+dnl
+AC_MSG_CHECKING(use Sendmail/Postfix SetGID Spool)
+AC_ARG_ENABLE(sendmail_setgid,
+        [  --enable-sendmail-setgid       [[no]] Enable Sendmail/Postfix SetGID Spool],
+        sendmail_setgid=yes,
+        sendmail_setgid=no)
+AC_MSG_RESULT($sendmail_setgid)
+if test "$sendmail_setgid" = yes; then
+  sendmail_setgid=1 
+elif test "$sendmail_setgid" = no; then
+  sendmail_setgid=0
+else
+  sendmail_setgid=$def_sendmail_setgid
+fi
+AC_DEFINE_UNQUOTED(SETGID_SENDMAIL, $sendmail_setgid, [ Sendmail/Postfix SetGID Spool ])
+
+dnl Enable sql Config.
+dnl
+AC_MSG_CHECKING(use sql Config)
+AC_ARG_ENABLE(sql_config,
+        [  --enable-sql-config          [[no]] Enable sql config],
+        sql_config=yes,
+        sql_config=no)
+AC_MSG_RESULT($sql_config)
+if test "$sql_config" = yes; then
+  sql_config=1 
+elif test "$sql_config" = no; then
+  sql_config=0
+else
+  sql_config=$def_sql_config
+fi
+AC_DEFINE_UNQUOTED(SQL_CONFIG, $sql_config, [ Use sql Config ])
+
+dnl Enable Use log.
+dnl
+AC_MSG_CHECKING(use log)
+AC_ARG_ENABLE(use_log,
+        [  --enable-use-log               [[no]] Enable Logging Blocked msg],
+        use_log=yes,
+        use_log=no)
+AC_MSG_RESULT($use_log)
+if test "$use_log" = yes; then
+  use_log=1 
+elif test "$use_log" = no; then
+  use_log=0
+else
+  use_log=$def_use_log
+fi
+AC_DEFINE_UNQUOTED(USE_LOG, $use_log, [ Use Blocked/Defered Logging ])
+
+dnl Enable OK log.
+dnl
+AC_MSG_CHECKING(OK log)
+AC_ARG_ENABLE(ok_log,
+        [  --enable-ok-log                [[no]] Enable Logging OK msg],
+        ok_log=yes,
+        ok_log=no)
+AC_MSG_RESULT($ok_log)
+if test "$ok_log" = yes; then
+  ok_log=1 
+elif test "$ok_log" = no; then
+  ok_log=0
+else
+  ok_log=$def_ok_log
+fi
+AC_DEFINE_UNQUOTED(LOG_OK, $ok_log, [ Use OK Logging ])
+
+dnl Enable SCORE loging.
+dnl
+AC_MSG_CHECKING(SCORE log)
+AC_ARG_ENABLE(log_score,
+        [  --enable-log-score             [[no]] Enable Logging for SCORE],
+        log_score=yes,
+        log_score=no)
+AC_MSG_RESULT($log_score)
+if test "$log_score" = yes; then
+  log_score=1 
+elif test "$log_score" = no; then
+  log_score=0
+else
+  log_score=$def_log_score
+fi
+AC_DEFINE_UNQUOTED(LOG_SCORE, $log_score, [ Use SCORE Logging ])
+
+dnl Enable SIZE loging.
+dnl
+AC_MSG_CHECKING(SIZE log)
+AC_ARG_ENABLE(log_size,
+        [  --enable-log-size              [[no]] Enable Logging for SIZE],
+        log_size=yes,
+        log_size=no)
+AC_MSG_RESULT($log_size)
+if test "$log_size" = yes; then
+  log_size=1 
+elif test "$log_size" = no; then
+  log_size=0
+else
+  log_size=$def_log_size
+fi
+AC_DEFINE_UNQUOTED(LOG_SIZE, $log_size, [ Use SIZE Logging ])
+
+dnl Enable IPRELAY loging.
+dnl
+AC_MSG_CHECKING(IPRELAY log)
+AC_ARG_ENABLE(log_iprelay,
+        [  --enable-log-iprelay           [[no]] Enable Logging for IPRELAY],
+        log_iprelay=yes,
+        log_iprelay=no)
+AC_MSG_RESULT($log_iprelay)
+if test "$log_iprelay" = yes; then
+  log_iprelay=1 
+elif test "$log_iprelay" = no; then
+  log_iprelay=0
+else
+  log_iprelay=$def_log_iprelay
+fi
+AC_DEFINE_UNQUOTED(LOG_IPRELAY, $log_iprelay, [ Use IPRELAY Logging ])
+
+dnl Enable SENDER loging.
+dnl
+AC_MSG_CHECKING(SENDER log)
+AC_ARG_ENABLE(log_sender,
+        [  --enable-log-sender            [[no]] Enable Logging for SENDER],
+        log_sender=yes,
+        log_sender=no)
+AC_MSG_RESULT($log_sender)
+if test "$log_sender" = yes; then
+  log_sender=1 
+elif test "$log_sender" = no; then
+  log_sender=0
+else
+  log_sender=$def_log_sender
+fi
+AC_DEFINE_UNQUOTED(LOG_SENDER, $log_sender, [ Use SENDER Logging ])
+
+dnl Enable RECIPIENT loging.
+dnl
+AC_MSG_CHECKING(RECIPIENT log)
+AC_ARG_ENABLE(log_score,
+        [  --enable-log-score             [[no]] Enable Logging for RECIPIENT],
+        log_score=yes,
+        log_score=no)
+AC_MSG_RESULT($log_score)
+if test "$log_score" = yes; then
+  log_score=1 
+elif test "$log_score" = no; then
+  log_score=0
+else
+  log_score=$def_log_score
+fi
+AC_DEFINE_UNQUOTED(LOG_RECIPIENT, $log_score, [ Use RECIPIENT Logging ])
+
+dnl Enable One Box.
+dnl
+AC_MSG_CHECKING(use one box)
+AC_ARG_ENABLE(one_box,
+        [  --enable-one-box               [[no]] Use One Box],
+        one_box=yes,
+        one_box=no)
+AC_MSG_RESULT($one_box)
+if test "$one_box" = yes; then
+  one_box=1 
+elif test "$one_box" = no; then
+  one_box=0
+else
+  one_box=$def_one_box
+fi
+AC_DEFINE_UNQUOTED(ALLINONE, $one_box, [ One Box ])
+
+dnl Delete Blocked Email.
+dnl
+AC_MSG_CHECKING(use delete blocked email)
+AC_ARG_ENABLE(delete_email,
+        [  --enable-delete-email          [[no]] Delete Blocked Email],
+        delete_email=yes,
+        delete_email=no)
+AC_MSG_RESULT($delete_email)
+if test "$delete_email" = yes; then
+  delete_email=0
+elif test "$delete_email" = no; then
+  delete_email=1
+else
+  delete_email=$def_delete_email
+fi
+AC_DEFINE_UNQUOTED(STORE_EMAIL, $delete_email, [ Store Email ])
+
+dnl Disable RBL Checks.
+dnl
+AC_MSG_CHECKING(use without rbl checks)
+AC_ARG_ENABLE(no_rbl,
+        [  --enable-no-rbl                [[no]] No RBL Checks],
+        no_rbl=yes,
+        no_rbl=no)
+AC_MSG_RESULT($no_rbl)
+if test "$no_rbl" = yes; then
+  no_rbl=0
+elif test "$no_rbl" = no; then
+  no_rbl=1
+else
+  no_rbl=$def_no_rbl
+fi
+AC_DEFINE_UNQUOTED(SPAM_SCAN, $no_rbl, [ NO RBL ])
+
+dnl Enable Executable Report Program.
+dnl
+AC_MSG_CHECKING(use Executable Report Program)
+AC_ARG_ENABLE(exec_prog,
+        [  --enable-exec-prog             [[no]] Enable Executable Report Program],
+        exec_prog=yes,
+        exec_prog=no)
+AC_MSG_RESULT($exec_prog)
+if test "$exec_prog" = yes; then
+  exec_prog=1 
+elif test "$exec_prog" = no; then
+  exec_prog=0
+else
+  exec_prog=$def_exec_prog
+fi
+AC_DEFINE_UNQUOTED(EXEC_PROG, $exec_prog, [ Enable ERP ])
+
+dnl Enable Virus Scan.
+dnl
+AC_MSG_CHECKING(use virus scan)
+AC_ARG_ENABLE(virus_scan,
+        [  --enable-virus-scan            [[no]] Virus Scan],
+        virus_scan=yes,
+        virus_scan=no)
+AC_MSG_RESULT($virus_scan)
+if test "$virus_scan" = yes; then
+  virus_scan=1 
+elif test "$virus_scan" = no; then
+  virus_scan=0
+else
+  virus_scan=$def_virus_scan
+fi
+AC_DEFINE_UNQUOTED(VIRUS_SCAN, $virus_scan, [ Virus Scan ])
+
+dnl Enable Virus Alert.
+dnl
+AC_MSG_CHECKING(use virus alert)
+AC_ARG_ENABLE(virus_alert,
+        [  --enable-virus-alert           [[no]] Virus Alert],
+        virus_alert=yes,
+        virus_alert=no)
+AC_MSG_RESULT($virus_alert)
+if test "$virus_alert" = yes; then
+  virus_alert=1 
+elif test "$virus_alert" = no; then
+  virus_alert=0
+else
+  virus_alert=$def_virus_alert
+fi
+AC_DEFINE_UNQUOTED(VIRUS_ALERT, $virus_alert, [ Virus Alert ])
+
+dnl Enable Disinfect.
+dnl
+AC_MSG_CHECKING(use disinfect)
+AC_ARG_ENABLE(disinfect,
+        [  --enable-disinfect             [[no]] Disinfect Viruses],
+        disinfect=yes,
+        disinfect=no)
+AC_MSG_RESULT($disinfect)
+if test "$disinfect" = yes; then
+  disinfect=1 
+elif test "$disinfect" = no; then
+  disinfect=0
+else
+  disinfect=$def_disinfect
+fi
+AC_DEFINE_UNQUOTED(DISINFECT, $disinfect, [ Virus Disinfect ])
+
+dnl Enable Bounce Messages.
+dnl
+AC_MSG_CHECKING(use bounce messages)
+AC_ARG_ENABLE(bounce,
+        [  --enable-bounce                [[no]] Bounce messages],
+        bounce=yes,
+        bounce=no)
+AC_MSG_RESULT($bounce)
+if test "$bounce" = yes; then
+  bounce=1 
+elif test "$bounce" = no; then
+  bounce=0
+else
+  bounce=$def_bounce
+fi
+AC_DEFINE_UNQUOTED(BOUNCE_MSG, $bounce, [ Bounce Messages ])
+
+dnl Enable DNS Sender.
+dnl
+AC_MSG_CHECKING(use dns sender check)
+AC_ARG_ENABLE(dns_sender,
+        [  --enable-dns-sender            [[no]] Check DNS Sender],
+        dns_sender=yes,
+        dns_sender=no)
+AC_MSG_RESULT($dns_sender)
+if test "$dns_sender" = yes; then
+  dns_sender=1 
+elif test "$dns_sender" = no; then
+  dns_sender=0
+else
+  dns_sender=$def_dns_sender
+fi
+AC_DEFINE_UNQUOTED(CHECK_SENDER, $dns_sender, [ DNS Sender ])
+
+dnl Enable DNS Reverse.
+dnl
+AC_MSG_CHECKING(use dns reverse)
+AC_ARG_ENABLE(dns_reverse,
+        [  --enable-dns-reverse           [[no]] Check Reverse DNS],
+        dns_reverse=yes,
+        dns_reverse=no)
+AC_MSG_RESULT($dns_reverse)
+if test "$dns_reverse" = yes; then
+  dns_reverse=1 
+elif test "$dns_reverse" = no; then
+  dns_reverse=0
+else
+  dns_reverse=$def_dns_reverse
+fi
+AC_DEFINE_UNQUOTED(CHECK_REVERSE, $dns_reverse, [ DNS Reverse ])
+
+dnl Enable DNS Helo.
+dnl
+AC_MSG_CHECKING(use dns helo)
+AC_ARG_ENABLE(dns_helo,
+        [  --enable-dns-helo              [[no]] Check DNS Helo],
+        dns_helo=yes,
+        dns_helo=no)
+AC_MSG_RESULT($dns_helo)
+if test "$dns_helo" = yes; then
+  dns_helo=1 
+elif test "$dns_helo" = no; then
+  dns_helo=0
+else
+  dns_helo=$def_dns_helo
+fi
+AC_DEFINE_UNQUOTED(CHECK_HELO, $dns_helo, [ DNS Helo ])
+
+dnl Enable White List.
+dnl Enable White List.
+dnl
+AC_MSG_CHECKING(use white list)
+AC_ARG_ENABLE(white_list,
+        [  --enable-white-list            [[no]] White List],
+        white_list=yes,
+        white_list=no)
+AC_MSG_RESULT($white_list)
+if test "$white_list" = yes; then
+  white_list=1 
+elif test "$white_list" = no; then
+  white_list=0
+else
+  white_list=$def_white_list
+fi
+AC_DEFINE_UNQUOTED(WHITE_LIST, $white_list, [ White List ])
+
+dnl Enable No Body Signature.
+dnl
+AC_MSG_CHECKING(use no body signature)
+AC_ARG_ENABLE(no_body_sig,
+        [  --enable-no-body-sig           [[no]] Don't body chk msg signature],
+        no_body_sig=yes,
+        no_body_sig=no)
+AC_MSG_RESULT($no_body_sig)
+if test "$no_body_sig" = yes; then
+  no_body_sig=1 
+elif test "$no_body_sig" = no; then
+  no_body_sig=0
+else
+  no_body_sig=$def_no_body_sig
+fi
+AC_DEFINE_UNQUOTED(NO_BODY_CHECK_SIGNATURE, $no_body_sig, [ No Body Sig ])
+
+dnl Choose MySQL Support.
+dnl
+AC_MSG_CHECKING(use mysql support)
+AC_ARG_ENABLE(mysql_active,
+        [  --enable-mysql-active          [[no]] Compile Mysql in BlackHole],
+        mysql_active=yes,
+        mysql_active=no)
+AC_MSG_RESULT($mysql_active)
+if test "$mysql_active" = yes; then
+  mysql_active=1
+  sql_active=1
+  # FIXME: Replace `main' with a function in `-lz':
+  AC_CHECK_LIB([z], [main])
+elif test "$mysql_active" = no; then
+  mysql_active=0
+  sql_active=0
+else
+  mysql_active=$def_mysql_active
+  mysql_active=$def_sql_active
+fi
+AC_DEFINE_UNQUOTED(WITH_MYSQL, $mysql_active, [ Mysql Active ])
+if test "$mysql_active" = 1; then
+  AC_DEFINE_UNQUOTED(WITH_SQL, $mysql_active, [ sql Active ])
+  # FIXME: Replace `main' with a function in `-lmysqlclient':
+  AC_CHECK_LIB([mysqlclient], [main])
+fi
+
+dnl Choose PgSQL Support.
+dnl
+AC_MSG_CHECKING(use pgsql support)
+AC_ARG_ENABLE(pgsql_active,
+        [  --enable-pgsql-active          [[no]] Compile Pgsql in BlackHole (BETA CODE!!!)],
+        pgsql_active=yes,
+        pgsql_active=no)
+AC_MSG_RESULT($pgsql_active)
+if test "$pgsql_active" = yes; then
+  pgsql_active=1
+  sql_active=1
+  # FIXME: Replace `main' with a function in `-lz':
+  AC_CHECK_LIB([z], [main])
+elif test "$pgsql_active" = no; then
+  pgsql_active=0
+  sql_active=0
+else
+  pgsql_active=$def_pgsql_active
+  sql_active=$def_sql_active
+fi
+AC_DEFINE_UNQUOTED(WITH_PGSQL, $pgsql_active, [ Mysql Active ])
+if test "$pgsql_active" = 1; then
+  AC_DEFINE_UNQUOTED(WITH_SQL, $pgsql_active, [ sql Active ])
+  # FIXME: Replace `main' with a function in `-lpq':
+  AC_CHECK_LIB([pq], [main])
+fi
+
+dnl ========================
+dnl BlackHole --with OPTIONS
+dnl ========================
+
+## WITH OPTIONS
+dnl Choose Maildir directory.
+dnl
+AC_MSG_CHECKING(which Maildir directory)
+AC_ARG_WITH(maildir,
+        [  --with-maildir=MAILDIR            [[Maildir]] Maildir directory],
+        maildir=$withval,
+        maildir=$def_maildir)
+AC_MSG_RESULT($maildir)
+AC_DEFINE_UNQUOTED(MAIL_DIR, "$maildir", [ Maildir directory ])
+MAIL_DIR=$maildir
+AC_SUBST(MAIL_DIR)
+
+dnl Choose Spam Maildir directory.
+dnl
+AC_MSG_CHECKING(which Spam Maildir directory)
+AC_ARG_WITH(spam_maildir,
+        [  --with-spam-maildir=MAILDIR       [[.Spam]] Spam Maildir directory],
+        spam_maildir=$withval,
+        spam_maildir=$def_spam_maildir)
+AC_MSG_RESULT($spam_maildir)
+AC_DEFINE_UNQUOTED(SPAM_MAIL_DIR, "$spam_maildir", [ Spam Maildir directory ])
+SPAM_MAIL_DIR=$spam_maildir
+AC_SUBST(SPAM_MAIL_DIR)
+
+dnl Choose Virus Maildir directory.
+dnl
+AC_MSG_CHECKING(which Virus Maildir directory)
+AC_ARG_WITH(virus_maildir,
+        [  --with-virus-maildir=MAILDIR      [[.Virus]] Virus Maildir directory],
+        virus_maildir=$withval,
+        virus_maildir=$def_virus_maildir)
+AC_MSG_RESULT($virus_maildir)
+AC_DEFINE_UNQUOTED(VIRUS_MAIL_DIR, "$virus_maildir", [ Virus Maildir ])
+VIRUS_MAIL_DIR=$virus_maildir
+AC_SUBST(VIRUS_MAIL_DIR)
+
+dnl Choose Spam mailbox file. 
+dnl
+AC_MSG_CHECKING(which Spam mailbox file)
+AC_ARG_WITH(spam_mailbox,
+        [  --with-spam-mailbox=MAILBOX       [[Inbox.Spam]] Spam mbox file],
+        spam_mailbox=$withval,
+        spam_mailbox=$def_spam_mailbox)
+AC_MSG_RESULT($spam_mailbox)
+AC_DEFINE_UNQUOTED(SPAM_MAIL_BOX, "$spam_mailbox", [ Spam mailbox file ])
+SPAM_MAIL_BOX=$spam_mailbox
+AC_SUBST(SPAM_MAIL_BOX)
+
+dnl Choose Virus mailbox file.
+dnl
+AC_MSG_CHECKING(which Virus mailbox file)
+AC_ARG_WITH(virus_mailbox,
+        [  --with-virus-mailbox=MAILBOX      [[Inbox.Virus]] Virus mbox file],
+        virus_mailbox=$withval,
+        virus_mailbox=$def_virus_mailbox)
+AC_MSG_RESULT($virus_mailbox)
+AC_DEFINE_UNQUOTED(VIRUS_MAIL_BOX, "$virus_mailbox", [ Virus mailbox ])
+VIRUS_MAIL_BOX=$virus_mailbox
+AC_SUBST(VIRUS_MAIL_BOX)
+
+dnl Choose Sendmail/Postfix Spool directory.
+dnl
+AC_MSG_CHECKING(which Sendmail/Postfix Spool directory)
+AC_ARG_WITH(sm_spooldir,
+        [  --with-sm-spooldir=SPOOLDIR       [[/var/spool/mail]] Sendmail/Postfix Spool dir],
+        sm_spooldir=$withval,
+        sm_spooldir=$def_sm_spooldir)
+AC_MSG_RESULT($sm_spooldir)
+AC_DEFINE_UNQUOTED(SM_SPOOL_DIR, "$sm_spooldir", [ Sendmail/Postfix Spool directory ])
+
+dnl Choose Sendmail/Postfix Local Spool directory.
+dnl
+AC_MSG_CHECKING(which Sendmail/Postfix Local Spool directory)
+AC_ARG_WITH(sm_local_spool,
+        [  --with-sm-local-spool=LOCALSPOOL  [[.]] Sendmail/Postfix Local Spool dir],
+        sm_local_spool=$withval,
+        sm_local_spool=$def_sendmail_local_spool)
+AC_MSG_RESULT($sm_local_spool)
+AC_DEFINE_UNQUOTED(SM_LOCAL_SPOOL, "$sm_local_spool", [ Sendmail/Postfix Local Spool directory ])
+
+dnl Choose Sendmail/Postfix lockfile binary.
+dnl
+AC_MSG_CHECKING(which Sendmail/Postfix lockfile binary)
+AC_ARG_WITH(sm_lockfile,
+        [  --with-sm-lockfile=PROGRAM        [[/usr/bin/lockfile]] Sendmail/Postfix lock],
+        sm_lockfile=$withval,
+        sm_lockfile=$def_sm_lockfile)
+AC_MSG_RESULT($sm_lockfile)
+AC_DEFINE_UNQUOTED(LOCKFILE, "$sm_lockfile", [ Sendmail/Postfix lockfile binary ])
+
+dnl Choose first config location.
+dnl
+AC_MSG_CHECKING(which first config location)
+AC_ARG_WITH(config1,
+        [  --with-config1=FILENAME           [.blackhole]] First config location],
+        config1=$withval,
+        config1=$def_config1)
+AC_MSG_RESULT($config1)
+AC_DEFINE_UNQUOTED(BH_CONFIG, "$config1", [ First config location ])
+
+dnl Choose qmail-queue config location.
+dnl
+AC_MSG_CHECKING(which qmail-queue config location)
+AC_ARG_WITH(queue_config,
+        [  --with-queue-config=FILENAME      [[/etc/blackhole.conf]] qmail-queue config],
+        queue_config=$withval,
+        queue_config=$def_queue_config)
+AC_MSG_RESULT($queue_config)
+AC_DEFINE_UNQUOTED(QUEUE_CONFIG, "$queue_config", [ qmail-queue config ])
+QUEUE_CONFIG=$queue_config
+AC_SUBST(QUEUE_CONFIG)
+
+dnl Choose DNS Server.
+dnl
+AC_MSG_CHECKING(which RBL dns server)
+AC_ARG_WITH(rbl_dnssrv,
+        [  --with-rbl-dnssrv=IPADDRESS       [[NULL]] DNS for RBL Lookups],
+        rbl_dnssrv=$withval,
+        rbl_dnssrv=$def_rbl_dnssrv)
+AC_MSG_RESULT($rbl_dnssrv)
+if test "$rbl_dnssrv" = 0; then
+  AC_DEFINE_UNQUOTED(DNS_SRV, NULL, [ DNS for RBL Lookups ])
+else 
+  AC_DEFINE_UNQUOTED(DNS_SRV, "$rbl_dnssrv", [ DNS for RBL Lookups ])
+fi
+
+dnl Choose sql User.
+dnl
+AC_MSG_CHECKING(which sql user)
+AC_ARG_WITH(sql_user,
+        [  --with-sql-user=USERNAME          [[blackhole]] sql User],
+        sql_user=$withval,
+        sql_user=$def_sql_user)
+AC_MSG_RESULT($sql_user)
+AC_DEFINE_UNQUOTED(SQL_USER, "$sql_user", [ sql User ])
+
+dnl Choose sql Pass.
+dnl
+AC_MSG_CHECKING(which sql password)
+AC_ARG_WITH(sql_pass,
+        [  --with-sql-pass=PASSWORD          [[]] sql Password],
+        sql_pass=$withval,
+        sql_pass=$def_sql_pass)
+AC_MSG_RESULT($sql_pass)
+AC_DEFINE_UNQUOTED(SQL_PASS, "$sql_pass", [ sql Password ])
+
+dnl Choose sql server.
+dnl
+AC_MSG_CHECKING(which mysql server)
+AC_ARG_WITH(sql_server,
+        [  --with-sql-server=HOST/IP         [[127.0.0.1]] sql Server],
+        sql_server=$withval,
+        sql_server=$def_sql_server)
+AC_MSG_RESULT($sql_server)
+AC_DEFINE_UNQUOTED(SQL_SERVER, "$sql_server", [ sql Server ])
+
+dnl Choose sql Domain.
+dnl
+AC_MSG_CHECKING(which sql domain)
+AC_ARG_WITH(sql_domain,
+        [  --with-sql-domain=NAME            [[default]] sql Domain],
+        sql_domain=$withval,
+        sql_domain=$def_sql_domain)
+AC_MSG_RESULT($sql_domain)
+AC_DEFINE_UNQUOTED(SQL_DOMAIN, "$sql_domain", [ sql Domain ])
+
+dnl Choose Expire Time.
+dnl
+AC_MSG_CHECKING(which expire time)
+AC_ARG_WITH(expire_time,
+        [  --with-expire-time=DAYS           [[0]] Days till mail expires],
+        expire_time=$withval,
+        expire_time=$def_expire_time)
+AC_MSG_RESULT($expire_time)
+AC_DEFINE_UNQUOTED(EXPIRE_TIME, $expire_time, [ Expire Time ])
+
+dnl Choose Maximum Options per section.
+dnl
+AC_MSG_CHECKING(which max options per section)
+AC_ARG_WITH(maxoptions,
+        [  --with-maxoptions=NUMBER          [[500]] Max Options per Section],
+        maxoptions=$withval,
+        maxoptions=$def_maxoptions)
+AC_MSG_RESULT($maxoptions)
+AC_DEFINE_UNQUOTED(MAXOPTION, $maxoptions, [ Max Options ])
+
+dnl Choose CPU Priority.
+dnl
+AC_MSG_CHECKING(which CPU Priority)
+AC_ARG_WITH(priority,
+        [  --with-priority=0-19              [[0]] CPU Priority],
+        priority=$withval,
+        priority=$def_priority)
+AC_MSG_RESULT($priority)
+AC_DEFINE_UNQUOTED(PRIORITY, $priority, [ CPU Priority ])
+
+dnl Choose Razor Bin.
+dnl
+AC_MSG_CHECKING(which razor bin)
+AC_ARG_WITH(razor_bin,
+        [  --with-razor-bin=FILE             [[/usr/bin/razor-check]] Razor Binary],
+        razor_bin=$withval,
+        razor_bin=$def_razor_bin)
+AC_MSG_RESULT($razor_bin)
+AC_DEFINE_UNQUOTED(RAZOR_BIN, "$razor_bin", [ Razor Binary ])
+
+dnl Choose Pyzor Bin.
+dnl
+AC_MSG_CHECKING(which pyzor bin)
+AC_ARG_WITH(pyzor_bin,
+        [  --with-pyzor-bin=FILE             [[/usr/bin/pyzor]] Pyzor Binary],
+        pyzor_bin=$withval,
+        pyzor_bin=$def_pyzor_bin)
+AC_MSG_RESULT($pyzor_bin)
+AC_DEFINE_UNQUOTED(PYZOR_BIN, "$pyzor_bin", [ Pyzor Binary ])
+
+dnl Choose Perl Bin.
+dnl
+AC_MSG_CHECKING(which perl bin)
+AC_ARG_WITH(perl_bin,
+        [  --with-perl-bin=FILE              [[/usr/bin/perl]] Perl Binary],
+        perl_bin=$withval,
+        perl_bin=$def_perl_bin)
+AC_MSG_RESULT($perl_bin)
+AC_DEFINE_UNQUOTED(PERL_BIN, "$perl_bin", [ Perl Binary ])
+
+dnl Choose Sendmail Bin.
+dnl
+AC_MSG_CHECKING(which sendmail bin)
+AC_ARG_WITH(sendmail_bin,
+        [  --with-sendmail-bin=FILE          [[/usr/sbin/sendmail]] Sendmail Binary],
+        sendmail_bin=$withval,
+        sendmail_bin=$def_sendmail_bin)
+AC_MSG_RESULT($sendmail_bin)
+AC_DEFINE_UNQUOTED(SENDMAIL_BIN, "$sendmail_bin", [ Sendmail Binary ])
+
+dnl Choose Mcafee Dat Directory.
+dnl
+AC_MSG_CHECKING(which mcafee dat dir)
+AC_ARG_WITH(mcafee_dat,
+        [  --with-mcafee-dat=DIR             [[/opt/uvscan]] McAfee Dat Directory],
+        mcafee_dat=$withval,
+        mcafee_dat=$def_mcafee_dat)
+AC_MSG_RESULT($mcafee_dat)
+AC_DEFINE_UNQUOTED(MCAFEE_DAT_DIR, "$mcafee_dat", [ McAfee Dat Dir])
+
+dnl Choose McAfee Bin.
+dnl
+AC_MSG_CHECKING(which mcafee bin)
+AC_ARG_WITH(mcafee_bin,
+        [  --with-mcafee-bin=BINARY          [[/opt/uvscan/uvscan]] McAfee Binary],
+        mcafee_bin=$withval,
+        mcafee_bin=$def_mcafee_bin)
+AC_MSG_RESULT($mcafee_bin)
+AC_DEFINE_UNQUOTED(MCAFEE_UVSCAN, "$mcafee_bin", [ McAfee Binary ])
+
+dnl Choose Mcafee Args.
+dnl
+AC_MSG_CHECKING(which mcafee args)
+AC_ARG_WITH(mcafee_args,
+        [  --with-mcafee-args=ARGS           
+	[[\"--unzip\",\"--exit-on-error\", \"--noboot\",\"--norename\",
+	\"--noexpire\",\"--ignore-links\",\"--mime\",]] McAfee Args],
+        mcafee_args=$withval,
+        mcafee_args=$def_mcafee_args)
+AC_MSG_RESULT($mcafee_args)
+AC_DEFINE_UNQUOTED(MCAFEE_ARGS, $mcafee_args, [ McAfee ARGS])
+
+dnl Choose ClamScan Bin.
+dnl
+AC_MSG_CHECKING(which clamscan bin)
+AC_ARG_WITH(clamscan_bin,
+        [  --with-clamscan-bin=FILE          [[/usr/local/bin/clamscan]] ClamScan Binary],
+        clamscan_bin=$withval,
+        clamscan_bin=$def_clamscan_bin)
+AC_MSG_RESULT($clamscan_bin)
+AC_DEFINE_UNQUOTED(CLAMSCAN_BIN, "$clamscan_bin", [ ClamScan Binary ])
+
+dnl Choose ClamScan Args.
+dnl
+AC_MSG_CHECKING(which clamscan args)
+AC_ARG_WITH(clamscan_args,
+        [  --with-clamscan-args=ARGS         
+	[[\"--unzip=/usr/bin/unzip\",\"--tar=/bin/tar\",]] ClamScan Args],
+        clamscan_args=$withval,
+        clamscan_args=$def_clamscan_args)
+AC_MSG_RESULT($clamscan_args)
+AC_DEFINE_UNQUOTED(CLAMSCAN_ARGS, $clamscan_args, [ ClamScan Args ])
+
+dnl Choose Executable Report Binary.
+dnl
+AC_MSG_CHECKING(which Executable Report Binary)
+AC_ARG_WITH(progexec,
+        [  --with-progexec=PROG              [[/opt/blackhole/bin/spamcomplain]]
+			Executable Report Binary, is passed iprelay and msgfile],
+        progexec=$withval,
+        progexec=$def_progexec)
+AC_MSG_RESULT($progexec)
+AC_DEFINE_UNQUOTED(PROGEXEC, "$progexec", [ Executable Report Binary ])
+
+dnl Choose Executable Report Binary Args.
+dnl
+AC_MSG_CHECKING(which Executable Report Binary Args)
+AC_ARG_WITH(progexec_args,
+        [  --with-progexec-args=ARGS         [[\"\",]] Executable Report Binary ARGS],
+        progexec_args=$withval,
+        progexec_args=$def_progexec_args)
+AC_MSG_RESULT($progexec_args)
+AC_DEFINE_UNQUOTED(PROGEXEC_ARGS, $progexec_args, [ Executable Report Binary ARGS ])
+
+dnl Choose Executable Check Binary.
+dnl
+AC_MSG_CHECKING(which Executable Check Binary)
+AC_ARG_WITH(exec_check_prog,
+        [  --with-exec-check-prog=PROG       [[/opt/blackhole/bin/spamcheck]] 
+			Executable Check Binary, is passed iprelay and msgfile],
+        exec_check_prog=$withval,
+        exec_check_prog=$def_exec_check_prog)
+AC_MSG_RESULT($exec_check_prog)
+AC_DEFINE_UNQUOTED(EXEC_CHECK_PROG, "$exec_check_prog", [ Executable Check Binary ])
+
+dnl Choose Executable Check Args.
+dnl
+AC_MSG_CHECKING(which Executable Check args)
+AC_ARG_WITH(exec_check_args,
+        [  --with-exec-check-args=ARGS       [[\"\",]] Executable Check Args],
+        exec_check_args=$withval,
+        exec_check_args=$def_exec_check_args)
+AC_MSG_RESULT($exec_check_args)
+AC_DEFINE_UNQUOTED(EXEC_CHECK_ARGS, $exec_check_args, [ Executable Check Args ])
+
+dnl Choose Executable Check Return Val.
+dnl
+AC_MSG_CHECKING(which Executable Check return value)
+AC_ARG_WITH(exec_check_ret,
+        [  --with-exec-check-ret=ARGS        [[1]] Executable Check Return value for Spam],
+        exec_check_ret=$withval,
+        exec_check_ret=$def_exec_check_ret)
+AC_MSG_RESULT($exec_check_ret)
+AC_DEFINE_UNQUOTED(EXEC_CHECK_RET, $exec_check_ret, [ Executable Check Ret ])
+
+dnl Choose Log Type.
+dnl
+AC_MSG_CHECKING(which log type)
+AC_ARG_WITH(log_type,
+        [  --with-log-type=TYPE              [[syslog]] |stderr|stdout|syslog|sql|],
+        log_type=$withval,
+        log_type=$def_log_type)
+AC_MSG_RESULT($log_type)
+if test "$log_type" = stderr; then
+  log_type=0
+elif test "$log_type" = stdout; then
+  log_type=1
+elif test "$log_type" = syslog; then
+  log_type=2
+elif test "$log_type" = sql; then
+  log_type=3
+elif test "$log_type" = mysql; then
+  log_type=3
+elif test "$log_type" = pgsql; then
+  log_type=3
+else
+  log_type=$def_log_type
+fi
+AC_DEFINE_UNQUOTED(LOG_TYPE, $log_type, [ Log Type ])
+
+dnl Choose Custom Body Threshhold.
+dnl
+AC_MSG_CHECKING(which custom body threshhold)
+AC_ARG_WITH(custom_body_thresh,
+        [  --with-custom-body-thresh=NUM     [[1]] Custom Body Threshhold],
+        custom_body_thresh=$withval,
+        custom_body_thresh=$def_custom_body_thresh)
+AC_MSG_RESULT($custom_body_thresh)
+AC_DEFINE_UNQUOTED(CUSTOM_BODY_THRESHHOLD, $custom_body_thresh, [ Custom Body Threshhold ])
+
+dnl Choose Spam Body Threshhold.
+dnl
+AC_MSG_CHECKING(which spam body threshhold)
+AC_ARG_WITH(spam_body_thresh,
+        [  --with-spam-body-thresh=NUM       [[5]] Spam Body Threshhold],
+        spam_body_thresh=$withval,
+        spam_body_thresh=$def_spam_body_thresh)
+AC_MSG_RESULT($spam_body_thresh)
+AC_DEFINE_UNQUOTED(SPAM_BODY_THRESHHOLD, $spam_body_thresh, [ Spam Body Threshhold ])
+
+dnl Choose Porn Body Threshhold.
+dnl
+AC_MSG_CHECKING(which porn body threshhold)
+AC_ARG_WITH(porn_body_thresh,
+        [  --with-porn-body-thresh=NUM       [[3]] Porn Body Threshhold],
+        porn_body_thresh=$withval,
+        porn_body_thresh=$def_porn_body_thresh)
+AC_MSG_RESULT($porn_body_thresh)
+AC_DEFINE_UNQUOTED(PORN_BODY_THRESHHOLD, $porn_body_thresh, [ Porn Body Threshhold ])
+
+dnl Choose Racist Body Threshhold.
+dnl
+AC_MSG_CHECKING(which racist body threshhold)
+AC_ARG_WITH(racist_body_thresh,
+        [  --with-racist-body-thresh=NUM     [[3]] Racist Body Threshhold],
+        racist_body_thresh=$withval,
+        racist_body_thresh=$def_racist_body_thresh)
+AC_MSG_RESULT($racist_body_thresh)
+AC_DEFINE_UNQUOTED(RACIST_BODY_THRESHHOLD, $racist_body_thresh, [ Racist Body Threshhold ])
+
+dnl Choose Virus Scanner.
+dnl
+AC_MSG_CHECKING(which virus scanner)
+AC_ARG_WITH(virus_scanner,
+        [  --with-virus-scanner=NAME         [[clamscan]] |mcafee|sophos|tmicro|clamscan],
+        virus_scanner=$withval,
+        virus_scanner=$def_virus_scanner)
+AC_MSG_RESULT($virus_scanner)
+RIPMIME_LIBS=
+if test "$virus_scanner" = mcafee; then
+  virus_scanner=1
+elif test "$virus_scanner" = sophos; then
+  virus_scanner=2
+  RIPMIME_LIBS=ripmime/libripmime.a
+elif test "$virus_scanner" = tmicro; then
+  virus_scanner=3
+elif test "$virus_scanner" = clamscan; then
+  virus_scanner=4
+  RIPMIME_LIBS=ripmime/libripmime.a
+else
+  virus_scanner=$def_virus_scanner
+  RIPMIME_LIBS=ripmime/libripmime.a
+fi
+AC_SUBST(RIPMIME_LIBS)
+AM_CONDITIONAL(VIRUS_SCANNER_SOPHOS, test virus_scanner = 2)
+AC_DEFINE_UNQUOTED(VIRUS_SCANNER, $virus_scanner, [ Virus Scanner ])
+
+dnl Choose Sophos Lib.
+dnl
+AC_MSG_CHECKING(which sophos libs)
+AC_ARG_WITH(sophos_libs,
+        [  --with-sophos-libs=PATH           [[/opt/sophos/lib]] path to sophos libs],
+        sophos_libs="-L$withval -lsavi",
+        sophos_libs="-L$def_sophos_libs -lsavi")
+AC_MSG_RESULT($sophos_libs)
+if test "$virus_scanner" = 2; then
+  SOPHOS_LIBS=$sophos_libs
+  AC_SUBST(SOPHOS_LIBS)
+  SOPHOS_INCLUDES="-I./sav_if"
+  AC_SUBST(SOPHOS_INCLUDES)
+  VIRUS_SCANNER=2
+  AC_SUBST(VIRUS_SCANNER)
+  echo
+fi
+
+dnl Choose Trend Lib.
+dnl
+AC_MSG_CHECKING(which tmicro libs)
+AC_ARG_WITH(tmicro_libs,
+        [  --with-tmicro-libs=PATH           [[/lib]] path to tmicro libs],
+        tmicro_libs="-L$withval -lvsapi",
+        tmicro_libs="-L$def_tmicro_libs -lvsapi")
+AC_MSG_RESULT($tmicro_libs)
+if test "$virus_scanner" = 3; then
+  TMICRO_LIBS=$tmicro_libs
+  AC_SUBST(TMICRO_LIBS)
+  VIRUS_SCANNER=3
+  AC_SUBST(VIRUS_SCANNER)
+  echo
+fi
+
+dnl Choose Blackhole Spool Directory.
+dnl
+AC_MSG_CHECKING(which blackhole spool directory)
+AC_ARG_WITH(blackhole_spool,
+        [  --with-blackhole-spool=DIR        [[/var/spool/blackhole]] Blackhole Spool Dir],
+        blackhole_spool=$withval,
+        blackhole_spool=$def_blackhole_spool)
+AC_MSG_RESULT($blackhole_spool)
+AC_DEFINE_UNQUOTED(BH_SPOOL_DIR, "$blackhole_spool", [ BlackHole Spool Dir ])
+BH_SPOOL_DIR=$blackhole_spool
+AC_SUBST(BH_SPOOL_DIR)
+
+dnl Choose MySQL Include Support.
+dnl
+AC_MSG_CHECKING(which mysql includes)
+AC_ARG_WITH(mysql_includes,
+        [  --with-mysql-includes=PATH        [[/usr/include/mysql]] path to mysql includes],
+        mysql_includes="-I$withval",
+        mysql_includes="-I$def_mysql_includes")
+AC_MSG_RESULT($mysql_includes)
+if test "$mysql_active" = 1; then
+  MYSQL_INCLUDES=$mysql_includes
+  AC_SUBST(MYSQL_INCLUDES)
+  echo
+fi
+
+dnl Choose MySQL Lib.
+dnl
+AC_MSG_CHECKING(which mysql libs)
+AC_ARG_WITH(mysql_libs,
+        [  --with-mysql-libs=PATH            [[/usr/lib/mysql]] path to mysql libs],
+        mysql_libs="-L$withval -lmysqlclient",
+        mysql_libs="-L$def_mysql_libs -lmysqlclient")
+AC_MSG_RESULT($mysql_libs)
+if test "$mysql_active" = 1; then
+  MYSQL_LIBS=$mysql_libs
+  AC_SUBST(MYSQL_LIBS)
+  echo
+fi
+
+dnl Choose PgSQL Include Support.
+dnl
+AC_MSG_CHECKING(which pgsql includes)
+AC_ARG_WITH(pgsql_includes,
+        [  --with-pgsql-includes=PATH        [[/usr/include/postgresql]] path to pgsql includes],
+        pgsql_includes="-I$withval",
+        pgsql_includes="-I$def_pgsql_includes")
+AC_MSG_RESULT($pgsql_includes)
+if test "$pgsql_active" = 1; then
+  MYSQL_INCLUDES=$pgsql_includes
+  AC_SUBST(PGSQL_INCLUDES)
+  echo
+fi
+
+dnl Choose PgSQL Lib.
+dnl
+AC_MSG_CHECKING(which pgsql libs)
+AC_ARG_WITH(pgsql_libs,
+        [  --with-pgsql-libs=PATH            [[/usr/lib/postgresql]] path to pgsql libs],
+        pgsql_libs="-L$withval -lpq",
+        pgsql_libs="-L$def_pgsql_libs -lpq")
+AC_MSG_RESULT($pgsql_libs)
+if test "$pgsql_active" = 1; then
+  PGSQL_LIBS=$pgsql_libs
+  AC_SUBST(PGSQL_LIBS)
+  echo
+fi
+
+dnl =============
+dnl Makefile file
+dnl =============
+
+AC_OUTPUT(Makefile
+scripts/Makefile
+ripmime/Makefile
+ripmime/tnef/Makefile
+etc/Makefile
+doc/Makefile
+SMTP_DEMON/Makefile)
+
+
+echo
+echo "You are now ready to compile BlackHole, make sure to read the HOWTO"
+echo "on the website at http://groovy.org/source/docs/blackhole/.  You can"
+echo "type 'make' (If not using GNU Make then instead type 'gmake' instead)"
+echo "to build and then type 'make install' for installation (or gmake again),"
+echo "by default the PREFIX used is /opt/blackhole which can be changed by"
+echo "adding the --prefix option to configure's args."
+echo
+echo "If you haven't tried using ./Setup to get a better set of configure"
+echo "options for your installation, please do, it should help alot."
+echo 
+echo "Thanks,"
+echo "Chris Kennedy"
+

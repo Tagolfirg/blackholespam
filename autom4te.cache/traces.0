@@ -1,0 +1,506 @@
+m4trace:aclocal.m4:50: -1- m4_pattern_allow([^AM_[A-Z]+FLAGS$])
+m4trace:configure.in:2: -1- m4_pattern_forbid([^_?A[CHUM]_])
+m4trace:configure.in:2: -1- m4_pattern_forbid([_AC_])
+m4trace:configure.in:2: -1- m4_pattern_forbid([^LIBOBJS$], [do not use LIBOBJS directly, use AC_LIBOBJ (see section `AC_LIBOBJ vs. LIBOBJS'])
+m4trace:configure.in:2: -1- m4_pattern_allow([^AS_FLAGS$])
+m4trace:configure.in:2: -1- m4_pattern_forbid([^_?m4_])
+m4trace:configure.in:2: -1- m4_pattern_forbid([^dnl$])
+m4trace:configure.in:2: -1- m4_pattern_forbid([^_?AS_])
+m4trace:configure.in:2: -1- AC_SUBST([SHELL], [${CONFIG_SHELL-/bin/sh}])
+m4trace:configure.in:2: -1- AC_SUBST([PATH_SEPARATOR])
+m4trace:configure.in:2: -1- AC_SUBST([PACKAGE_NAME], [m4_ifdef([AC_PACKAGE_NAME],      ['AC_PACKAGE_NAME'])])
+m4trace:configure.in:2: -1- AC_SUBST([PACKAGE_TARNAME], [m4_ifdef([AC_PACKAGE_TARNAME],   ['AC_PACKAGE_TARNAME'])])
+m4trace:configure.in:2: -1- AC_SUBST([PACKAGE_VERSION], [m4_ifdef([AC_PACKAGE_VERSION],   ['AC_PACKAGE_VERSION'])])
+m4trace:configure.in:2: -1- AC_SUBST([PACKAGE_STRING], [m4_ifdef([AC_PACKAGE_STRING],    ['AC_PACKAGE_STRING'])])
+m4trace:configure.in:2: -1- AC_SUBST([PACKAGE_BUGREPORT], [m4_ifdef([AC_PACKAGE_BUGREPORT], ['AC_PACKAGE_BUGREPORT'])])
+m4trace:configure.in:2: -1- AC_SUBST([exec_prefix], [NONE])
+m4trace:configure.in:2: -1- AC_SUBST([prefix], [NONE])
+m4trace:configure.in:2: -1- AC_SUBST([program_transform_name], [s,x,x,])
+m4trace:configure.in:2: -1- AC_SUBST([bindir], ['${exec_prefix}/bin'])
+m4trace:configure.in:2: -1- AC_SUBST([sbindir], ['${exec_prefix}/sbin'])
+m4trace:configure.in:2: -1- AC_SUBST([libexecdir], ['${exec_prefix}/libexec'])
+m4trace:configure.in:2: -1- AC_SUBST([datadir], ['${prefix}/share'])
+m4trace:configure.in:2: -1- AC_SUBST([sysconfdir], ['${prefix}/etc'])
+m4trace:configure.in:2: -1- AC_SUBST([sharedstatedir], ['${prefix}/com'])
+m4trace:configure.in:2: -1- AC_SUBST([localstatedir], ['${prefix}/var'])
+m4trace:configure.in:2: -1- AC_SUBST([libdir], ['${exec_prefix}/lib'])
+m4trace:configure.in:2: -1- AC_SUBST([includedir], ['${prefix}/include'])
+m4trace:configure.in:2: -1- AC_SUBST([oldincludedir], ['/usr/include'])
+m4trace:configure.in:2: -1- AC_SUBST([infodir], ['${prefix}/info'])
+m4trace:configure.in:2: -1- AC_SUBST([mandir], ['${prefix}/man'])
+m4trace:configure.in:2: -1- AC_DEFINE_TRACE_LITERAL([PACKAGE_NAME])
+m4trace:configure.in:2: -1- AH_OUTPUT([PACKAGE_NAME], [/* Define to the full name of this package. */
+#undef PACKAGE_NAME])
+m4trace:configure.in:2: -1- AC_DEFINE_TRACE_LITERAL([PACKAGE_TARNAME])
+m4trace:configure.in:2: -1- AH_OUTPUT([PACKAGE_TARNAME], [/* Define to the one symbol short name of this package. */
+#undef PACKAGE_TARNAME])
+m4trace:configure.in:2: -1- AC_DEFINE_TRACE_LITERAL([PACKAGE_VERSION])
+m4trace:configure.in:2: -1- AH_OUTPUT([PACKAGE_VERSION], [/* Define to the version of this package. */
+#undef PACKAGE_VERSION])
+m4trace:configure.in:2: -1- AC_DEFINE_TRACE_LITERAL([PACKAGE_STRING])
+m4trace:configure.in:2: -1- AH_OUTPUT([PACKAGE_STRING], [/* Define to the full name and version of this package. */
+#undef PACKAGE_STRING])
+m4trace:configure.in:2: -1- AC_DEFINE_TRACE_LITERAL([PACKAGE_BUGREPORT])
+m4trace:configure.in:2: -1- AH_OUTPUT([PACKAGE_BUGREPORT], [/* Define to the address where bug reports for this package should be sent. */
+#undef PACKAGE_BUGREPORT])
+m4trace:configure.in:2: -1- AC_SUBST([build_alias])
+m4trace:configure.in:2: -1- AC_SUBST([host_alias])
+m4trace:configure.in:2: -1- AC_SUBST([target_alias])
+m4trace:configure.in:2: -1- AC_SUBST([DEFS])
+m4trace:configure.in:2: -1- AC_SUBST([ECHO_C])
+m4trace:configure.in:2: -1- AC_SUBST([ECHO_N])
+m4trace:configure.in:2: -1- AC_SUBST([ECHO_T])
+m4trace:configure.in:2: -1- AC_SUBST([LIBS])
+m4trace:configure.in:3: -1- AC_PROG_INSTALL
+m4trace:configure.in:3: -1- AC_SUBST([INSTALL_PROGRAM])
+m4trace:configure.in:3: -1- AC_SUBST([INSTALL_SCRIPT])
+m4trace:configure.in:3: -1- AC_SUBST([INSTALL_DATA])
+m4trace:configure.in:3: -1- AC_SUBST([PACKAGE], [blackhole])
+m4trace:configure.in:3: -1- AC_SUBST([VERSION], [1.0.9])
+m4trace:configure.in:3: -1- AC_DEFINE_TRACE_LITERAL([PACKAGE])
+m4trace:configure.in:3: -1- AH_OUTPUT([PACKAGE], [/* Name of package */
+#undef PACKAGE])
+m4trace:configure.in:3: -1- AC_DEFINE_TRACE_LITERAL([VERSION])
+m4trace:configure.in:3: -1- AH_OUTPUT([VERSION], [/* Version number of package */
+#undef VERSION])
+m4trace:configure.in:3: -1- AC_SUBST([ACLOCAL])
+m4trace:configure.in:3: -1- AC_SUBST([AUTOCONF])
+m4trace:configure.in:3: -1- AC_SUBST([AUTOMAKE])
+m4trace:configure.in:3: -1- AC_SUBST([AUTOHEADER])
+m4trace:configure.in:3: -1- AC_SUBST([MAKEINFO])
+m4trace:configure.in:3: -1- AC_SUBST([AMTAR])
+m4trace:configure.in:3: -1- AC_SUBST([install_sh])
+m4trace:configure.in:3: -1- AC_SUBST([STRIP])
+m4trace:configure.in:3: -1- AC_SUBST([ac_ct_STRIP])
+m4trace:configure.in:3: -1- AC_SUBST([INSTALL_STRIP_PROGRAM])
+m4trace:configure.in:3: -1- AC_PROG_AWK
+m4trace:configure.in:3: -1- AC_SUBST([AWK])
+m4trace:configure.in:3: -1- AC_PROG_MAKE_SET
+m4trace:configure.in:3: -1- AC_SUBST([SET_MAKE])
+m4trace:configure.in:4: -1- AC_CONFIG_HEADERS([config.h], [# update the timestamp
+echo 'timestamp for config.h' >"_AM_STAMP([config.h])"
+], [])
+m4trace:configure.in:7: -1- AC_PROG_CC
+m4trace:configure.in:7: -1- AC_SUBST([CC])
+m4trace:configure.in:7: -1- AC_SUBST([CFLAGS])
+m4trace:configure.in:7: -1- AC_SUBST([LDFLAGS])
+m4trace:configure.in:7: -1- AC_SUBST([CPPFLAGS])
+m4trace:configure.in:7: -1- AC_SUBST([CC])
+m4trace:configure.in:7: -1- AC_SUBST([ac_ct_CC])
+m4trace:configure.in:7: -1- AC_SUBST([CC])
+m4trace:configure.in:7: -1- AC_SUBST([ac_ct_CC])
+m4trace:configure.in:7: -1- AC_SUBST([CC])
+m4trace:configure.in:7: -1- AC_SUBST([CC])
+m4trace:configure.in:7: -1- AC_SUBST([ac_ct_CC])
+m4trace:configure.in:7: -1- AC_SUBST([EXEEXT], [$ac_cv_exeext])
+m4trace:configure.in:7: -1- AC_SUBST([OBJEXT], [$ac_cv_objext])
+m4trace:configure.in:7: -1- AC_SUBST([DEPDIR])
+m4trace:configure.in:7: -1- AC_SUBST([am__include])
+m4trace:configure.in:7: -1- AC_SUBST([am__quote])
+m4trace:configure.in:7: -1- AM_CONDITIONAL([AMDEP], [test "x$enable_dependency_tracking" != xno])
+m4trace:configure.in:7: -1- AC_SUBST([AMDEP_TRUE])
+m4trace:configure.in:7: -1- AC_SUBST([AMDEP_FALSE])
+m4trace:configure.in:7: -1- AC_SUBST([AMDEPBACKSLASH])
+m4trace:configure.in:7: -1- AC_SUBST([CCDEPMODE], [depmode=$am_cv_CC_dependencies_compiler_type])
+m4trace:configure.in:8: -1- AC_PROG_INSTALL
+m4trace:configure.in:8: -1- AC_SUBST([INSTALL_PROGRAM])
+m4trace:configure.in:8: -1- AC_SUBST([INSTALL_SCRIPT])
+m4trace:configure.in:8: -1- AC_SUBST([INSTALL_DATA])
+m4trace:configure.in:9: -1- AC_PROG_LN_S
+m4trace:configure.in:9: -1- AC_SUBST([LN_S], [$as_ln_s])
+m4trace:configure.in:10: -1- AC_PROG_MAKE_SET
+m4trace:configure.in:10: -1- AC_SUBST([SET_MAKE])
+m4trace:configure.in:11: -1- AC_PROG_RANLIB
+m4trace:configure.in:11: -1- AC_SUBST([RANLIB])
+m4trace:configure.in:11: -1- AC_SUBST([ac_ct_RANLIB])
+m4trace:configure.in:12: -1- AC_SUBST([AUTOCONF])
+m4trace:configure.in:13: -1- AC_SUBST([AUTOMAKE])
+m4trace:configure.in:14: -1- AC_SUBST([AUTOHEADER])
+m4trace:configure.in:15: -1- AC_SUBST([ACLOCAL])
+m4trace:configure.in:19: -1- AC_CHECK_LIB([e], [main])
+m4trace:configure.in:19: -1- AH_OUTPUT([HAVE_LIBE], [/* Define to 1 if you have the \`e' library (-le). */
+#undef HAVE_LIBE])
+m4trace:configure.in:19: -1- AC_DEFINE_TRACE_LITERAL([HAVE_LIBE])
+m4trace:configure.in:21: -1- AC_CHECK_LIB([nsl], [main])
+m4trace:configure.in:21: -1- AH_OUTPUT([HAVE_LIBNSL], [/* Define to 1 if you have the \`nsl' library (-lnsl). */
+#undef HAVE_LIBNSL])
+m4trace:configure.in:21: -1- AC_DEFINE_TRACE_LITERAL([HAVE_LIBNSL])
+m4trace:configure.in:23: -1- AC_CHECK_LIB([inks], [main])
+m4trace:configure.in:23: -1- AH_OUTPUT([HAVE_LIBINKS], [/* Define to 1 if you have the \`inks' library (-links). */
+#undef HAVE_LIBINKS])
+m4trace:configure.in:23: -1- AC_DEFINE_TRACE_LITERAL([HAVE_LIBINKS])
+m4trace:configure.in:25: -1- AC_CHECK_LIB([m], [main])
+m4trace:configure.in:25: -1- AH_OUTPUT([HAVE_LIBM], [/* Define to 1 if you have the \`m' library (-lm). */
+#undef HAVE_LIBM])
+m4trace:configure.in:25: -1- AC_DEFINE_TRACE_LITERAL([HAVE_LIBM])
+m4trace:configure.in:27: -1- AC_CHECK_LIB([pcre], [main])
+m4trace:configure.in:27: -1- AH_OUTPUT([HAVE_LIBPCRE], [/* Define to 1 if you have the \`pcre' library (-lpcre). */
+#undef HAVE_LIBPCRE])
+m4trace:configure.in:27: -1- AC_DEFINE_TRACE_LITERAL([HAVE_LIBPCRE])
+m4trace:configure.in:29: -1- AC_CHECK_LIB([resolv], [main])
+m4trace:configure.in:29: -1- AH_OUTPUT([HAVE_LIBRESOLV], [/* Define to 1 if you have the \`resolv' library (-lresolv). */
+#undef HAVE_LIBRESOLV])
+m4trace:configure.in:29: -1- AC_DEFINE_TRACE_LITERAL([HAVE_LIBRESOLV])
+m4trace:configure.in:31: -1- AC_CHECK_LIB([nsl], [main])
+m4trace:configure.in:31: -1- AH_OUTPUT([HAVE_LIBNSL], [/* Define to 1 if you have the \`nsl' library (-lnsl). */
+#undef HAVE_LIBNSL])
+m4trace:configure.in:31: -1- AC_DEFINE_TRACE_LITERAL([HAVE_LIBNSL])
+m4trace:configure.in:32: -1- AC_CHECK_LIB([socket], [main])
+m4trace:configure.in:32: -1- AH_OUTPUT([HAVE_LIBSOCKET], [/* Define to 1 if you have the \`socket' library (-lsocket). */
+#undef HAVE_LIBSOCKET])
+m4trace:configure.in:32: -1- AC_DEFINE_TRACE_LITERAL([HAVE_LIBSOCKET])
+m4trace:configure.in:35: -1- AC_HEADER_DIRENT
+m4trace:configure.in:35: -1- AH_OUTPUT([HAVE_DIRENT_H], [/* Define to 1 if you have the <dirent.h> header file, and it defines \`DIR'.
+   */
+#undef HAVE_DIRENT_H])
+m4trace:configure.in:35: -1- AH_OUTPUT([HAVE_SYS_NDIR_H], [/* Define to 1 if you have the <sys/ndir.h> header file, and it defines \`DIR'.
+   */
+#undef HAVE_SYS_NDIR_H])
+m4trace:configure.in:35: -1- AH_OUTPUT([HAVE_SYS_DIR_H], [/* Define to 1 if you have the <sys/dir.h> header file, and it defines \`DIR'.
+   */
+#undef HAVE_SYS_DIR_H])
+m4trace:configure.in:35: -1- AH_OUTPUT([HAVE_NDIR_H], [/* Define to 1 if you have the <ndir.h> header file, and it defines \`DIR'. */
+#undef HAVE_NDIR_H])
+m4trace:configure.in:36: -1- AC_HEADER_STDC
+m4trace:configure.in:36: -1- AC_PROG_CPP
+m4trace:configure.in:36: -1- AC_SUBST([CPP])
+m4trace:configure.in:36: -1- AC_SUBST([CPPFLAGS])
+m4trace:configure.in:36: -1- AC_SUBST([CPP])
+m4trace:configure.in:36: -1- AC_DEFINE_TRACE_LITERAL([STDC_HEADERS])
+m4trace:configure.in:36: -1- AH_OUTPUT([STDC_HEADERS], [/* Define to 1 if you have the ANSI C header files. */
+#undef STDC_HEADERS])
+m4trace:configure.in:37: -1- AC_HEADER_SYS_WAIT
+m4trace:configure.in:37: -1- AC_DEFINE_TRACE_LITERAL([HAVE_SYS_WAIT_H])
+m4trace:configure.in:37: -1- AH_OUTPUT([HAVE_SYS_WAIT_H], [/* Define to 1 if you have <sys/wait.h> that is POSIX.1 compatible. */
+#undef HAVE_SYS_WAIT_H])
+m4trace:configure.in:38: -1- AC_CHECK_HEADERS([arpa/inet.h errno.h fcntl.h netdb.h netinet/in.h stdlib.h string.h sys/socket.h unistd.h])
+m4trace:configure.in:38: -1- AH_OUTPUT([HAVE_ARPA_INET_H], [/* Define to 1 if you have the <arpa/inet.h> header file. */
+#undef HAVE_ARPA_INET_H])
+m4trace:configure.in:38: -1- AH_OUTPUT([HAVE_ERRNO_H], [/* Define to 1 if you have the <errno.h> header file. */
+#undef HAVE_ERRNO_H])
+m4trace:configure.in:38: -1- AH_OUTPUT([HAVE_FCNTL_H], [/* Define to 1 if you have the <fcntl.h> header file. */
+#undef HAVE_FCNTL_H])
+m4trace:configure.in:38: -1- AH_OUTPUT([HAVE_NETDB_H], [/* Define to 1 if you have the <netdb.h> header file. */
+#undef HAVE_NETDB_H])
+m4trace:configure.in:38: -1- AH_OUTPUT([HAVE_NETINET_IN_H], [/* Define to 1 if you have the <netinet/in.h> header file. */
+#undef HAVE_NETINET_IN_H])
+m4trace:configure.in:38: -1- AH_OUTPUT([HAVE_STDLIB_H], [/* Define to 1 if you have the <stdlib.h> header file. */
+#undef HAVE_STDLIB_H])
+m4trace:configure.in:38: -1- AH_OUTPUT([HAVE_STRING_H], [/* Define to 1 if you have the <string.h> header file. */
+#undef HAVE_STRING_H])
+m4trace:configure.in:38: -1- AH_OUTPUT([HAVE_SYS_SOCKET_H], [/* Define to 1 if you have the <sys/socket.h> header file. */
+#undef HAVE_SYS_SOCKET_H])
+m4trace:configure.in:38: -1- AH_OUTPUT([HAVE_UNISTD_H], [/* Define to 1 if you have the <unistd.h> header file. */
+#undef HAVE_UNISTD_H])
+m4trace:configure.in:38: -1- AC_CHECK_HEADERS([sys/types.h sys/stat.h stdlib.h string.h memory.h strings.h \
+                  inttypes.h stdint.h unistd.h], [], [], [$ac_includes_default])
+m4trace:configure.in:38: -1- AH_OUTPUT([HAVE_SYS_TYPES_H], [/* Define to 1 if you have the <sys/types.h> header file. */
+#undef HAVE_SYS_TYPES_H])
+m4trace:configure.in:38: -1- AH_OUTPUT([HAVE_SYS_STAT_H], [/* Define to 1 if you have the <sys/stat.h> header file. */
+#undef HAVE_SYS_STAT_H])
+m4trace:configure.in:38: -1- AH_OUTPUT([HAVE_STDLIB_H], [/* Define to 1 if you have the <stdlib.h> header file. */
+#undef HAVE_STDLIB_H])
+m4trace:configure.in:38: -1- AH_OUTPUT([HAVE_STRING_H], [/* Define to 1 if you have the <string.h> header file. */
+#undef HAVE_STRING_H])
+m4trace:configure.in:38: -1- AH_OUTPUT([HAVE_MEMORY_H], [/* Define to 1 if you have the <memory.h> header file. */
+#undef HAVE_MEMORY_H])
+m4trace:configure.in:38: -1- AH_OUTPUT([HAVE_STRINGS_H], [/* Define to 1 if you have the <strings.h> header file. */
+#undef HAVE_STRINGS_H])
+m4trace:configure.in:38: -1- AH_OUTPUT([HAVE_INTTYPES_H], [/* Define to 1 if you have the <inttypes.h> header file. */
+#undef HAVE_INTTYPES_H])
+m4trace:configure.in:38: -1- AH_OUTPUT([HAVE_STDINT_H], [/* Define to 1 if you have the <stdint.h> header file. */
+#undef HAVE_STDINT_H])
+m4trace:configure.in:38: -1- AH_OUTPUT([HAVE_UNISTD_H], [/* Define to 1 if you have the <unistd.h> header file. */
+#undef HAVE_UNISTD_H])
+m4trace:configure.in:41: -1- AC_C_CONST
+m4trace:configure.in:41: -1- AC_DEFINE_TRACE_LITERAL([const])
+m4trace:configure.in:41: -1- AH_OUTPUT([const], [/* Define to empty if \`const' does not conform to ANSI C. */
+#undef const])
+m4trace:configure.in:42: -1- AC_TYPE_PID_T
+m4trace:configure.in:42: -1- AC_DEFINE_TRACE_LITERAL([pid_t])
+m4trace:configure.in:42: -1- AH_OUTPUT([pid_t], [/* Define to \`int' if <sys/types.h> does not define. */
+#undef pid_t])
+m4trace:configure.in:43: -1- AC_STRUCT_TM
+m4trace:configure.in:43: -1- AC_DEFINE_TRACE_LITERAL([TM_IN_SYS_TIME])
+m4trace:configure.in:43: -1- AH_OUTPUT([TM_IN_SYS_TIME], [/* Define to 1 if your <sys/time.h> declares \`struct tm'. */
+#undef TM_IN_SYS_TIME])
+m4trace:configure.in:49: -1- AC_CHECK_FUNCS([gethostbyname inet_ntoa strchr strncasecmp strstr uname])
+m4trace:configure.in:49: -1- AH_OUTPUT([HAVE_GETHOSTBYNAME], [/* Define to 1 if you have the \`gethostbyname' function. */
+#undef HAVE_GETHOSTBYNAME])
+m4trace:configure.in:49: -1- AH_OUTPUT([HAVE_INET_NTOA], [/* Define to 1 if you have the \`inet_ntoa' function. */
+#undef HAVE_INET_NTOA])
+m4trace:configure.in:49: -1- AH_OUTPUT([HAVE_STRCHR], [/* Define to 1 if you have the \`strchr' function. */
+#undef HAVE_STRCHR])
+m4trace:configure.in:49: -1- AH_OUTPUT([HAVE_STRNCASECMP], [/* Define to 1 if you have the \`strncasecmp' function. */
+#undef HAVE_STRNCASECMP])
+m4trace:configure.in:49: -1- AH_OUTPUT([HAVE_STRSTR], [/* Define to 1 if you have the \`strstr' function. */
+#undef HAVE_STRSTR])
+m4trace:configure.in:49: -1- AH_OUTPUT([HAVE_UNAME], [/* Define to 1 if you have the \`uname' function. */
+#undef HAVE_UNAME])
+m4trace:configure.in:161: -1- AC_DEFINE_TRACE_LITERAL([WITH_DEBUG])
+m4trace:configure.in:161: -1- AH_OUTPUT([WITH_DEBUG], [/* Extra Debugging */
+#undef WITH_DEBUG])
+m4trace:configure.in:178: -1- AC_DEFINE_TRACE_LITERAL([LIBSPAMC])
+m4trace:configure.in:178: -1- AH_OUTPUT([LIBSPAMC], [/* SpamAssassin libspamc.so */
+#undef LIBSPAMC])
+m4trace:configure.in:180: -1- AC_CHECK_LIB([spamc], [main])
+m4trace:configure.in:180: -1- AH_OUTPUT([HAVE_LIBSPAMC], [/* Define to 1 if you have the \`spamc' library (-lspamc). */
+#undef HAVE_LIBSPAMC])
+m4trace:configure.in:180: -1- AC_DEFINE_TRACE_LITERAL([HAVE_LIBSPAMC])
+m4trace:configure.in:193: -1- AC_SUBST([SPAMC_LIB])
+m4trace:configure.in:213: -1- AC_DEFINE_TRACE_LITERAL([SENDMAIL])
+m4trace:configure.in:213: -1- AH_OUTPUT([SENDMAIL], [/* Sendmail/Postfix */
+#undef SENDMAIL])
+m4trace:configure.in:230: -1- AC_DEFINE_TRACE_LITERAL([COURIER])
+m4trace:configure.in:230: -1- AH_OUTPUT([COURIER], [/* Courier */
+#undef COURIER])
+m4trace:configure.in:247: -1- AC_DEFINE_TRACE_LITERAL([QMAIL_QUEUE])
+m4trace:configure.in:247: -1- AH_OUTPUT([QMAIL_QUEUE], [/* Qmail Queue */
+#undef QMAIL_QUEUE])
+m4trace:configure.in:264: -1- AC_DEFINE_TRACE_LITERAL([QFILTER])
+m4trace:configure.in:264: -1- AH_OUTPUT([QFILTER], [/* Qmail Queue */
+#undef QFILTER])
+m4trace:configure.in:282: -1- AC_DEFINE_TRACE_LITERAL([USE_MAILDIR])
+m4trace:configure.in:282: -1- AH_OUTPUT([USE_MAILDIR], [/* Sendmail/Postfix Maildir */
+#undef USE_MAILDIR])
+m4trace:configure.in:299: -1- AC_DEFINE_TRACE_LITERAL([SETGID_SENDMAIL])
+m4trace:configure.in:299: -1- AH_OUTPUT([SETGID_SENDMAIL], [/* Sendmail/Postfix SetGID Spool */
+#undef SETGID_SENDMAIL])
+m4trace:configure.in:316: -1- AC_DEFINE_TRACE_LITERAL([SQL_CONFIG])
+m4trace:configure.in:316: -1- AH_OUTPUT([SQL_CONFIG], [/* Use sql Config */
+#undef SQL_CONFIG])
+m4trace:configure.in:333: -1- AC_DEFINE_TRACE_LITERAL([USE_LOG])
+m4trace:configure.in:333: -1- AH_OUTPUT([USE_LOG], [/* Use Blocked/Defered Logging */
+#undef USE_LOG])
+m4trace:configure.in:350: -1- AC_DEFINE_TRACE_LITERAL([LOG_OK])
+m4trace:configure.in:350: -1- AH_OUTPUT([LOG_OK], [/* Use OK Logging */
+#undef LOG_OK])
+m4trace:configure.in:367: -1- AC_DEFINE_TRACE_LITERAL([LOG_SCORE])
+m4trace:configure.in:367: -1- AH_OUTPUT([LOG_SCORE], [/* Use SCORE Logging */
+#undef LOG_SCORE])
+m4trace:configure.in:384: -1- AC_DEFINE_TRACE_LITERAL([LOG_SIZE])
+m4trace:configure.in:384: -1- AH_OUTPUT([LOG_SIZE], [/* Use SIZE Logging */
+#undef LOG_SIZE])
+m4trace:configure.in:401: -1- AC_DEFINE_TRACE_LITERAL([LOG_IPRELAY])
+m4trace:configure.in:401: -1- AH_OUTPUT([LOG_IPRELAY], [/* Use IPRELAY Logging */
+#undef LOG_IPRELAY])
+m4trace:configure.in:418: -1- AC_DEFINE_TRACE_LITERAL([LOG_SENDER])
+m4trace:configure.in:418: -1- AH_OUTPUT([LOG_SENDER], [/* Use SENDER Logging */
+#undef LOG_SENDER])
+m4trace:configure.in:435: -1- AC_DEFINE_TRACE_LITERAL([LOG_RECIPIENT])
+m4trace:configure.in:435: -1- AH_OUTPUT([LOG_RECIPIENT], [/* Use RECIPIENT Logging */
+#undef LOG_RECIPIENT])
+m4trace:configure.in:452: -1- AC_DEFINE_TRACE_LITERAL([ALLINONE])
+m4trace:configure.in:452: -1- AH_OUTPUT([ALLINONE], [/* One Box */
+#undef ALLINONE])
+m4trace:configure.in:469: -1- AC_DEFINE_TRACE_LITERAL([STORE_EMAIL])
+m4trace:configure.in:469: -1- AH_OUTPUT([STORE_EMAIL], [/* Store Email */
+#undef STORE_EMAIL])
+m4trace:configure.in:486: -1- AC_DEFINE_TRACE_LITERAL([SPAM_SCAN])
+m4trace:configure.in:486: -1- AH_OUTPUT([SPAM_SCAN], [/* NO RBL */
+#undef SPAM_SCAN])
+m4trace:configure.in:503: -1- AC_DEFINE_TRACE_LITERAL([EXEC_PROG])
+m4trace:configure.in:503: -1- AH_OUTPUT([EXEC_PROG], [/* Enable ERP */
+#undef EXEC_PROG])
+m4trace:configure.in:520: -1- AC_DEFINE_TRACE_LITERAL([VIRUS_SCAN])
+m4trace:configure.in:520: -1- AH_OUTPUT([VIRUS_SCAN], [/* Virus Scan */
+#undef VIRUS_SCAN])
+m4trace:configure.in:537: -1- AC_DEFINE_TRACE_LITERAL([VIRUS_ALERT])
+m4trace:configure.in:537: -1- AH_OUTPUT([VIRUS_ALERT], [/* Virus Alert */
+#undef VIRUS_ALERT])
+m4trace:configure.in:554: -1- AC_DEFINE_TRACE_LITERAL([DISINFECT])
+m4trace:configure.in:554: -1- AH_OUTPUT([DISINFECT], [/* Virus Disinfect */
+#undef DISINFECT])
+m4trace:configure.in:571: -1- AC_DEFINE_TRACE_LITERAL([BOUNCE_MSG])
+m4trace:configure.in:571: -1- AH_OUTPUT([BOUNCE_MSG], [/* Bounce Messages */
+#undef BOUNCE_MSG])
+m4trace:configure.in:588: -1- AC_DEFINE_TRACE_LITERAL([CHECK_SENDER])
+m4trace:configure.in:588: -1- AH_OUTPUT([CHECK_SENDER], [/* DNS Sender */
+#undef CHECK_SENDER])
+m4trace:configure.in:605: -1- AC_DEFINE_TRACE_LITERAL([CHECK_REVERSE])
+m4trace:configure.in:605: -1- AH_OUTPUT([CHECK_REVERSE], [/* DNS Reverse */
+#undef CHECK_REVERSE])
+m4trace:configure.in:622: -1- AC_DEFINE_TRACE_LITERAL([CHECK_HELO])
+m4trace:configure.in:622: -1- AH_OUTPUT([CHECK_HELO], [/* DNS Helo */
+#undef CHECK_HELO])
+m4trace:configure.in:640: -1- AC_DEFINE_TRACE_LITERAL([WHITE_LIST])
+m4trace:configure.in:640: -1- AH_OUTPUT([WHITE_LIST], [/* White List */
+#undef WHITE_LIST])
+m4trace:configure.in:657: -1- AC_DEFINE_TRACE_LITERAL([NO_BODY_CHECK_SIGNATURE])
+m4trace:configure.in:657: -1- AH_OUTPUT([NO_BODY_CHECK_SIGNATURE], [/* No Body Sig */
+#undef NO_BODY_CHECK_SIGNATURE])
+m4trace:configure.in:671: -1- AC_CHECK_LIB([z], [main])
+m4trace:configure.in:671: -1- AH_OUTPUT([HAVE_LIBZ], [/* Define to 1 if you have the \`z' library (-lz). */
+#undef HAVE_LIBZ])
+m4trace:configure.in:671: -1- AC_DEFINE_TRACE_LITERAL([HAVE_LIBZ])
+m4trace:configure.in:679: -1- AC_DEFINE_TRACE_LITERAL([WITH_MYSQL])
+m4trace:configure.in:679: -1- AH_OUTPUT([WITH_MYSQL], [/* Mysql Active */
+#undef WITH_MYSQL])
+m4trace:configure.in:681: -1- AC_DEFINE_TRACE_LITERAL([WITH_SQL])
+m4trace:configure.in:681: -1- AH_OUTPUT([WITH_SQL], [/* sql Active */
+#undef WITH_SQL])
+m4trace:configure.in:683: -1- AC_CHECK_LIB([mysqlclient], [main])
+m4trace:configure.in:683: -1- AH_OUTPUT([HAVE_LIBMYSQLCLIENT], [/* Define to 1 if you have the \`mysqlclient' library (-lmysqlclient). */
+#undef HAVE_LIBMYSQLCLIENT])
+m4trace:configure.in:683: -1- AC_DEFINE_TRACE_LITERAL([HAVE_LIBMYSQLCLIENT])
+m4trace:configure.in:698: -1- AC_CHECK_LIB([z], [main])
+m4trace:configure.in:698: -1- AH_OUTPUT([HAVE_LIBZ], [/* Define to 1 if you have the \`z' library (-lz). */
+#undef HAVE_LIBZ])
+m4trace:configure.in:698: -1- AC_DEFINE_TRACE_LITERAL([HAVE_LIBZ])
+m4trace:configure.in:706: -1- AC_DEFINE_TRACE_LITERAL([WITH_PGSQL])
+m4trace:configure.in:706: -1- AH_OUTPUT([WITH_PGSQL], [/* Mysql Active */
+#undef WITH_PGSQL])
+m4trace:configure.in:708: -1- AC_DEFINE_TRACE_LITERAL([WITH_SQL])
+m4trace:configure.in:708: -1- AH_OUTPUT([WITH_SQL], [/* sql Active */
+#undef WITH_SQL])
+m4trace:configure.in:710: -1- AC_CHECK_LIB([pq], [main])
+m4trace:configure.in:710: -1- AH_OUTPUT([HAVE_LIBPQ], [/* Define to 1 if you have the \`pq' library (-lpq). */
+#undef HAVE_LIBPQ])
+m4trace:configure.in:710: -1- AC_DEFINE_TRACE_LITERAL([HAVE_LIBPQ])
+m4trace:configure.in:726: -1- AC_DEFINE_TRACE_LITERAL([MAIL_DIR])
+m4trace:configure.in:726: -1- AH_OUTPUT([MAIL_DIR], [/* Maildir directory */
+#undef MAIL_DIR])
+m4trace:configure.in:728: -1- AC_SUBST([MAIL_DIR])
+m4trace:configure.in:738: -1- AC_DEFINE_TRACE_LITERAL([SPAM_MAIL_DIR])
+m4trace:configure.in:738: -1- AH_OUTPUT([SPAM_MAIL_DIR], [/* Spam Maildir directory */
+#undef SPAM_MAIL_DIR])
+m4trace:configure.in:740: -1- AC_SUBST([SPAM_MAIL_DIR])
+m4trace:configure.in:750: -1- AC_DEFINE_TRACE_LITERAL([VIRUS_MAIL_DIR])
+m4trace:configure.in:750: -1- AH_OUTPUT([VIRUS_MAIL_DIR], [/* Virus Maildir */
+#undef VIRUS_MAIL_DIR])
+m4trace:configure.in:752: -1- AC_SUBST([VIRUS_MAIL_DIR])
+m4trace:configure.in:762: -1- AC_DEFINE_TRACE_LITERAL([SPAM_MAIL_BOX])
+m4trace:configure.in:762: -1- AH_OUTPUT([SPAM_MAIL_BOX], [/* Spam mailbox file */
+#undef SPAM_MAIL_BOX])
+m4trace:configure.in:764: -1- AC_SUBST([SPAM_MAIL_BOX])
+m4trace:configure.in:774: -1- AC_DEFINE_TRACE_LITERAL([VIRUS_MAIL_BOX])
+m4trace:configure.in:774: -1- AH_OUTPUT([VIRUS_MAIL_BOX], [/* Virus mailbox */
+#undef VIRUS_MAIL_BOX])
+m4trace:configure.in:776: -1- AC_SUBST([VIRUS_MAIL_BOX])
+m4trace:configure.in:786: -1- AC_DEFINE_TRACE_LITERAL([SM_SPOOL_DIR])
+m4trace:configure.in:786: -1- AH_OUTPUT([SM_SPOOL_DIR], [/* Sendmail/Postfix Spool directory */
+#undef SM_SPOOL_DIR])
+m4trace:configure.in:796: -1- AC_DEFINE_TRACE_LITERAL([SM_LOCAL_SPOOL])
+m4trace:configure.in:796: -1- AH_OUTPUT([SM_LOCAL_SPOOL], [/* Sendmail/Postfix Local Spool directory */
+#undef SM_LOCAL_SPOOL])
+m4trace:configure.in:806: -1- AC_DEFINE_TRACE_LITERAL([LOCKFILE])
+m4trace:configure.in:806: -1- AH_OUTPUT([LOCKFILE], [/* Sendmail/Postfix lockfile binary */
+#undef LOCKFILE])
+m4trace:configure.in:816: -1- AC_DEFINE_TRACE_LITERAL([BH_CONFIG])
+m4trace:configure.in:816: -1- AH_OUTPUT([BH_CONFIG], [/* First config location */
+#undef BH_CONFIG])
+m4trace:configure.in:826: -1- AC_DEFINE_TRACE_LITERAL([QUEUE_CONFIG])
+m4trace:configure.in:826: -1- AH_OUTPUT([QUEUE_CONFIG], [/* qmail-queue config */
+#undef QUEUE_CONFIG])
+m4trace:configure.in:828: -1- AC_SUBST([QUEUE_CONFIG])
+m4trace:configure.in:839: -1- AC_DEFINE_TRACE_LITERAL([DNS_SRV])
+m4trace:configure.in:839: -1- AH_OUTPUT([DNS_SRV], [/* DNS for RBL Lookups */
+#undef DNS_SRV])
+m4trace:configure.in:841: -1- AC_DEFINE_TRACE_LITERAL([DNS_SRV])
+m4trace:configure.in:841: -1- AH_OUTPUT([DNS_SRV], [/* DNS for RBL Lookups */
+#undef DNS_SRV])
+m4trace:configure.in:852: -1- AC_DEFINE_TRACE_LITERAL([SQL_USER])
+m4trace:configure.in:852: -1- AH_OUTPUT([SQL_USER], [/* sql User */
+#undef SQL_USER])
+m4trace:configure.in:862: -1- AC_DEFINE_TRACE_LITERAL([SQL_PASS])
+m4trace:configure.in:862: -1- AH_OUTPUT([SQL_PASS], [/* sql Password */
+#undef SQL_PASS])
+m4trace:configure.in:872: -1- AC_DEFINE_TRACE_LITERAL([SQL_SERVER])
+m4trace:configure.in:872: -1- AH_OUTPUT([SQL_SERVER], [/* sql Server */
+#undef SQL_SERVER])
+m4trace:configure.in:882: -1- AC_DEFINE_TRACE_LITERAL([SQL_DOMAIN])
+m4trace:configure.in:882: -1- AH_OUTPUT([SQL_DOMAIN], [/* sql Domain */
+#undef SQL_DOMAIN])
+m4trace:configure.in:892: -1- AC_DEFINE_TRACE_LITERAL([EXPIRE_TIME])
+m4trace:configure.in:892: -1- AH_OUTPUT([EXPIRE_TIME], [/* Expire Time */
+#undef EXPIRE_TIME])
+m4trace:configure.in:902: -1- AC_DEFINE_TRACE_LITERAL([MAXOPTION])
+m4trace:configure.in:902: -1- AH_OUTPUT([MAXOPTION], [/* Max Options */
+#undef MAXOPTION])
+m4trace:configure.in:912: -1- AC_DEFINE_TRACE_LITERAL([PRIORITY])
+m4trace:configure.in:912: -1- AH_OUTPUT([PRIORITY], [/* CPU Priority */
+#undef PRIORITY])
+m4trace:configure.in:922: -1- AC_DEFINE_TRACE_LITERAL([RAZOR_BIN])
+m4trace:configure.in:922: -1- AH_OUTPUT([RAZOR_BIN], [/* Razor Binary */
+#undef RAZOR_BIN])
+m4trace:configure.in:932: -1- AC_DEFINE_TRACE_LITERAL([PYZOR_BIN])
+m4trace:configure.in:932: -1- AH_OUTPUT([PYZOR_BIN], [/* Pyzor Binary */
+#undef PYZOR_BIN])
+m4trace:configure.in:942: -1- AC_DEFINE_TRACE_LITERAL([PERL_BIN])
+m4trace:configure.in:942: -1- AH_OUTPUT([PERL_BIN], [/* Perl Binary */
+#undef PERL_BIN])
+m4trace:configure.in:952: -1- AC_DEFINE_TRACE_LITERAL([SENDMAIL_BIN])
+m4trace:configure.in:952: -1- AH_OUTPUT([SENDMAIL_BIN], [/* Sendmail Binary */
+#undef SENDMAIL_BIN])
+m4trace:configure.in:962: -1- AC_DEFINE_TRACE_LITERAL([MCAFEE_DAT_DIR])
+m4trace:configure.in:962: -1- AH_OUTPUT([MCAFEE_DAT_DIR], [/* McAfee Dat Dir */
+#undef MCAFEE_DAT_DIR])
+m4trace:configure.in:972: -1- AC_DEFINE_TRACE_LITERAL([MCAFEE_UVSCAN])
+m4trace:configure.in:972: -1- AH_OUTPUT([MCAFEE_UVSCAN], [/* McAfee Binary */
+#undef MCAFEE_UVSCAN])
+m4trace:configure.in:984: -1- AC_DEFINE_TRACE_LITERAL([MCAFEE_ARGS])
+m4trace:configure.in:984: -1- AH_OUTPUT([MCAFEE_ARGS], [/* McAfee ARGS */
+#undef MCAFEE_ARGS])
+m4trace:configure.in:994: -1- AC_DEFINE_TRACE_LITERAL([CLAMSCAN_BIN])
+m4trace:configure.in:994: -1- AH_OUTPUT([CLAMSCAN_BIN], [/* ClamScan Binary */
+#undef CLAMSCAN_BIN])
+m4trace:configure.in:1005: -1- AC_DEFINE_TRACE_LITERAL([CLAMSCAN_ARGS])
+m4trace:configure.in:1005: -1- AH_OUTPUT([CLAMSCAN_ARGS], [/* ClamScan Args */
+#undef CLAMSCAN_ARGS])
+m4trace:configure.in:1016: -1- AC_DEFINE_TRACE_LITERAL([PROGEXEC])
+m4trace:configure.in:1016: -1- AH_OUTPUT([PROGEXEC], [/* Executable Report Binary */
+#undef PROGEXEC])
+m4trace:configure.in:1026: -1- AC_DEFINE_TRACE_LITERAL([PROGEXEC_ARGS])
+m4trace:configure.in:1026: -1- AH_OUTPUT([PROGEXEC_ARGS], [/* Executable Report Binary ARGS */
+#undef PROGEXEC_ARGS])
+m4trace:configure.in:1037: -1- AC_DEFINE_TRACE_LITERAL([EXEC_CHECK_PROG])
+m4trace:configure.in:1037: -1- AH_OUTPUT([EXEC_CHECK_PROG], [/* Executable Check Binary */
+#undef EXEC_CHECK_PROG])
+m4trace:configure.in:1047: -1- AC_DEFINE_TRACE_LITERAL([EXEC_CHECK_ARGS])
+m4trace:configure.in:1047: -1- AH_OUTPUT([EXEC_CHECK_ARGS], [/* Executable Check Args */
+#undef EXEC_CHECK_ARGS])
+m4trace:configure.in:1057: -1- AC_DEFINE_TRACE_LITERAL([EXEC_CHECK_RET])
+m4trace:configure.in:1057: -1- AH_OUTPUT([EXEC_CHECK_RET], [/* Executable Check Ret */
+#undef EXEC_CHECK_RET])
+m4trace:configure.in:1082: -1- AC_DEFINE_TRACE_LITERAL([LOG_TYPE])
+m4trace:configure.in:1082: -1- AH_OUTPUT([LOG_TYPE], [/* Log Type */
+#undef LOG_TYPE])
+m4trace:configure.in:1092: -1- AC_DEFINE_TRACE_LITERAL([CUSTOM_BODY_THRESHHOLD])
+m4trace:configure.in:1092: -1- AH_OUTPUT([CUSTOM_BODY_THRESHHOLD], [/* Custom Body Threshhold */
+#undef CUSTOM_BODY_THRESHHOLD])
+m4trace:configure.in:1102: -1- AC_DEFINE_TRACE_LITERAL([SPAM_BODY_THRESHHOLD])
+m4trace:configure.in:1102: -1- AH_OUTPUT([SPAM_BODY_THRESHHOLD], [/* Spam Body Threshhold */
+#undef SPAM_BODY_THRESHHOLD])
+m4trace:configure.in:1112: -1- AC_DEFINE_TRACE_LITERAL([PORN_BODY_THRESHHOLD])
+m4trace:configure.in:1112: -1- AH_OUTPUT([PORN_BODY_THRESHHOLD], [/* Porn Body Threshhold */
+#undef PORN_BODY_THRESHHOLD])
+m4trace:configure.in:1122: -1- AC_DEFINE_TRACE_LITERAL([RACIST_BODY_THRESHHOLD])
+m4trace:configure.in:1122: -1- AH_OUTPUT([RACIST_BODY_THRESHHOLD], [/* Racist Body Threshhold */
+#undef RACIST_BODY_THRESHHOLD])
+m4trace:configure.in:1147: -1- AC_SUBST([RIPMIME_LIBS])
+m4trace:configure.in:1148: -1- AM_CONDITIONAL([VIRUS_SCANNER_SOPHOS], [test virus_scanner = 2])
+m4trace:configure.in:1148: -1- AC_SUBST([VIRUS_SCANNER_SOPHOS_TRUE])
+m4trace:configure.in:1148: -1- AC_SUBST([VIRUS_SCANNER_SOPHOS_FALSE])
+m4trace:configure.in:1149: -1- AC_DEFINE_TRACE_LITERAL([VIRUS_SCANNER])
+m4trace:configure.in:1149: -1- AH_OUTPUT([VIRUS_SCANNER], [/* Virus Scanner */
+#undef VIRUS_SCANNER])
+m4trace:configure.in:1161: -1- AC_SUBST([SOPHOS_LIBS])
+m4trace:configure.in:1163: -1- AC_SUBST([SOPHOS_INCLUDES])
+m4trace:configure.in:1165: -1- AC_SUBST([VIRUS_SCANNER])
+m4trace:configure.in:1179: -1- AC_SUBST([TMICRO_LIBS])
+m4trace:configure.in:1181: -1- AC_SUBST([VIRUS_SCANNER])
+m4trace:configure.in:1193: -1- AC_DEFINE_TRACE_LITERAL([BH_SPOOL_DIR])
+m4trace:configure.in:1193: -1- AH_OUTPUT([BH_SPOOL_DIR], [/* BlackHole Spool Dir */
+#undef BH_SPOOL_DIR])
+m4trace:configure.in:1195: -1- AC_SUBST([BH_SPOOL_DIR])
+m4trace:configure.in:1207: -1- AC_SUBST([MYSQL_INCLUDES])
+m4trace:configure.in:1221: -1- AC_SUBST([MYSQL_LIBS])
+m4trace:configure.in:1235: -1- AC_SUBST([PGSQL_INCLUDES])
+m4trace:configure.in:1249: -1- AC_SUBST([PGSQL_LIBS])
+m4trace:configure.in:1263: -1- AC_CONFIG_FILES([Makefile
+scripts/Makefile
+ripmime/Makefile
+ripmime/tnef/Makefile
+etc/Makefile
+doc/Makefile
+SMTP_DEMON/Makefile])

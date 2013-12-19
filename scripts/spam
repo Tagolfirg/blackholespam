@@ -1,0 +1,4 @@
+#!/bin/sh
+
+mutt -f ~/MAILDIR/.Spam -F PREFIX/share/blackhole/dot-muttrc-spam
+

@@ -1,0 +1,436 @@
+#!/bin/sh
+
+# BlackHole Setup
+
+
+echo "
+ You will be asked a series of questions about how to setup BlackHole.
+  These will cover:
+  (a) program prefix.
+  (b) SMTP Server Type.
+  (c) MySQL Usage.
+  (d) Logging Setup.
+  (e) Virus Checking.
+  (f) Razor and Perl paths.
+"
+sleep 1
+
+echo
+echo "Enter the prefix to install BlackHole, default is /opt/blackhole"
+echo -n "Prefix [/opt/blackhole]> "
+read PREFIX
+if [ -n "$PREFIX" ]; then
+  CONFIGURE_ARGS="$CONFIGURE_ARGS --prefix=${PREFIX}"
+fi
+
+# SMTP Server 
+echo
+echo "What SMTP Server type do you have, currently you can have
+Qmail, Courier, Qmail-Queue, Sendmail, Postfix and Exim."
+echo "
+ (1) Qmail
+ (1) Courier
+ (2) Qmail Queue
+ (3) Sendmail
+ (3) Exim
+ (4) Postfix"
+echo -n "Enter a number: "
+read NUMBER
+# Check Input
+if [ "$NUMBER" = "1" ]; then
+  echo "Using Qmail or Courier"
+  SMTPSERVER="qmail"
+elif [ "$NUMBER" = "2" ]; then
+  echo "Using Qmail Queue"
+  SMTPSERVER="qmailqueue"
+elif [ "$NUMBER" = "3" ]; then
+  echo "Using Sendmail or Exim"
+  SMTPSERVER="sendmail"
+elif [ "$NUMBER" = "4" ]; then
+  echo "Using Postfix Content Filter"
+  SMTPSERVER="pfilter"
+else
+  echo "Using Default Qmail"
+  SMTPSERVER="qmail"
+fi
+NUMBER=
+
+# Set Settings
+if [ "$SMTPSERVER" = "pfilter" ]; then
+  echo "Postfix Content Filter requires changing the postfix smtp server"
+  echo "main config to run blackhole inside postfix, not a .forward setup."
+  echo
+  echo "Use Postfix Content Filter?"
+  echo -n "default is 'no' [yes/no]> "
+  read PFILTER
+  if [ "$PFILTER" = "yes" -o "$PFILTER" = "y" ]; then
+echo "
+Postfix Content Filter Mode:
+============================
+You can run blackhole as a Postfix Content filter, making the postfix
+system run blackhole for every user, and have configs for each user like
+in qmail-queue mode.  You need to setup the following Postfix files,
+and read FILTER_README from the postfix documentation.
+
+1 - Create a dedicated local user account called 'blackhole'.
+    Give a "*" password and non-existent shell and home directory.
+    (if you don't have a useradd/adduser program, then...)
+     put 'blackhole:x:60999:100:blackhole:/:' in /etc/passwd
+     put 'blackhole:1000:0:99999:7:::' in /etc/shadow
+
+2 - chmod /var/spool/blackhole (or where you put the blackhole spool dir),
+    to the 'blackhole' user.
+    'chown -R blackhole /var/spool/blackhole/*'
+
+3 - Define the content filter in the Postfix master file:
+
+    /etc/postfix/master.cf:
+      blackhole    unix  -       n       n       -       -       pipe
+        flags=Rq user=blackhole \
+        argv=/opt/blackhole/bin/blackhole -Pf ${sender} ${recipient}
+
+To turn on content filtering for mail arriving via SMTP only, append
+"-o content_filter=blackhole:" to the master.cf entry that defines
+the Postfix SMTP server:
+
+    /etc/postfix/master.cf:
+        smtp      inet     ...stuff...      smtpd
+            -o content_filter=blackhole:
+
+Note the ':' at the end!!  The content_filter configuration parameter
+accepts the same syntax as the right-hand side in a Postfix transport
+table. Execute "postfix reload" to complete the change.
+
+To turn off content filtering, edit the master.cf file, remove the
+'-o content_filter=blackhole:' text from the entry that defines the
+Postfix SMTP server, and execute another 'postfix reload'.
+"
+  echo "<Press Enter to Continue>"
+  read SCROLL
+  CONFIGURE_ARGS="$CONFIGURE_ARGS --enable-sendmail"
+  else
+    SMTPSERVER="sendmail"
+  fi
+fi
+
+if [ "$SMTPSERVER" = "qmail" ]; then
+  echo
+  echo "Enter your Maildir relative to your home directory, this"
+  echo "by default is Maildir, just press enter for the default."
+  echo -n "Enter Maildir [Maildir]> "
+  read MAILDIR
+  if [ -n "$MAILDIR" ]; then
+    CONFIGURE_ARGS="$CONFIGURE_ARGS --with-maildir=${MAILDIR}"
+  fi
+  echo "Are you using the Courier SMTP server"
+  echo "just press enter if not, the default is [no]"
+  echo -n "Using Courier [yes/no]> "
+  read COURIER
+  if [ "$COURIER" = "yes" ]; then
+    CONFIGURE_ARGS="$CONFIGURE_ARGS --enable-courier"
+  fi
+elif [ "$SMTPSERVER" = "qmailqueue" ]; then
+  CONFIGURE_ARGS="$CONFIGURE_ARGS --enable-qmailqueue"
+  CONFIGURE_ARGS="$CONFIGURE_ARGS --with-config1=.blackhole"
+  echo
+  echo "Do you want to run as the old depreciated qmail-qfilter mode,"
+  echo "which requires getting qmail-queue separately, it is now built"
+  echo "into blackhole and is better to run that way."
+  echo "The default is no, just press enter for that..."
+  echo -n "Use external qmail-qfilter [yes/no]> "
+  read QFILTER
+  if [ "$QFILTER" != "yes" ]; then
+    CONFIGURE_ARGS="$CONFIGURE_ARGS --enable-qmailqfilter" 
+  fi
+  echo
+  echo "Subject line tag blocked email and let it through, default"
+  echo "is to bounce it, with this set you will not bounce the email"
+  echo "but it will have a visible Spam Tag to differentiate it, "
+  echo "just press enter for the default."
+  echo -n "Subject line tag[yes/no]> "
+  read SUBLINETAG
+  if [ "$SUBLINETAG" = "yes" ]; then
+    CONFIGURE_ARGS="$CONFIGURE_ARGS --enable-one-box"
+  else
+    echo
+    echo "Delete blocked email instead of saving in the global spool"
+    echo "which is /var/spool/blackhole/msg/new/ by default."
+    echo "just press enter for the default."
+    echo -n "Delete blocked Email [yes/no]> "
+    read DELETEBLOCKED
+    if [ "$DELETEBLOCKED" = "yes" ]; then
+      CONFIGURE_ARGS="$CONFIGURE_ARGS --enable-delete-email"
+    fi
+  fi
+elif [ "$SMTPSERVER" = "sendmail" ]; then
+  CONFIGURE_ARGS="$CONFIGURE_ARGS --enable-sendmail"
+  echo
+  echo "Do you want to use maildir format completely, not use the"
+  echo "normal /var/spool/mail directory, instead have it like Qmail"
+  echo "The default is no, just press enter for the default"
+  echo -n "Qmail maildir format [yes/no]> "
+  read SMMAILDIR
+  if [ -n "$SMMAILDIR" ]; then
+    CONFIGURE_ARGS="$CONFIGURE_ARGS --enable-sendmail-maildir"
+  fi
+  if [ "$SMMAILDIR" = "yes" ]; then
+    echo
+    echo "Enter your Maildir relative to your home directory, this"
+    echo "by default is Maildir, just press enter for the default."
+    echo -n "Enter Maildir [Maildir]> "
+    read MAILDIR
+    if [ -n "$MAILDIR" ]; then
+      CONFIGURE_ARGS="$CONFIGURE_ARGS --with-maildir=${MAILDIR}"
+    fi
+  else
+    echo 
+    echo "Enter your Mail Servers default Spool directory, this can be"
+    echo "similar tho the default of /var/spool/mail/ or just mail/ which"
+    echo "puts it into ~/mail/Inbox, or mail/Spool which uses ~/mail/Spool."
+    echo -n "Enter Mail Spool Directory [/var/spool/mail]> "
+    read MAILSPOOL
+    if [ -n "$MAILSPOOL" ]; then
+      CONFIGURE_ARGS="$CONFIGURE_ARGS --with-sm-spooldir=${MAILSPOOL}"
+    fi
+    echo
+    echo "Enter 'yes' or 'no' here, if you need setgid write access to your"
+    echo "/var/spool/ directory, which RedHat does, say yes, default is no."
+    echo "if you have trouble with the lockfile program this may be needed."
+    echo " NOTE: This is needed on Exim SMTP servers!"
+    echo -n "Have Setgid Spool [yes/no]> "
+    read SETGIDSPOOL
+    if [ "$SETGIDSPOOL" = "yes" ]; then
+      CONFIGURE_ARGS="$CONFIGURE_ARGS --enable-sendmail-setgid"
+    fi
+    echo
+    echo "Enter your Mailbox directory relative to your home directory, this"
+    echo "by default is NULL, you can store the blocked email in ~/Mail/ by"
+    echo "entering Mail here, it is ~/Inbox.Spam by default.  "
+    echo "Just press enter for the default."
+    echo -n "Enter Mailbox Directory []> "
+    read MAILBOX
+    if [ -n "$MAILBOX" ]; then
+       CONFIGURE_ARGS="$CONFIGURE_ARGS --with-sm-local-spool=${MAILBOX}"
+    fi
+    echo
+    echo "Enter your prefered name for the Spam Mailbox, the default"
+    echo "is Inbox.Spam which gets ~/Inbox.Spam"
+    echo "Just press enter for the default."
+    echo -n "Enter Spam Mailbox [Inbox.Spam]> "
+    read SMAILBOX
+    if [ -n "$SMAILBOX" ]; then
+       CONFIGURE_ARGS="$CONFIGURE_ARGS --with-spam-mailbox=${SMAILBOX}"
+    fi
+    echo
+    echo "Enter your prefered name for the Virus Mailbox, the default"
+    echo "is Inbox.Virus which gets ~/Inbox.Virus"
+    echo "Just press enter for the default."
+    echo -n "Enter Virus Mailbox [Inbox.Virus]> "
+    read VMAILBOX
+    if [ -n "$SMAILBOX" ]; then
+       CONFIGURE_ARGS="$CONFIGURE_ARGS --with-virus-mailbox=${VMAILBOX}"
+    fi
+    echo 
+    echo "Enter location of the lockfile program, default is"
+    echo "/usr/bin/lockfile, just press enter for the default"
+    LOCKFILELOC=`which lockfile 2>/dev/null`
+    if [ -n "$LOCKFILELOC" ]; then
+      echo "Possibly in $LOCKFILELOC"
+    fi
+    echo -n "Lockfile program location> "
+    read LOCKFILELOC
+    if [ -n "$LOCKFILELOC" ]; then
+      CONFIGURE_ARGS="$CONFIGURE_ARGS --with-sm-lockfile=$LOCKFILELOC"
+    fi
+  fi
+fi
+
+# MySQL
+echo
+echo "Compile BlackHole with MySQL configuration and logging support?"
+echo -n "Default is no [yes/no]> "
+read COMPILESQL
+if [ "$COMPILESQL" = "yes" ]; then
+  CONFIGURE_ARGS="$CONFIGURE_ARGS --enable-mysql-active"
+  echo
+  echo "Enable SQL by default in BlackHole for the config, will check"
+  echo "the sql db first before the local config, seeing if the user"
+  echo "exists in the db and is newer than the .blackhole config."
+  echo -n "Default is no [yes/no]> "
+  read USESQL
+  if [ "$USESQL" = "yes" ]; then
+    CONFIGURE_ARGS="$CONFIGURE_ARGS --enable-sql-config"
+  fi
+  echo
+  echo -n "SQL Host IP, default is [127.0.0.1]> "
+  read SQLHOSTIP
+  if [ -n "$SQLHOSTIP" ]; then
+    CONFIGURE_ARGS="$CONFIGURE_ARGS --with-sql-server=${SQLHOSTIP}"
+  fi
+  echo 
+  echo "SQL Password? User should be blackhole, this would be their"
+  echo "password in the SQL Grant tables."
+  echo -n "SQL Password, default is NULL []> "
+  read SQLPASS
+  if [ -n "$SQLPASS" ]; then
+    CONFIGURE_ARGS="$CONFIGURE_ARGS --with-sql-pass=${SQLPASS}"
+  fi
+  echo
+  echo "SQL Domain, used to separate different servers."
+  echo -n "SQL Domain, default is [default]> "
+  read SQLDOMAIN
+  if [ -n "$SQLDOMAIN" ]; then
+    CONFIGURE_ARGS="$CONFIGURE_ARGS --with-sql-domain=${SQLDOMAIN}"
+  fi
+fi
+
+# Logging
+echo
+echo "Default logging method:"
+echo " 
+ (1) Stderr
+ (2) Stdout
+ (3) Syslog"
+if [ "$COMPILESQL" = "yes" ]; then
+  echo " (4) SQL"
+fi
+echo -n "Enter a number: "
+read NUMBER
+# Check Input
+if [ "$NUMBER" = "1" ]; then
+  echo "Using Stderr"
+  CONFIGURE_ARGS="$CONFIGURE_ARGS --with-log-type=stderr"
+elif [ "$NUMBER" = "2" ]; then
+  echo "Using Stdout"
+  CONFIGURE_ARGS="$CONFIGURE_ARGS --with-log-type=stdout"
+elif [ "$NUMBER" = "3" ]; then
+  echo "Using Syslog"
+  CONFIGURE_ARGS="$CONFIGURE_ARGS --with-log-type=syslog"
+elif [ "$NUMBER" = "4" ]; then
+  echo "Using SQL"
+  CONFIGURE_ARGS="$CONFIGURE_ARGS --with-log-type=sql"
+else 
+  echo "Using Default Stderr"
+  CONFIGURE_ARGS="$CONFIGURE_ARGS --with-log-type=stderr"
+fi
+NUMBER=
+
+echo
+echo "Enable Logging by default in BlackHole?"
+echo -n "Default is no [yes/no]> "
+read LOGGINGACTIVE
+if [ "$LOGGINGACTIVE" = "yes" ]; then
+  CONFIGURE_ARGS="$CONFIGURE_ARGS --enable-use-log"
+fi
+
+# Virus
+echo
+echo "[Virus Checking]"
+echo
+echo "Virus Checker to use?"
+echo "Default is McAfee uvscan, can also use Sophos SDK built in,"
+echo "or Trend Micro which is built in too."
+echo -n "Virus checker, default is clamscan [clamscan/sophos/tmicro/mcafee]> "
+read VIRUSCHECKER
+if [ "$VIRUSCHECKER" = "mcafee" ]; then
+  CONFIGURE_ARGS="$CONFIGURE_ARGS --with-virus-scanner=${VIRUSCHECKER}"
+  echo 
+  echo "McAfee Dat Directory?"
+  echo -n "Default Dat Dir is [/opt/uvscan/dat]> "
+  read MACDAT
+  if [ -n "$MACDAT" ]; then
+    CONFIGURE_ARGS="$CONFIGURE_ARGS --with-mcafee-dat=${MACDAT}"
+  fi
+  echo
+  echo "McAfee Binary?"
+  echo -n "Default Bin is [/opt/uvscan/uvscan]> "
+  read MACBIN
+  if [ -n "$MACBIN" ]; then
+    CONFIGURE_ARGS="$CONFIGURE_ARGS --with-mcafee-bin=${MACBIN}"
+  fi
+elif [ "$VIRUSCHECKER" = "sophos" ]; then
+  CONFIGURE_ARGS="$CONFIGURE_ARGS --with-virus-scanner=${VIRUSCHECKER}"
+  echo
+  echo "Where are your sophos libraries located?"
+  echo -n "Default is [/opt/sophos/lib]> "
+  read SOPHOSLIB
+  if [ -n "$SOPHOSLIB" ]; then
+    CONFIGURE_ARGS="$CONFIGURE_ARGS --with-sophos-libs=${SOPHOSLIB}"
+  fi
+elif [ "$VIRUSCHECKER" = "tmicro" ]; then
+  CONFIGURE_ARGS="$CONFIGURE_ARGS --with-virus-scanner=${VIRUSCHECKER}"
+  echo
+  echo "Where are your libvsapi.so libraries located?"
+  echo -n "Default is [/lib]> "
+  read TMICROLIB
+  if [ -n "$TMICROLIB" ]; then
+    CONFIGURE_ARGS="$CONFIGURE_ARGS --with-tmicro-libs=${TMICROLIB}"
+  fi
+elif [ -z "$VIRUSCHECKER" -o "$VIRUSCHECKER" = "clamscan" ]; then
+  echo
+  echo "Where is the clamscan binary located?"
+  echo -n "Default is [/usr/local/bin/clamscan]> "
+  read CLAMSCANBIN
+  if [ -n "$CLAMSCANBIN" ]; then
+    CONFIGURE_ARGS="$CONFIGURE_ARGS --with-clamscan-bin=${CLAMSCANBIN}"
+  fi
+else 
+  echo "Unknown Scanner given, going on with defaults"
+fi
+echo
+echo "Send Alerts to senders of viruses that they are infected?"
+echo -n "Default is no, [yes/no]> "
+read VALERT
+if [ "$VALERT" = "yes" ]; then
+  CONFIGURE_ARGS="$CONFIGURE_ARGS --enable-virus-alert"
+fi
+echo
+echo "Clean Virus off infected messages in Virus mailbox?"
+echo -n "Default is no, [yes/no]> "
+read VCLEAN
+if [ "$VCLEAN" = "yes" ]; then
+  CONFIGURE_ARGS="$CONFIGURE_ARGS --enable-virus-clean"
+fi
+
+# Razor
+echo 
+echo "Razor Setup, where is your perl binary at, for Razor execution?"
+PERLFILELOC=`which perl 2>/dev/null`
+if [ -n "$PERLFILELOC" ]; then
+  echo "Possibly in $PERLFILELOC"
+fi
+echo -n "Perl Bin, default [/usr/bin/perl]> "
+read PERLFILELOC
+if [ -n "$PERLFILELOC" ]; then
+  CONFIGURE_ARGS="$CONFIGURE_ARGS --with-perl-bin=${PERLFILELOC}"
+fi
+echo
+echo "where is your razor-check binary at?"
+RAZORFILELOC=`which razor-check 2>/dev/null`
+if [ -n "$RAZORFILELOC" ]; then
+  echo "Possibly in $RAZORFILELOC"
+fi
+echo -n "Razor Bin, default [/usr/bin/razor-check]> "
+read RAZORFILELOC
+if [ -n "$RAZORFILELOC" ]; then
+  CONFIGURE_ARGS="$CONFIGURE_ARGS --with-razor-bin=${RAZORFILELOC}"
+fi
+
+# End
+echo
+echo
+echo "Configuration complete!"
+echo
+echo "for help be sure to try the HOWTO on the website..."
+echo " http://groovy.org/source/docs/blackhole/"
+echo
+echo "You may need to run this on certain systems, try not running it at first."
+echo "./buildconf"
+echo
+echo "run this to setup the build environment"
+echo "./configure $CONFIGURE_ARGS"
+echo
+echo "This is also in a shell script called preconf.sh"
+echo "./configure $CONFIGURE_ARGS" > preconf.sh
+
+

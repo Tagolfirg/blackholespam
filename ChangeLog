@@ -1,0 +1,1387 @@
+Wed Jan 29 14:49:03 CST 2003
+   1.0.9 -- * stdout support added by Joe Stump, needs to use Sendmail mode for
+              this to be active currently, and have the blackhole.h file 
+              edited to enable it with the SEND_TO_STDOUT define set to 1.
+            * removed received from lines patch for now, my logic on relay ip
+              discovery made it not work in all instances.
+            * Added patch for spamassassin from Craig Smith, fixes spamd.
+
+Tue Jan  7 14:31:11 CST 2003
+   1.0.8 -- * patch from Craig Smith which improves SQL logging by splitting
+              up the fields to allow for better statistics gathering.
+            * fix for footer messages patch, fclose() calls placed better.
+
+Fri Jan  3 13:43:31 CST 2003
+   1.0.7 -- * footer to messages for checking if scanned by blackhole, 
+              contributed by Craig Smith.
+            * fix for spamd when it thinks message is too big, so blackhole
+              can determine that, contributed by Craig Smith.
+            * fix for includes with clamscan daemon, contributed by Craig Smith.
+            * fix for a pointer that could be freed twice, found by Ben Pfountz.
+            * fix for received from lines when malformed, patch by Ben Pfountz.
+            * fix to footer on messages so they work for all uses of blackhole,
+              patch by Craig Smith.
+
+Mon Dec 30 08:36:37 CST 2002
+   1.0.6 -- * had forgot the README.spamc on SpamAssassin and how to use it
+              with BlackHole.
+
+Mon Dec 30 08:20:38 CST 2002
+   1.0.5 -- * fixed configure bug with SQL always trying to be active, now
+              needs to be explicitly enabled in configure, so it can easily
+              be excluded.
+            * removed fprintf statement in ripmime libraries, no integer was
+              given but a %d format line number was used, so was giving a 
+              warning.
+            * hostname included in mysql logging.
+            * New Spamd support for Spam Assassin, patches by Craig Smith.
+
+Wed Oct 23 10:43:00 CDT 2002
+   1.0.4 -- * removed some uu encoded attachment decoding code from ripmime,
+              was causing seg faults.
+            * merged in changes to ripmime for the newest version, fixed the
+              problem above actually better, and kept uu encoding/decoding,
+              and also all the other improvements with that.
+            * BCC to virus alerts are now sent with better RFC compliance, 
+              thanks a patch from Thaddaeus.
+
+Fri Oct 18 10:55:24 CDT 2002
+   1.0.3 -- * fix to Makefile in configure setup, don't try copying old 
+              blackhole binary on a 'make install'.
+            * Patch incorporated from Franco Gasperino which allows ClamScan
+              to run in Daemon mode and BlackHole to use the Socket method
+              to connect to it and virus scane, this saves resources.  Also
+              added From: and To: parts to the bounce message when SMTP bounce
+              is used.  Currently in virus.h this can be activated and the
+              socket file chosen from there.
+
+Tue Oct  8 15:01:25 CDT 2002
+   1.0.2 -- * Added define in sophos.h for using Sophos beta versions, libsav.3
+            * Fix for Makefile in configure not backing up the old blackhole.
+            * Updated spamcomplain program.
+
+  Fri Sep 27 14:24:45 CDT 2002 
+   1.0.1 -- * INSTALL script had bugs in it if installation of blackhole
+              didn't work (compiling it) but make install was still ran.
+
+  Fri Sep 27 08:30:34 CDT 2002
+   1.0.0 -- * Seems to be stable enough to me, so this is the 1.0.0 release.
+
+  Mon Sep 23 16:55:35 CDT 2002 
+   0.9.162 -- * Updates to spamcomplain program.
+              * Updated demon.c in SMTP_DEMON, prgram to stop SMTP floods.
+              * Fixed actions order and infinite loop problem in rare situations
+                (I hope).
+              * Now if Subject: or and headers are without a space after the
+                colon, it will still work properly for matching, like this...
+                Subject:test message.
+              * Bug with mime spliting where any .files would get left and not
+                deleted.
+              * Synced up man pages to most recent ones.
+
+  Fri Sep 20 10:39:57 CDT 2002
+   0.9.161 -- * Added [debug] option in config file, to force debugging 
+                on or off from there, instead the command line, still need
+                the --enable-debug option for configure to get very verbose
+                debugging, this just allows that or the normal debugging to 
+                be active.
+              * Virus attachments should be cleaned now even when the content
+                type is claimed to be text/.
+              * have some sanity when cycling through the match linked list,
+                to have max actions defined and not loop forever if something
+                bad occurs (still fixing a bug with that).
+
+  Fri Sep 13 13:42:26 CDT 2002
+   0.9.160 -- * Made the portability to s390 and other
+                processors work, seems that ripmime has places where char
+                should be an int for the portability to work.
+
+  Mon Sep  9 08:57:24 CDT 2002
+   0.9.159 -- * Setup script had some differences from actual configure args
+                blackholes configure used.
+              * fixes to qmail-qfilter, hopefully works with forwarding in
+                all cases now, still some funkyness when forwarding back into
+                blackhole, may need to put the addresses forwarded to into
+                the list of users to not run through blackhole in the config.
+              * portability fixes to the ripmime library for the s390.
+
+  Thu Sep  5 16:54:39 CDT 2002
+   0.9.158 -- * fix to configure.in, should make mysql configuration work
+                right.
+
+  Thu Sep  5 13:22:01 CDT 2002
+   0.9.157 -- * Email was not deleted properly from an action set to do so when
+                the isolated flag or accumulative one set.
+              * Spamcomplain updated to newest version.
+
+  Mon Sep  2 13:31:08 CDT 2002
+   0.9.156 -- * bounce message debugging accurate with smtp bounces too.
+              * bounce messages were being sent for actions when not set
+                to bounce, fixed now.
+
+  Sun Sep  1 01:48:58 CDT 2002
+   0.9.155 -- * extra error messing up qmail-queue mode when running the
+                standalone sendmail binary.
+
+  Sun Sep  1 00:24:46 CDT 2002
+   0.9.154 -- * Avoid changing permissions on blackhole spool conf directory
+                contents on install.
+
+  Fri Aug 30 15:42:52 CDT 2002
+   0.9.153 -- * Updated spamcomplain prgram.
+              * Added 'accumulative' flag to match actions, this can be used to
+                change the behavior of action matching so that any with this
+                set to 0 have the options ignored if not the highest score.
+                This is set to 1 by default, and should be used when different
+                scores are set for each action and the highest is needed to
+                take precidence, and the accumulation of actions is not desired.
+              * Added 'isolated' flag to match actions, this makes a match
+                when the top score, or first match of equal scores, not use
+                any settings from the other matches, like bouncing etc...
+              * fixed bug with bounce message debug output, was just saying if
+                set to bounce viruses, so if that was set always would register
+                as bouncing (but actually wouldn't of course).
+              * Security fixes for qmail-qfilter mode, with tmp file creation,
+                users could read each others email in theory, although would
+                be very difficult to do this in most cases.
+              * General permissions on /var/spool/blackhole directory made so
+                no extra permissions are given to anything, just what is needed.
+
+  Thu Aug 29 16:34:26 CDT 2002 
+   0.9.152 -- * change in my_strlen function, better checking for NULL and
+                better action if no NULL is at the end of a string.
+              * debugging includes if message was deleted and if it was bounced.
+
+  Mon Aug 26 23:36:21 CDT 2002
+   0.9.151 -- * Virus and Spam bounces now should both use the [smtp_bounce]
+                option when set to send the bounces using smtp, and also
+                qmail-queue and postfix content filter should be able to
+                bounce using this now (with the messages actually, this makes
+                the message allow customization for those setups). 
+
+  Mon Aug 26 01:02:53 CDT 2002
+   0.9.150 -- * Body checking improved to catch spam much more often, was
+                bailing out on checking a line after a match, so that a line
+                with multiple matches wasn't increasing the score enough.
+
+  Sat Aug 24 18:51:06 CDT 2002 
+   0.9.149 -- * SMTP Bounces now only happen during Spam messages like normal,
+                also return address is now <> so they can't bounce
+                back.
+
+  Sat Aug 24 13:10:37 CDT 2002
+   0.9.148 -- * fixed bug in username matching for bad/good email checks.
+
+  Sat Aug 24 03:42:18 CDT 2002
+   0.9.147 -- * Added [smtp_bounce] option, which takes bounces and manually
+                performs them, sends the same bounce message set from
+                [bounce_msg] and uses the [smtp_server] ip to send it, will
+                only send the original headers, which can avoid any really
+                odd mail loops, and looks much better for Sendmail bounces.
+              * PgSQL connection and results variables added, still ALPHA!!!
+
+  Fri Aug 23 18:37:04 CDT 2002 
+   0.9.146 -- * fix to mysql configuration, wasn't being setup in configure.
+
+  Fri Aug 23 16:17:03 CDT 2002
+   0.9.145 -- * Postgres SQL Database support partly added to blackhole,
+                for developers to fix up before ready to use, still in ALPHA!!!
+              * All Subject and Header checking is full regular expression aware
+                now, if the PCRE library is installed (which is mostly).  Other
+                wise the old checking is fallen back upon, shouldn't change the
+                way it checks, just more regex options.
+              * Spam Complain program updated to have a README and Makefile plus
+                manual page, all by David Ronis, in the 
+                report_programs/spamcomplain/ directory now.
+              * MySQL config file download for first run when no local config
+                exists now should work correctly, was making a default one.
+
+  Thu Aug 22 21:01:07 CDT 2002
+   0.9.144 -- * Debugging output cleaned up some, added exec report args to it.
+              * Setup is a bit more clear about postfix setup now, and smtps.
+              * bad/good email lists now can have just a 'username' without
+                the domain to block, for local addresses on the server mainly.
+              * Exec Report in actions would not work as expected if using 
+                scoring with different weights, now one with largest score wins.
+              * Included contributed program 'spamcomplain' by David Ronis to
+                report spam to the originating ISP abuse through email, in the
+                report_programs directory.
+
+  Wed Aug 21 09:58:51 CDT 2002
+   0.9.143 -- * Bounce messages for Viruses are now customizable in the config.
+                Use the [virus_bounce_msg] section, default format improved too.
+
+  Wed Aug 21 08:30:00 CDT 2002
+   0.9.142 -- * Config file reading fixes, command line and able to 
+                go without an individual users config existing, no longer
+                a fatal error.
+              * Pfilter mode now acts like qmail-queue in not treating
+                /etc/blackhole.conf as a possible file to write to, only
+                mysql config for individual users.
+
+  Tue Aug 20 17:39:05 CDT 2002
+   0.9.141 -- * bug in charset and attachment matching fixed.
+
+  Tue Aug 20 13:07:37 CDT 2002
+   0.9.140 -- * Extra debugging messages for qmail-queue config removed.
+              * include 'depcomp' file so automake/autoconf and configure
+                all work better with older versions.
+              * Sendmail Maildir support was broken, now blackhole should
+                do this right, can be used to basically force Sendmail to
+                use Maildir format with this feature.
+              * Added directory ./byz_scripts, which uses 
+                Bayesian classification to scan good/bad spam and create
+                a DB of spam words, which is currently not fully integrated
+                with blackhole, but could be creatively used in different
+                ways (and others are welcome to help improve it so it can
+                be), it may be ready though really soon as a blackhole option
+                to use the data gathered too, currently the custom body
+                options could use this.  This was derived from information at..
+                 <http://www.paulgraham.com/spam.html>.
+
+  Sun Aug 18 14:40:16 CDT 2002
+   0.9.139 -- * Fixed problems writing to config file and domain config file
+                when non-existent but writable, so a blank can be setup for
+                keeping some sanity in blackhole and mysql can then write
+                to it when updating, so the config file setup can be automated.
+              * Bug in spam_fwd for actions fixed, wasn't being set.
+              * Individual actions can have different report programs and args,
+                setup in actions with exec_report_prog and exec_report_args,
+                with args syntax a string of args like '-test arg -test2 arg2'
+                WITHOUT the quotes, like...
+                [bad_email_action]
+                exec_report_prog = /bin/reporter
+                exec_report_args = -test arg -test2 arg2
+                This can be turned off at compile time for untrusted users
+                by setting the WITH_EXEC_REPORT_ACTION define in blackhole.h
+                to 0.
+              * Patches from Bastian Kleineidam to integrate the configure
+                process with ripmime and blackhole better, should be much
+                more portable from this.
+
+  Fri Aug 16 11:36:09 CDT 2002
+   0.9.138 -- * Overhauled all logging messages to be much cleaner, also header
+                tags are nicer now from this, uniform and condensed.
+              * Bug where pcre was required fixed, use strstr when it isn't
+                installed.
+
+  Thu Aug 15 19:36:42 CDT 2002
+   0.9.137 -- * Config file parsing now has /etc/blackhole.conf become the
+                base config and then individual users configs add to the 
+                settings.  This changes the old default behavior!!! 
+              * Attachment blocking by filename/extension/pattern, added
+                option for [bad_attachment] which takes regular expressions to
+                check attachment files against and block if they match.
+
+  Wed Aug 14 15:57:24 CDT 2002
+   0.9.136 -- * Added ability to turn off Include file support in blackhole.h
+                and MCONFIG, for sites not wanting this option for users.
+              * Portability fixes to the ripmime Makefile, and to pyzor check
+                where Solaris 8 seemed to not like it.
+              * Made config interface a bit easier to work with, option to
+                show options by number index for quick configuation.
+
+  Wed Aug 14 12:45:34 CDT 2002
+   0.9.135 -- * Ripmime library wasn't properly included with Sophos compile
+                and configure.
+
+  Wed Aug 14 12:12:29 CDT 2002
+   0.9.134 -- * Added ability to include a file which contains a list of
+                the options for the section, like with the bad_email you
+                can put one or more entries with /some/file/badlist.txt
+                and those will be added to that sections options.
+              * Compile bugs fixed.
+
+  Wed Aug 14 08:23:24 CDT 2002
+   0.9.133 -- * bug fixes for postfix pfilter mode and delete option, also
+                include headers on bcc_to even in delete mode.
+              * BUG in 0.9.132, probably noticed configure was broke, now
+                it is fixed, sorry about that.
+
+  Tue Aug 13 21:16:18 CDT 2002
+   0.9.132 -- * Switched default Sophos Mime parsing to use Ripmime, this
+                can be changed to the old in-sophos mime parsing in virus.h
+                or MCONFIG.
+              * Fixed bug in My Email (good rcpt to addresses whitelist) where
+                logging wasn't being done.
+              * Added ability to execute an external program and have a return
+                value and args for it to be an extra spam check, could run 
+                SpamAssassin and such programs.
+
+  Fri Aug  9 15:55:49 CDT 2002
+   0.9.131 -- * Some CVS id stuff added for documenting each source files state
+                in every blackhole binary created, should be useful.
+              * Made check_reverse have a strict_reverse mode, which before it
+                was too strict by default checking the helo response and now
+                does that check only if on strict_reverse mode, and by default
+                just a normal reverse dns lookup on the relay ip.
+              * Added OK Logging, off by default, now you can log every message
+                ok/defer/blocked, use the -oklog command line option to activate
+                it.
+              * Added more Logging options, now can individually add these...
+                -log_score, -log_size, -log_iprelay, -log_sender, -log_recipient
+                will include all chosen ones in a [] area in the log message,
+                can also set these at compile time to be on by default.
+
+  Thu Aug  8 13:57:07 CDT 2002
+   0.9.130 -- * bh_assert error reporting fixed so that proper filename is given
+              * can turn off bh_assert completely by using the USE_BH_ASSERT
+                define and undefining it in misc.h.
+              * Postfix -Pf args were not able to have '-'s at the front of
+                email addresses, now can do this, but can't just add args in
+                postfix mode at the end of the -Pf args variables.  These also
+                were not properly emailing everyone in the recipients, not they
+                do, so Postfix mode should be fixed up and working right now.
+              * Added ability to use -- style options, more standard acting,
+                also added in the -v/--version option which was missing.
+
+  Wed Aug  7 10:47:27 CDT 2002
+   0.9.129 -- * Subject tags are very configurable now, can choose a different
+                base string, and if you want the type/info on the spam/virus
+                and score/clean status of the spam/virus in the subject,
+                takes the subject_msg, subject_info, subject_score for spam
+                and subject_msg, subject_type, subject_clean for viruses in 
+                the [spam_header] and [virus_header] sections of the config.
+
+  Wed Aug  7 08:03:47 CDT 2002
+   0.9.128 -- * added optional args for clamscan so attachments types can
+                be checked with external checkers.
+              * Made args configurable through configure and MCONFIG for
+                McAfee and ClamScan, for the arguments the programs run with. 
+              * Added option to execute a program when a threshhold is met
+                either with the maxscore, or just for any spam (can be setup 
+                through each individual spam action) to run with the args
+                'iprelay' and 'msg_file' which then you can create a program
+                to parse that info and do what you want.  This would be good
+                to report spam to RBL lists when matching the pattern checks
+                etc. while not being on the RBL lists possibly.
+
+  Mon Aug  5 19:51:07 CDT 2002
+   0.9.127 -- * compile with configure and ripmime local src problem, trying
+                to run install when the makefile didn't have the option that
+                I put in there to as a wrapper.
+
+  Mon Aug  5 09:44:04 CDT 2002
+   0.9.126 -- * Actually added the pyzorcheck.c file, oops.
+
+  Sat Aug  3 14:39:39 CDT 2002 
+   0.9.125 -- * Debugging output format made uniform and easy to read.
+              * Code contributed by Bastian Kleineidam to allow the use
+                of Pyzor (razor in python, also more), check out...
+                 http://pyzor.sourceforge.net/
+
+  Sat Aug  3 12:30:26 CDT 2002
+   0.9.124 -- * Changed mysql config setup so that fields can contain NULL in
+                the values (the NULL in mysql, not C NULL), since options
+                for NULL ones would get written into the config as the string
+                'NULL' as mysql thinks null is.
+              * made integer string conversions more portable to any platform.
+
+  Thu Aug  1 10:25:07 CDT 2002
+   0.9.123 -- * mysql db fixes, bhedit upload to mysql now clear out fields
+                which are no longer in the config and NULL.
+              * bug in mysql string checking and NULL appending fixed.
+
+  Wed Jul 31 19:14:20 CDT 2002
+   0.9.122 -- * ClamScan binary is now easily configurable, and in ./Setup.
+              * Some improvements in the error output interface, and mysql err.
+              * Integrated ripmime into blackhole as an API using the ripmime.a
+                library (source is included in blackhole and compiles in).
+                This allows blackhole to be capable of extracting mimeparts
+                of email itself, which is needed for clamscan.
+              * better output of errors using bh_assert in more parts.
+
+  Mon Jul 29 20:36:10 CDT 2002
+   0.9.121 -- * -Pf arg fix, postfix filter could have been defering sometimes.
+              * removed some headers from qmail-qfilter.c.
+              * Some memory management improvements and other memory fixes.
+              * improved debugging output with forwarding to smtp servers.
+              * Support for Clamscan, Free GPLed Virus Scanner using the
+                OpenAntiVirus def files (modified version more efficient with
+                clamscan), available from... 
+			http://clamav.elektrapro.com/
+              * ATTENTION: Clamscan is now the default virus scanner used,
+                since it is Free and the most efficient and open scanner plus
+                conforms with all the other licensing of blackhole.
+
+   Sat Jul 27 12:28:53 CDT 2002 
+   0.9.120 -- * blackhole now finds bhedit when not in /opt/blackhole/bin/.
+              * config interface now nicer to work with, updates settings as
+                they are changed in itself now, no longer large output in menu.
+              * updates to bhinstall for qmail-queue install and -setup option.
+              * config interface is new recommended program for configuration,
+                similar to a cisco interface, takes abbr commands.
+
+   Thu Jul 25 15:58:51 CDT 2002
+   0.9.119 -- * Config interface can be useful now, can setup the Maildir used
+                for Spam/Viruses for a user, 'make maildir' option after using
+                'blackhole -setup', view the running config and the config file,
+                menu of config options and descriptions which allows you to
+                add/delete options by choosing which option and a value.
+
+   Tue Jul 23 14:39:13 CDT 2002
+   0.9.118 -- * Added header extraction for bcc_to virus alerts.
+              * Fixed bug where ok_fwd email would also end up in the
+                qmail inbox when setup with the maildir in the .qmail file.
+              * Start of a config interface, way to query a blackhole setup
+                by running as the user/setup and checking out variables set,
+                use -setup as a cmdline switch for this, not very useful yet.
+
+   Fri Jul 19 12:40:58 CDT 2002
+   0.9.117 -- * Changes to Postfix pfilter mode, wasn't adapting well when
+                less than 2 arguments were given, when the sender was ''.
+              * bug fixed in MySQL config for postfix, and qmail-queue.
+              * Have MCONFIG default CC options be '-g -Wall' for better
+                debugging, not like this in configure, but MCONFIG is good
+                when testing.
+
+   Thu Jul 18 09:38:51 CDT 2002
+   0.9.116 -- * Documentation has been changed, now on the website and pointed
+                to by the README and QUEUE_INSTALL files, which allows a central
+                location that can keep people updated and not have stale docs in
+                each release still out there.
+              * Subject tags/Match reasons have been shortened to be less 
+                intrusive and more to the point, the score no longer is labled
+                as 'Score' either.
+
+   Tue Jul 16 13:26:00 CDT 2002
+   0.9.115 -- * Mysql config and qmail-queue mode should work now, the lockfile
+                was not working since blackhole didn't know where to write it to
+              * fixes to mysql config upload with bhedit and bhconf scripts.
+              * Virus Alert has new option, BCC TO Admin, where you can give an
+                admin email address that enables having every virus found send
+                an alert to the admin listed as a 'bcc' address, and also sends
+                the alert to the person the virus was destined to.  This needs
+                the mail_relay setup to use for sending the email, default is
+                the local smtp server on localhost. Option is [virus_bcc_to].
+                 Note: Thanks to Andreas Wurzinger for the idea and bcc code.
+              * Fix to Setup script and Sendmail lockfile being setup.
+              * Virus Alert BCC TO now includes Headers in the email it sends,
+                so you can actually fully diagnose virus infections through it.
+
+   Sun Jul 14 02:51:29 CDT 2002
+   0.9.114 -- * qmail-qfilter mode works, now can replace qmail-queue fully.
+              * qmail-qfilter mode now allows bounce messages for qmail-queue
+                mode, and one_box to work with bounce messages in it too.
+
+   Sat Jul 13 02:24:42 CDT 2002
+   0.9.113 -- * Logging now logs 'DEFER' when a deferal happens if set to log.
+              * Score is now included in the subject line tag.
+
+   Sat Jul 13 01:16:06 CDT 2002
+   0.9.112 -- * Fixes to qmail-queue mode, should work much better now, also
+                closer to qmail-qfilter integration, but don't use yet ;).
+
+   Fri Jul 12 14:38:55 CDT 2002
+   0.9.111 -- * Fixed overruns for regexip code, should be able to avoid some
+                rare cases where it could have caused the ip not to be found
+                properly for the relay too.
+              * Qmail-Qfilter code put in, but not active in any way yet, just
+                the functions needed are in place, it's there but only for 
+                developers to look at, it won't do much.
+
+   Thu Jul 11 20:52:27 CDT 2002
+   0.9.110 -- * Internal change on how qmail-queue mode outputs the message,
+                which will allow less code duplication and qmail-qfilter merges.
+              * Found bug in confi parsing, sometimes in a rare case an action
+                section could have missed options.
+              * New Option for Headers and Subject Tags, Now fully configurable
+                so you can choose which X-BlackHole- Headers to include and also
+                can enable Subject tags for Virus/Spam email through the config
+                file, some default behavior of tags and headers may have changed
+                from this, but only needs the config file to be altered, here
+                is the options basic format...
+                  # Spam Header Tags
+                  [spam_header]
+                  subject_tag = 1
+                  version = 1
+                  sender = 1
+                  relay = 1
+                  match = 1
+                  type = 1
+                  status = 1 
+                  # Virus Header Tags
+                  [virus_header]
+                  subject_tag = 1
+                  version = 1
+                  sender = 1
+                  relay = 1
+                  match = 1
+                  type = 1
+                  status = 1 
+                  #
+
+   Wed Jul 10 08:52:29 CDT 2002
+   0.9.109 -- * Added check for HOME environ variable first, which will allow
+                virtual users to work with Qmail properly.
+
+   Mon Jul  8 18:04:52 CDT 2002
+   0.9.108 -- * Finished string cleanups, should be improved in stability and
+                security.
+
+   Mon Jul  8 12:46:26 CDT 2002
+   0.9.107 -- * More string handling fixes, some nasty bugs were in the last
+                version, so UPGRADE to this one.
+              * Added the list.dsbl.org and multihop.dsbl.org to RBL lists.
+
+   Sat Jul  6 04:29:24 CDT 2002
+   0.9.106 -- * More string handling fixes, changed maxline to 1004 per RFC 821.
+              * Should match \s+ space declarations in header line matches.
+
+   Fri Jul  5 12:38:32 CDT 2002
+   0.9.105 -- * Changed maxline to 1096 for email message parsing.
+              * Added string handling with more secure methods to switch to.
+              * Started redoing string handling, many fixes, still more to do.
+
+   Sat Jun 22 18:32:17 CDT 2002 
+   0.9.104 -- * Updated Sophos Header files, confirmed working with newest lib.
+              * Possibly fixed compile order of libraries to be more portable.
+              * Made debug and blackhole headers only print out when variable
+                is not NULL, for portability, and also no longer prints out 
+                any extra ones that are 0 valued either.
+              * Fixed CRLF on forwarding email to smtp servers.
+
+   Wed Jun 19 08:32:39 CDT 2002 
+   0.9.103 -- * Fix Sendmail mode, was not spliting virus/spam anymore to mboxs
+		since changes in last version.
+
+   Tue Jun 18 17:16:45 CDT 2002
+   0.9.102 -- * Rewrite of message file name code, major cleanup of this.
+              * Consolidated exit code and how virus blocking is done.
+
+   Tue Jun 18 11:43:41 CDT 2002
+   0.9.101 -- * fixed bug with defining COURIER, and mysql config in configure.
+              * hopefully fixed some bugs in virus scanning after .100's changes
+
+   Tue Jun 11 03:20:04 CDT 2002
+   0.9.100 -- * TODO before 1.0.0; qmail-qfilter integration, stats collection,
+                general cleanups, AVP support, rewrite bhconf and README.
+              * Rearrangement of virus checking, consolidating code in exit.
+              * Made postfix pfilter mode allow delete and virus delete to
+                work.
+
+   Tue May 28 21:44:21 CDT 2002
+   0.9.99 -- * better error output showing line/function/file/prog standardized.
+             * To: address in qmail is now always the actual one the Sender 
+               used, was not getting back to the aliases possibly used.
+             * Added [good_rcptto] and [bad_rcptto] options, allow same control
+               as sender ones but for the To: or recipient address.
+
+   Fri May 24 23:53:27 CDT 2002
+   0.9.98 -- * Made maxbytes actually work, was counting them wrong.
+             * [delete] now should be [sdelete] because of mysql and
+               that being a reserved word, although either one will work if
+               not going to use mysql.
+             * Wildcard support in subject/header matching, so test.*msg will
+               work with 'test    msg' as the header. 
+             * Global exit function added where stats on all actions code
+               will be able to go.
+
+   Thu May 23 18:23:12 CDT 2002
+   0.9.97 -- * Added [maxbytes] and [maxbytes_trunc] configuration options,
+               can give a maximum message size to accept and if the message
+               should be truncated to that size if over.
+
+   Wed May 22 21:47:33 CDT 2002
+   0.9.96 -- * fix for sendmail valert option, was using the global bounce msg.
+             * Courier SMTP server fix, was exiting wrong when bouncing mail.
+             * Added [vdelete] option to not keep viruses at all, don't even
+               clean them, just delete them.
+             * Added [delete] option to config so deleting spam can be set
+               in the configfile instead of just cmdline and action sections.
+             * Added test_msg_spam to use for testing blackhole with.
+             * Added test_msg_virus to use for testing blackhole with.
+
+   Wed May 22 16:57:19 CDT 2002
+   0.9.95 -- * fixed some bad logic with certain checks when using scoring.
+  
+   Tue May 21 10:49:18 CDT 2002
+   0.9.94 -- * No longer assume group root exists.
+             * bug in spam/virus mailbox in sendmail, was given the wrong
+               directories.
+             * code cleanups.
+
+   Fri May 17 21:43:57 CDT 2002
+   0.9.93 -- * Added ability to change Mailbox for Sendmail/Postfix/Exim
+               to different one from default Inbox.Spam for Spam and Inbox.Virus
+               for Viruses.  ./configure takes --spam_mail_box= 
+               and --virus_mail_box= to change them.
+             * fixed parts of code where maildir wasn't changed even when
+               changing the default.
+             * fixed postfix content filter problems attaching proper sender,
+               and return value passed through properly.
+
+   Tue May 14 10:05:27 CDT 2002
+   0.9.92 -- * Added postfix content filtering and trend micro scanner
+               config to ./Setup.  bhconf made to allow input by specifying
+               an email file and seeing the variables you need to block.
+             * Added man pages, created by Michael Hummel, for blackhole 
+               program and scripts, located under ./doc directory.
+             * General bug fixes.
+
+   Sun May 12 09:52:22 CDT 2002
+   0.9.91 -- * Added Trend Micro Virus Scanner support, only need the
+               engine/library, code is compiled in and linked with the lib.
+               The Setup script is updated to setup this.
+
+   Sun May 12 04:22:22 CDT 2002
+   0.9.90 -- * Support for Postfix Content Filtering, where whole postfix
+               system can use blackhole, similar to qmail-queue mode.
+               The README has the details how to set this up.
+             * Fixed bug in email forwarding.
+
+   Sat May 11 20:16:56 CDT 2002
+   0.9.89 -- * Added in bhinstall queue configuration for individual users
+               and domains in qmail-queue mode, can configure users setups
+               from qmail-queue mode with bhconf and bhedit.
+
+   Sat May 11 16:25:26 CDT 2002
+   0.9.88 -- * Added info about needing to use gmake when GNU Make isn't the
+               default program.
+             * Removed need to configure an alternative .blackhole location,
+               also changed so default location is ~/.blackhole now, not the
+               Maildir/.blackhole location.
+             * Added case insensitivity for header matching using (i) at the 
+               beginning of the pattern string, like X-Header: (i)^test$.
+               Also works for subject matching, just using (i)^test$, since
+               bad subject matching is using the same code. 
+             * Overhaul of way bhconf, bhedit and bhinstall work, should be much
+               better at predicting the right locations for everything, and
+               should be able to edit lone .blackhole files if in the current
+               directory and no default one is present.
+
+   Wed May  8 13:37:39 CDT 2002
+   0.9.87 -- * Fixes to Qmail Queue domain/user config support, where
+               odd recipient addresses were used, now better at handling.
+             * Added option on cmdline to override default config used,
+               so if a users config is really needing odd customization in
+               placement this should allow the flexibility.
+
+   Tue May  7 23:44:43 CDT 2002
+   0.9.86 -- * Qmail Queue individual domain/user support improved, now
+               you can have a domains config, or each users config which
+               will override the domains, like 
+               /var/spool/blackhole/domain.com/.blackhole for domain.com.
+
+   Mon May  6 19:06:30 CDT 2002
+   0.9.85 -- * Ability to specify a nameserver to use for RBL lookups, instead
+               of the system defaults in resolv.conf, so you can have a maps
+               or other RBL subscription for zone transfers on one host and 
+               multiple servers using it for lookups exclusively.
+             * Qmail Queue mode can have individual users use separate 
+               config files, conf directory in blackhole global spool, put
+               configs in /var/spool/blackhole/conf/domain.com/username/.
+               This uses the RECIPIENT to get the username and domain, this
+               can work for MySQL configs too, still need the local config
+               for cache use with MySQL.
+             * QMAIL QUEUE Mode has Changed, ATTENTION to users, it now
+               can have individual users with separate configs, read the
+               README for information on it.
+
+   Sat May  4 12:01:14 CDT 2002
+   0.9.84 -- * header matching allows more than one pattern per header type now.
+             * Subject checking had a bug matching on ^$ patterns, overhauled
+               the way subject checking is done, now same code does subject 
+               checking and header checking to reduce redundancy, and sync up.
+
+   Fri May  3 16:57:17 CDT 2002
+   0.9.83 -- * Added [sscan] option to turn Spam Checking on and off just 
+               like the [vscan] option works for Virus Checking, on by default.
+             * portability fixes to bhinstall for Solaris 8.
+ 
+   Thu May  2 15:21:44 CDT 2002
+   0.9.82 -- * Added spam_fwd to possible individual actions for each check,
+               this allows each check that finds spam to have a different
+               email address to forward the message to, if desired, otherwise
+               the default global spam_fwd option is used if set.
+              * Added 127.0.0.1 into list of my_relay's by default.
+              * Added in postfix default mailer-daemon address so dns checks
+               won't trigger false positives.
+
+   Mon Apr 29 14:12:32 CDT 2002
+   0.9.81 -- * fixed problem with Postfix and reading the config file, should
+               work much better with reading the configs, now uses the full
+               path to it, and tries the main/alternate and global one in a
+               better way.
+             * Expire function was broken since 0.9.79, fixed.
+ 
+   Sun Apr 28 15:30:31 CDT 2002
+   0.9.80 -- * SMTP_Demon small portability fix.
+             * smtp relaying fixes, take this with caution still.
+
+   Sun Apr 28 02:06:35 CDT 2002
+   0.9.79 -- * Fixes for smtp relaying, should fully work now.
+             * Able to change the .Spam and .Virus maildir names on build.
+
+   Sat Apr 27 17:41:15 CDT 2002
+   0.9.78 -- * Removed bl.spamcop.net from RBL Lists, seems to time out.
+             * Added ability to forward email blocked as spam/viruses and
+               mail that is ok to different email addresses local or remote.
+               Does this using a smtp relay you specify, defaults to 127.0.0.1.
+
+   Thu Apr 25 16:40:22 CDT 2002
+   0.9.77 -- * Content-Type: and Content-Transfer-Encoding: filtering, options
+               in config to list bad types to be blocked, the new options are
+               [bad_ctype] and [bad_encoding], which take a list of types or
+               encodings, like text/html or base64.  
+             * Updated bhconf to have the users virus/spam checking exclusions
+               and the content type filtering configurable.
+             * Made users virus/spam checking exclusions a bit more resilient
+               to oddities if the rcptto is not defined (should of only done
+               this in testing, otherwise it would have been '' at least.
+
+   Thu Apr 25 12:20:40 CDT 2002
+   0.9.76 -- * bhinstall typo fixed, backported to last version before release.
+             * DEBUG problem in checkbody.c, was backported to last version too.
+             * Added a 'BONUS' program useful on Linux with the iproute2 tools,
+               it can run with a Qmail servers SMTP logs and block hosts with
+               settings that can be customized to your likings.
+             * Added sophos auto update script for the ide virus defs, emails
+               you with the updated virus defs each time ran.
+             * Added two new configuration variables, no_spam_check and
+               no_virus_check, which are lists of user names, domains or full
+               email addresses to not check and let through.  This is a good
+               setting for use in qmail-queue, otherwise the whole user base
+               is subject to checking on a server.  The README has the syntax
+               but it is basically adding to the same options as good_email 
+               one with username@ which matches that username for any domain,
+               but this would not be used in qmail-queue mode, only dot files. 
+               Otherwise in qmail-queue mode it would also allow sending email
+               to remote servers with that username to avoid checking.
+             * WITH_DEBUG is on by default for MCONFIG compile, but not on by
+               default when using ./configure, for easier testing.
+
+   Wed Apr 24 09:25:05 CDT 2002
+   0.9.75 -- * cleanups of README documentation and comments for each option in
+               the default etc/dot-blackhole.temp file, so .blackhole will tell
+               each options basic information now.
+             * Added verbose debuging output for body checking matches when in
+               --enable-debug mode from ./configure or WITH_DEBUG in MCONFIG.
+             * Made the >199 line length check be worth less in the spam body
+               checks 
+
+   Mon Apr 22 12:34:19 CDT 2002
+   0.9.74 -- * fixed problems in bhedit for sendmail and qmail-queue, improved
+               mysql uploading automation in bhconf/bhedit.
+
+   Mon Apr 22 11:32:01 CDT 2002
+   0.9.73 -- * added sophos libs to cofigure as an option, now in ./Setup too.
+             * fixes to configure to be much more portable to all systems.
+
+   Mon Apr 22 01:34:19 CDT 2002
+   0.9.72 -- * bhconf and bhinstall work alot better now, should work good
+               for any type of installation and need minor work to use, get
+               variables better so it knows what the setup should be.
+
+   Sun Apr 21 22:50:11 CDT 2002
+   0.9.71 -- * Made Setup script to be ran for setting up configure options
+               to use with BlackHole, makes it easy to setup for most situations
+             * qmail-queue improvements on setup and README section.
+
+   Sat Apr 20 02:37:02 CDT 2002
+   0.9.70 -- * qmail-queue gets paths from configure or MCONFIG now, no longer
+               need to alter manually.
+             * qmail-queue can subject tag the spam now,
+               before the spam was only able to be kept in a global spool,
+               now it uses the one_box method to tag it, it can't bounce when
+               doing this since you accept the email.
+
+   Mon Apr 15 19:31:11 CDT 2002
+   0.9.69 -- * Changed way Razor is executed, now needs path the perl if not the
+               default of /usr/bin/perl, more efficient.
+             * Switched to using execv on all executable programs, lockfile and
+               uvscan were the others.
+             * Improved qmail-queue installation to be a bit safer, now it will
+               instruct the user on what to do, so it doesn't foul up 
+               qmail-queue.
+
+   Mon Apr 15 14:49:20 CDT 2002
+   0.9.68 -- * Added username to syslog logging, memory save in password file
+               opening by closing after done.
+             * Optimization added to allow setting it to be easier, defaults
+               to '-O2' now, can set through CFLAGS with configure or in MCONFIG
+               set 'OPT' variable.
+
+   Mon Apr 15 13:13:37 CDT 2002
+   0.9.67 -- * fixes for solaris compile through configure, should work well
+               now, also should work on RedHat better too.
+             * improved memory management so that nothing is allocated for
+               the filenames of blocked email unless really needed, allows
+               actions to decrease memory usage in some cases.
+             * Debugging output cleaned up, now when set to WITH_DEBUG or
+               --enable-debug it is very verbose, otherwise a summary of
+               all aspects of match and email checks that match are output 
+               when the message is blocked.
+
+   Fri Apr 12 16:10:20 CDT 2002
+   0.9.66 -- * fix for custom body matching, was not getting the custom string
+               in full.
+             * fix for body checking, should skip base64 attachments now even
+               when they claim to be text.
+
+   Thu Apr 11 22:38:32 CDT 2002
+   0.9.65 -- * Charset checking matches with windows- all variations, no 
+               longer has to be whole charset name.
+             * Debugging improved, now can set to have the old debugging,
+               but by default it isn't as verbose, so no longer compiles in
+               the extra code if not needed.
+             * Mysql exclusion easy to do, and the default, in MCONFIG now.
+             * portability of install program fixed
+
+   Wed Apr 10 21:49:07 CDT 2002
+   0.9.64 -- * Body checking made more efficient, was checking attachments when
+               not necessary.
+
+   Wed Apr 10 16:31:27 CDT 2002
+   0.9.63 -- * configure now allows for PCRE or MySQL to be left out of
+               compiling, will not use pcre or compile in body checking if
+               the pcre lib can't be found. 
+             * configure now defaults to /opt/blackhole for installation.
+             * Improvements in installation, getting configure to work well
+               for replacing MCONFIG, and qmail-queue install simplification.
+             * Reworking of the README file, better documentation, still being
+               worked on too.
+
+   Tue Apr  9 21:53:48 CDT 2002
+   0.9.62 -- * configure options replace MCONFIG file, Mysql is not needed
+               by default anymore when using configure.
+             * Removed extra debugging printout from score checking.
+
+   Tue Apr  9 01:08:13 CDT 2002
+   0.9.61 -- * fixed a Sendmail bug, was bouncing in one case it should
+               not, unless the user had chosen too, it was choosing for them.
+             * Scoring orders the matches, so the bounce message is the 
+               highest valued match.
+
+   Mon Apr  8 11:19:28 CDT 2002
+   0.9.60 -- * made actions active by default, so if setup will be active, but
+               can turn them off to not need to delete them or comment out.
+             * New option at cmdline to list compile time settings from MCONFIG
+             * commented out config.h from blackhole.h for now, till all options
+               are in there, otherwise things get screwy.
+
+   Sun Apr  7 22:39:35 CDT 2002
+   0.9.59 -- * Added ability to skip the messages signature when body checking.
+             * My Body custom patterns can be setup with different scores now,
+               uses syntax on option line for my_bodys: '0.2: <pattern>'.
+             * scoring system implemented, can now give each check a score,
+               they all default to 1 by default, this is activated by setting
+               [maxscore] to more than 0, which also makes all checks occur
+               so if one of the matches deletes it is done, so the actions
+               can be combined if certain matches are made, this will gain
+               some more features with ordering by score and tags with the
+               number of matches, possibly the list of matches too are
+               possible at the top of the spam, stay tuned for those features.
+             * Don't choose the options in configure yet, but they are getting
+               put in and soon will be active, need them all first.
+             * fix for INSTALL script called from Makefiles
+
+   Thu Apr  4 08:21:16 CST 2002
+   0.9.58 -- * configure setup so tarballs are made with 'make dist'.
+             * Fixed bug in my relay matching, was still not properly 
+               working, also made the subject line and charset matching
+               work even when no relay is found outside the my_relays list.
+
+   Wed Apr  3 11:55:00 CST 2002
+   0.9.57 -- * Fixed bug in checking my_relays, wasn't doing it properly so
+               the my_relays being setup would not work.
+
+   Tue Apr  2 20:07:10 CST 2002
+   0.9.56 -- * Performance improvements on parsing subject and how message
+               is checked.  
+
+   Tue Apr  2 15:39:08 CST 2002 
+   0.9.55 -- * Cleaned up checks and matching to not body check when already
+               found a match, was a bug from the work on cleaning up checking.
+               Checking improvements were made so that checks only happen when
+               config has the option filled for checking and all other variables
+               are occupied that are needed.
+
+   Tue Apr  2 13:23:00 CST 2002
+   0.9.54 -- * Excluded Relays check added, this list is used for ip/networks
+               which when the relay you don't want to do any ip checks but still
+               all the other checks.
+             * Added [bad_headers] config item, syntax is 'X-Header: String',
+               and the String can have ^ and $ anchors and is case sensitive,
+               while the actual X-Header: part is case insensitive.
+
+   Tue Apr  2 00:32:22 CST 2002
+   0.9.53 -- * Rearranged internal order of checking, for optimization and
+               future feature additions.
+
+   Sun Mar 31 04:16:30 CST 2002
+   0.9.52 -- * Fixed missed individual check activation for rbl lists and body
+               checking
+             * Added new action options to bhedit, for mysql upload to work.
+
+   Sun Mar 31 02:43:09 CST 2002
+   0.9.51 -- * Improved way Sophos SDK works, now easy to setup by just
+               uncommenting one line in the Makefile.
+             * Individual actions per match type can be setup now, can set 
+               if match is found if the email is Subject line tagged or 
+               separated, if it is deleted or saved, if it is bounced, 
+               what the bounce message is, in the future there is a score 
+               field for a global score and passthru to have option for 
+               multiple weighted checks and global threshhold.
+             
+   Fri Mar 29 22:33:11 CST 2002
+   0.9.50 -- * Fixed exit when email address/relay was on the good lists
+               to not check with razor, but check if not found to be spam
+               and not on good lists to passthrough.
+
+   Fri Mar 29 12:52:51 CST 2002
+   0.9.49 -- * Razor support added, now can run razor-check against Spam too,
+               you need the Razor program from http://razor.sourceforge.net/,
+               it is a distributed Spam checksum database.  You can activate
+               this support with the -razor option or [razor] section in 
+               .blackhole
+
+   Fri Mar 29 10:33:32 CST 2002
+   0.9.48 -- * fixed problem with Sendmail installation.
+             * made sophos settings configurable in sophos.h header file.
+             * general optimization of sophos code.
+
+   Thu Mar 28 23:02:40 CST 2002
+   0.9.47 -- * Integrated Sophos SDK into blackhole, if chosen in the Makefile
+               to incude MSOPHOS and with the libsavi.so library from 
+               www.sophos.com, cheaper alternative to McAfee and just as good.
+
+   Thu Mar 28 19:41:13 CST 2002
+   0.9.46 -- * Able to set threshholds defaults for body checking in MCONFIG
+             * Able to use the main mailbox in Sendmail/Postfix setup in
+               the users home directory instead of a global spool, can setup
+               using all maildir for email in Sendmail from MCONFIG too.
+             * Bug in Sendmail/Postfix rcpto address wasn't being properly
+               extracted.
+             * Improvements in Autoconfigure support and Makefile improvements
+             * Cleanups of blackhole.c ordering of memory allocation.
+             * Missed some config items in getting them all accepting on/off
+               or true/false syntax, all should work that way now.
+ 
+   Wed Mar 27 10:23:30 CST 2002
+   0.9.45 -- * Can now add a filename as an argument to -debug which will
+               be appended to, or created and appended to, for extra debuging
+               abilities.
+             * Added body checking threshholds defaults into MCONFIG, so the
+               defaults that are used when being set to 1 in .blackhole can
+               be altered.
+             * .blackhole config file should now allow using 'true/false' and
+               'on/off' instead of 1 and -1/0 to turn things on and off.
+             * .blackhole parsing should be more accurate because of the
+               change in reading the values for boolean type options like above.
+
+   Tue Mar 26 13:25:33 CST 2002
+   0.9.44 -- * Fixes for Sendmail lockfiles and local spool in homedir location.
+
+   Mon Mar 25 18:58:24 CST 2002
+   0.9.43 -- * put comments in MCONFIG for all the options, can change the
+               Inbox.Spam and Inbox.Virus mboxes in Sendmail mode now in there.
+             * made charset matching bug fixes.
+             * made mysql config writing to .blackhole atomic over NFS.
+             
+   Sun Mar 24 13:20:46 CST 2002
+   0.9.42 -- * Made the setgid support for locking in Sendmail a compile time
+               option, this is not so good to do on a system that doesn't allow
+               it.
+
+   Sun Mar 24 13:01:06 CST 2002
+   0.9.41 -- * Fixes for Sendmail mbox locking when needing setgid priviledge.
+             * Made extension of email the hostname, eliminates any chance of
+               a duplicate, since tstamp + pid + hostname will not happen twice
+             * All logging now contains the hostname except syslog and mysql,
+               which the mysql support will happen while syslog shouldn't need
+
+   Sun Mar 24 03:41:09 CST 2002
+   0.9.40 -- * Fixes in Makefile to build easier, bug fixes.
+             * Charset matching improved to be case insensitive and exact
+               on match, also logging and tags report bad charset now.
+             * ascii 128 support now also checks headers too, more accurate.
+
+   Sat Mar 23 18:52:37 CST 2002
+   0.9.39 -- * Added in NFS safe atomic locking for expire function on
+               Spam and Virus maildir directories.
+             * Added Reverse DNS checking for iprelay and the hostname
+               it resolves to, can check both for resolution and if they
+               match, so any non-resolving or spoof attempted email will fail.
+
+   Thu Mar 21 16:51:49 CST 2002
+   0.9.38 -- * Fixed bugs in 'make upgrade', wouldn't setup the correct
+               prefixes in the bh* scripts.
+             * directory expiration is Stable, no longer Beta, has been
+               tested.
+
+   Thu Mar 21 15:26:42 CST 2002
+   0.9.37 -- * Changed -Exists option to -Resolve, make sure to change this!
+             * Added -Expire option, which takes days as input, -Expire 1,
+               This will delete mail for Maildir formats only, in the .Spam
+               and .Virus folders, after the number of days specified, if 0
+               or not defined then no mail is deleted ever.  You can use in
+               .blackhole the [expire] section for this, it is in bhconf.
+               This is BETA still, haven't tested it fully, only use it if
+               knowing how to test it first and verify all is correct, 
+               otherwise wait till the next release where it will be better
+               tested.
+
+   Thu Mar 21 09:51:14 CST 2002
+   0.9.36 -- * Removed Violent body checking, didn't have list of words and
+               the custom option could be used by anyone wanting something
+               like this.
+             * cleanups in setup and with mysql setup when not in table but
+               trying to use mysql as an option.
+
+   Thu Mar 21 08:27:30 CST 2002
+   0.9.35 -- * everything now is configurable from MCONFIG, the scripts
+               will use the prefixes set in there and all else.  
+             * default PREFIX has changed, now /opt/blackhole/, change
+               this in MCONFIG, Maildir is used now by default too.
+
+   Wed Mar 20 23:33:12 CST 2002
+   0.9.34 -- * fixed configure and autoconf so they use MCONFIG too, so 
+               running buildconf should work after editing that, was broke.
+
+   Wed Mar 20 22:50:24 CST 2002
+   0.9.33 -- * Made everything configurable in the MCONFIG file, easy
+               to make changes for all settings defaults, so can avoid
+               using the command line easier.
+             * Made install more portable by not relying on mkdir -p
+
+   Wed Mar 20 17:40:29 CST 2002
+   0.9.32 -- * Some more tweaking of the 128 ascii checking.
+
+   Wed Mar 20 17:07:16 CST 2002
+   0.9.31 -- * Changed around 128 ascii checking a bit, should be better at
+               catching messages.
+             * install fixes.
+ 
+   Wed Mar 20 14:30:34 CST 2002
+   0.9.30 -- * Removed ORBZ from RBL lists, they are gone unfortunately.
+             * Added option to block a threshhold of characters that are
+               non-latin, or above 128 bit in ASCII terms, this could help
+               people that get tons of Spam in non-latin charsets and don't
+               have anyway to read them anyways.
+
+   Tue Mar 19 22:50:20 CST 2002
+   0.9.29 -- * Added a custom body check list, you can put your own regex
+               expressions in  the config, see below for more info, the
+               option is [body_check] and the list of patterns in [my_body],
+               the bhconf is not updated yet with this, you have to edit
+               .blackhole yourself, the default config template is updated.
+             * Added good charset matching, you basically put all the good
+               charsets in the [charsets] section of the config, these and
+               the undefined ones (usually your charset, I think, maby just US),
+               are the only ones let through, so you can block unknown ones.
+
+   Tue Mar 19 17:05:33 CST 2002
+   0.9.28 -- * Fixed nasty output when bouncing for Sendmail, now will only
+               print your bounce message or the default 550 error properly.
+             * Portability to RH7 should be improved.
+             * Subject checking bugs fixed.
+
+   Tue Mar 19 11:33:45 CST 2002
+   0.9.27 -- * Removed body line from message tags/logs, more private and
+               also could hose the rest of the message when blocked at times.
+             * optimized tmp message close to happen sooner in code.
+             * Raised default body check threshhold to 5 from 3, was too strict.
+
+   Mon Mar 18 20:38:45 CST 2002
+   0.9.26 -- * Moved /PREFIX/etc/ dot-file templates to /PREFIX/share/blackhole/
+               to make them separated better. 
+             * Improved memory management of logging line output.
+             * Subject line tag is cleaner, with original following the tag.
+             * prefix in INSTALL should work better with the sed commands now.
+
+   Sun Mar 17 10:41:51 CST 2002
+   0.9.25 -- * New option, -Onebox, skips the diverting email to different
+               imap mailboxes, instead sends it to your normal box but tags
+               the Subject: lines with if it's Spam or a Virus, (this is beta)
+             * Logging is stable now, works well for all 4 forms.
+             * added one_box option into .blackhole and the mysql tables.
+             * updated bhconf and bhedit to configure one_box, cleaned up too.
+
+   Sun Mar 17 06:21:56 CST 2002
+   0.9.24 -- * Now when no .blackhole exists one is created by default,
+               allows for easier setup.
+
+   0.9.23 -- * Syslog, mysql, stderr and stdout logging can be chosen
+               from the command line.  This is still beta :)
+             * Can use comments in the .blackhole config file.
+             * added -spool option to change default mailbox folder
+               in sendmail from ~/Inbox.* to ~/ANYTHING/Inbox.*
+             * tmp spool is now always /var/spool/blackhole/msg/tmp/
+               which really speeds up checks when homedir is an NFS mount,
+               also allows quota to not be affected by having two instances
+               of the message, which is true during a blocked email.
+             
+   Sat Mar 16 14:30:51 CST 2002
+   0.9.22 -- * Reworked entire directory structure and improved names of
+               config scripts, now uses /prefix/etc to store the dot files,
+               they all have dot- as a prefix now.  The scripts are now named
+               bhconf, bhinstall, bhtest and bhedit.
+             * Improved logging and message tagging info, much more detail now.
+             * Close to mysql logging, syslog logging.
+             * Reduced RBL lists to 0-9, removed slow/non-effective ones, now
+               7 is normal and 8-9 are strict.
+
+   Thu Mar 14 12:30:52 CST 2002
+   0.9.21 -- * New X-headers added instead of old message tags at bottoms,
+               This allows the details of blocked messages to be easily 
+               accessable in the headers, have X-BlackHole format
+             * More cleanups from taking out reformime.
+
+   Wed Mar 13 00:30:32 CST 2002
+   0.9.20 -- * No more need for Reformime, removed Kaspersky support,
+               now virus scanning is very efficient and accurate, use
+               McAfee now only, since it supports the --mime option.
+             * Performance enhanced greatly by above changes.
+
+   Tue Mar 12 13:21:20 CST 2002
+   0.9.19 -- * Really fixed the mime parsing, still misses a virus every
+               so often, not sure why, seems to be located in how reformime
+               takes the files in as stdin, I am looking at ways to fix this.
+
+   Tue Mar 12 09:40:45 CST 2002
+   0.9.18 -- * Fixed bug in reformime running, so that after 0.9.11 the
+               /var/spool/blackhole/mime/ directory was not being properly
+               cleaned, now it should clean up the tmp files properly.
+
+   Mon Mar 11 21:33:15 CST 2002
+   0.9.17 -- * Fixed configure.sh and install.sh interaction, had problems
+               with where the .blackhole file was kept.
+             * Fixed so that full path to maildir is always used for all
+               files in both qmail and sendmail.
+  
+   0.9.16 -- * Reworked Makefile, INSTALL script, and the configure/install
+               scripts to work better when choosing alternative installation
+               and mail directories.
+             * Have preliminary support for Autoconf to build a configure
+               script to use building the Makefile, which should be able
+               to choose the installation prefix, and setup everything better.
+               If you want to test this feel free, there is a buildconf script
+               in the base of the distro which makes the configure script, and
+               from there you would run ./configure --prefix=/export or similar
+             * Misc bugs fixed with the .blackhole.temp script having some
+               bad variables, and other installation/setup bugs.
+
+   Sun Mar 10 17:30:09 CST 2002
+   0.9.15 -- * Made -maildir cmdline option with -Sendmail to override
+               and use maildir format for Sendmail, would work for postfix
+               the same way, can be a relative or absolute directory path.
+
+  Sat Mar  9 23:52:51 CST 2002
+   0.9.14 -- * Moved all configurable variables to top of blackhole.h,
+               should help in getting a configure setup working sometime.
+
+  Sat Mar  9 23:10:17 CST 2002
+   0.9.13 -- * MySQL and Sendmail bug fixed, was probably with certain
+               systems actually, better at creating the query now.
+
+  Sat Mar  9 20:28:37 CST 2002
+   0.9.12 -- * Changed back to using Reformime from the Maildrop package for
+               virus attachment decoding.
+             * Added in ability to also use CIDR addresses in my_relays,
+               bad_relays, and good_relays, slash notation, using x.x.x.x/24.
+             * WARNING: Sendmail support of mysql seems broken, fixing it
+               for the next version hopefully, this may have never worked
+               for sendmail yet, probably didn't.
+             
+  Sat Mar  9 11:37:33 CST 2002
+   0.9.11 -- * fixes for FreeBSD
+             * refined RBL lists to 13, improved order.
+             * Improved efficiency of checks, ordered fastest
+               with least resource usage.
+             * edit.pl script can now upload current .blackhole to the mysql DB
+             * Improved MySQL support, now truly optimized with caching cfg.
+             * domain option in blackhole.h now, to have different servers
+               containing duplicate usernames, also set the mysql pass in
+               there, and defaults to user 'blackhole' in blackhole.h.
+  
+  Fri Mar  8 12:54:28 CST 2002
+   0.9.10 -- * Added MySQL support for storing the configuration,
+               caches it locally to the .blackhole config file and
+               only retrieves from the mysql server when it changes
+               on there, uses a timestamp field and the .blackhole
+               modify time to check if the config has changed on
+               the mysql server.
+             * Added into Makefile options to compile statically and
+               more optimization possibilities.
+             * Improved default list of RBL hosts, less lookups for match.
+             
+  Sun Mar  3 04:27:53 CST 2002
+   0.9.9 -- * Added in ability to Clean Virus attachments off messages,
+              Don't need the virus scanner, basically takes off the 
+              attachments of infected messages if config setting is on,
+              the configure.sh script can set this up, or use -Clean
+              on the command line ([vclean] in .blackhole).
+            * Have only scan attachments, now will not waste extra
+              resources scanning non-viruses.
+            * Made body searching not as intensive by doing the RBL
+              check first, also most other checks were optimized in
+              order.
+
+  Sat Mar  2 21:42:48 CST 2002
+   0.9.8 -- * Rewrote the way the exiting works, much more clean at this,
+            * Remove Virus Client/Server support, not really needed, and
+              not wanting to support it.
+            * Switched to using RIPMIME instead of REFORMIME for virus 
+              checking, now use close to the same code for McAfee and
+              Kaspersky, should also be easy to add more scanners too.
+            * Rewrote config parser, now much cleaner and faster, plus
+              now [and ] characters can be used in options, if not at
+              the beginning of the line.
+            * McAfee is now the default Virus Scanner used again.
+            * Fixed bug in bare domains in good/bad email, now 
+              mail.com wont match hotmail.com, was not doing this right.
+            * Lower memory usage from rewriting exit and virus checking.
+
+  Fri Mar  1 12:54:47 CST 2002
+   0.9.7 -- * Fixed bug in SENDER and RECIPIENT addresses not getting defined
+              in Qmail, this made the good/bad email addresses break.
+
+  Thu Feb 28 20:03:00 CST 2002
+   0.9.6 -- * Rewrote README file to cover much more documentation.
+
+  Wed Feb 27 19:40:24 CST 2002
+   0.9.5 -- * Sendmail support should work now, lockfiles are used,
+              it is ready for production use, needs procmails lockfile
+              program to properly lock the mailspool.
+
+  Wed Feb 27 12:28:17 CST 2002
+   0.9.4 -- * Sendmail support improved, gets the rcpt to and mail to
+              addresses now, and proper error returns for bounces/non-bounces,
+              still need to implement mailbox locking for this to be really
+              ready for production.
+
+  Tue Feb 26 23:24:49 CST 2002
+   0.9.3 -- * Sendmail support working ok, consider this Beta still ;).
+              You have to use the -S option Remember.
+
+  Tue Feb 26 13:22:49 CST 2002
+   0.9.2 -- * New options, 
+               1. Valid Domain checking, will do DNS lookups for A/MX.
+               2. My Email list, only allow email to your addresses/domains
+               3. White List, you can set it to be a white list, for both
+                  email addresses/domains and hosts/networks.
+            * Message Tags are now actually human readable, explain better.
+            * Logging sorta done, it can be piped from blackhole in .qmail
+              file now like '|blackhole -log 2>> blackhole.log', this will
+              soon write to the real qmail logfile hopefully and have maby
+              another location for global logging too.
+            * General improvements in reading body for Category checking.
+
+  Mon Feb 25 20:23:46 CST 2002
+   0.9.1 -- * Logging now includes timestamps and user names, with
+              -log option, can pipe stderr to a logfile for testing.
+            * small bug where blackholes were still checked even if
+              a body match was found.
+            * priority is set to a nice level of 10 now, so it will
+              not hog the CPU ever, especially for body checking or
+              running the virus scanner.
+            * Speed up and improvement in performance from improved
+              scanning of headers and body, cut out extra scans not needed.
+
+  Mon Feb 25 16:32:36 CST 2002
+   0.9.0 -- * Reworked all debugging output to be stderr instead of just
+            * Made -log option actually print out any matches made, so
+              if the email is caught a spam then it will print if this is set.
+            * Fixed bug in body matching, now will work for them even if one
+              is set to -1, it before would wipe out the setting to match by
+              body all together if any categories were set to -1.
+            * Now the threshhold for the body matching is set by the 
+              value set in .blackhole, like -1 means off, and 1 on up would
+              mean on and also set the threshhold to 1 or higher.
+            * Body matching will not consume very much memory at all now :).
+
+  Mon Feb 25 12:37:32 CST 2002
+   0.8.5 -- * Fixed problem where bounces would contain the message
+              tag on what sort of reason was used to block it.
+            * Ran Indent on all source files to clean up codings look.
+            * Added -log option, started setting up output for that,
+              will eventually be the way to capture logs of all messages
+              blocked, probably pipe by default right into Qmails logs.
+
+  Sun Feb 24 21:38:40 CST 2002 
+   0.8.4 -- * More work on Sendmail support, writes out to home
+              directory Mailbox's as ~/Inbox.Spam, ~/Inbox.Virus
+              and ~/mbox for regular email, can't get it writing 
+              to the mail spool directory yet.  Can check these
+              through IMAP clients like mozilla.
+            * Number of RBL hosts reordered for efficiency, and
+              now only 20 levels used.
+
+  Sun Feb 24 14:07:41 CST 2002
+   0.8.3 -- * Fixed problem with some one file not being included in
+              source distribution, RCS ate it.
+            * Have basic Sendmail support, but not really tested,
+              Not Recommended yet, although testing it would be nice.
+
+  Sun Feb 24 00:50:53 CST 2002
+   0.8.2 -- * Now messages are tagged with the exact level matched
+              or option matched from a section like bad email/relays.
+
+  Sat Feb 23 22:21:25 CST 2002
+   0.8.1 -- * Updated scripts to all work with global configuation,
+              using blackhole and qmail-qfilter.
+            * Have able to install by typing 'make install_queue',
+              and also can install C version of qmail-queue program
+              to run qmail-qfilter with, avoids overhead of shell.
+            
+  Sat Feb 23 19:08:55 CST 2002
+   0.8.0 -- * Removed Conditional redirect support, cleaner without.
+            * Added -Queue option, now can be used with qmail-qfilter
+              which allows blackhole to plugin as the qmail-queue and
+              filter all messages going through a qmail server.
+            * cleaned up -maildir option, now can give it full path
+              names for a global Spam/Virus Store outside users homedir
+              ,good for the qmail-queue use, or can still use -Delete to
+              throw away.
+            * Now virus checking, when messages mime parts are extracted,
+              is done in a global /var/spool/blackhole/ area, also place
+              where other spooling is done.
+
+  Thu Feb 21 13:27:39 CST 2002
+   0.7.5 -- * Category blocking, can state either Spam/Racist/Porn email,
+              This searches the body for certain common patterns of the
+              type chosen.  You will need to install the PCRE library 
+              now from this change, but it is listed below with the 
+              dependencies. (will have violent as a category in the future,
+              right now that's empty, and maby custom categorys someday).
+              These basic scores used and patterns are from Spam Assassin,
+              it is at http://www.spamassassin.org , they have a great 
+              way of calculating these which seems to work great.
+            * default RBL hosts ordered better, level 25 seems good now,
+              above that gets into some very picky RBL hosts.
+
+  Mon Feb 18 14:38:57 CST 2002
+   0.7.4 -- * Improved command line variables
+            * Can now choose between McAfee and Kaspersky for virus checking.
+            * Capable of not keeping email blocked at all, -Delete option.
+
+  Sat Feb 16 16:55:12 CST 2002
+   0.7.3 -- * Enabled ability to remote virus check by commandline option.
+            
+  Sat Feb 16 12:13:35 CST 2002
+   0.7.2 -- * Will compile on FreeBSD now, need to modify Makefile
+              and comment out the -resolv library to get it working.
+            * Made it easier to change the default maildir (which is mail)
+              with a command line option or in the blackhole.h header.
+            * Improved the server so it should always find the file to scan.
+            * General cleanups and full licenses added to every file now.
+
+  Thu Feb 14 12:05:43 CST 2002
+   0.7.1 -- * Some cleanup of help output, -h.
+            * fixed bounces, now you can actually turn them off.
+            * general work on code clean up, checking with -Wall option.
+            * install.sh script now properly deals with ./Maildir/ 
+              since we use ./mail/ for blackhole, so a symlink is
+              now made to be compatible and work still when ./mail/
+              isn't used (which no one probably uses but my place I
+              work, some decision years ago which now is un-reversable).
+            * INSTALL script now ran from 'make install', and should
+              do the right thing now in most cases.
+
+  Feb ?? (early feb)
+   0.6.5 -- * initial release.
+
+  2001 and before
+   Was in Perl, converted fully by Jan 2002, worked C version since April 2001.
+

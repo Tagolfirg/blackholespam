@@ -1,0 +1,66 @@
+BlackHole and SpamAssassin Integration
+======================================
+
+It is possible to directly integrate the spam capabilities of SpamAssassin
+with blackhole.  You will need a version of SpamAssassin that supports
+compiling of libspamc (2.43+).  Spamc will not be needed for this to work
+since all core features of spamc will be called internally by blackhole.
+You will however need spamd running. 
+
+This method is preferred over calling spamc as an external program for speed
+reasons as well as the integration with maxscores.
+
+ o Compile libspamc
+
+ After compiling you can copy libspamc.so to /usr/local/lib.  You can place
+this library anywhere you want but you will need to use the ./configure option
+--with-spamc-lib=PATH.  Also ensure that the library path is also in
+/etc/ld.so.conf.
+
+ o Enable libspamc
+
+ Once the library is installed you can simply pass the ./configure option:
+
+ ./configure --enable-libspamc
+
+ This with enable blackhole to run additional checks directly against spamd.
+Blackhole communicates with spamd over a TCP socket.  Per default it will
+attempt to connect to localhost on port 783.  If you wish to change this
+you can modify the first few lines of spamassassin.c:
+
+#define SPAMD_HOST "127.0.0.1"
+#define SPAMD_PORT 783
+
+ o Enable spamassassin in .blackhole configuration file
+
+SpamAssassin will not be called by default.  To enable a user/domain
+to use the SpamAssassin engine you have to add the following entry
+to the config file:
+
+[spamassassin]
+1
+
+Please see below for some SpamAssassin Quirks.  When enabling SpamAssassin
+you will probably want to disable some blackhole features so the do not
+step on each others toes.
+
+ o SpamAssassin Quirks
+
+SpamAssassin is meant to run on a single domain while blackhole supports
+multiple domains.  Blackhole sends a complete name and domain to spamd.
+Spamd can handle this if you use SQL for it's configurations.  The only
+change that needs to be made is to the username field.  By default
+SpamAssassin sets this filed to a size of 8 characters.  Modify the SQL
+table to be at least 55 characters.  If a user is not in the database it
+will use the local.cf config file for defaults.
+
+Also there are several problems with running two different spam engines.
+For instance if you have SpamAssassin changing the subject lines you
+probably don't want BlackHole to tag the subject lines also (at least
+not for spam :)
+
+ o Contact
+
+ Any questions, concerns, patches, flames can be sent to
+ Craig Smith <csmith@maximizeit.net>
+ 

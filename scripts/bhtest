@@ -1,0 +1,57 @@
+#!/usr/bin/perl
+# Arguments:
+# program directory benchmark debug
+if($ARGV[0] =~ /^-/ || $#ARGV < 3) {
+  printf("Usage: $0 [time] [debug] [show] [wait] [prog] [testdir]\n");
+  printf("\texample: %s 1 1 1 0\n", $0);
+  exit 0;
+}
+
+$LEVEL = '6';
+#$total = "-t";
+$total = "-log stderr ";
+$delete = "-D";
+#$virus = "-V";
+
+($bmark,$debug,$SHOW_RET,$WAIT,$prog,$dir) = @ARGV;
+if(!$prog) {
+  $prog = "C/blackhole";
+}
+if(!$dir) {
+  $dir = "./tests";
+}
+if(!$bmark) {
+  $bmark = '';
+} else {
+  $bmark = 'time';
+}
+
+opendir(DIR,"$dir/");
+@files = grep { !/^\./} readdir(DIR);
+closedir(DIR);
+
+foreach(@files) {
+  $count++;
+  printf("$count: Testing: $dir/$_");
+  my $ret;
+  my $d;
+
+  if($debug) {$d = "-d"} else {$d = ""};
+  my $RUN = "$bmark $prog $bounce $total $d $capture $virus $delete <$dir/$_";
+  if($SHOW_RET && $debug){
+      printf("\nRunning: %s\n", $RUN);
+  }
+  $ret = `$RUN`;
+  $exit_code = $?;
+  if($exit_code == 100 || $exit_code == 99 || $exit_code == 32) {
+    printf(" **Spam**\n");
+  } else {
+    printf("\n");
+  }
+
+  if($debug) {
+    printf("$ret\n");
+  }
+  sleep $WAIT;
+}
+

@@ -1,0 +1,579 @@
+#!/bin/sh
+# 
+# Configure BlackHole Programs .blackhole config file
+# Chris Kennedy (C) 2002
+#
+echo
+echo "Configure BlackHole Programs .blackhole config file"
+echo "Chris Kennedy (C) 2002"
+echo
+echo 
+
+PREFIX=BASEPREFIX
+BIN_DIR=BASEPREFIX/bin
+
+if [ -n "$1" -a "$1" != "queue" ]; then
+  echo "Usage: $0 [queue] [configfile]"
+  exit
+fi
+
+if [ ! -f "${BIN_DIR}/blackhole" ]; then
+  if [ ! -f "./blackhole" ]; then
+    echo "Error, no $BIN_DIR exists"
+    exit
+  else
+    BIN_DIR="."
+    EDITPROG="${BIN_DIR}/scripts/bhedit"
+    BLACKHOLE="${BIN_DIR}/scripts/blackhole"
+    EMAILPROG="${BIN_DIR}/scripts/spam"
+  fi
+else
+  EDITPROG="${BIN_DIR}/bhedit"
+  BLACKHOLE="${BIN_DIR}/blackhole"
+  EMAILPROG="${BIN_DIR}/spam"
+fi
+if [ ! -f "$EDITPROG" ]; then
+  echo "Error, no bhedit program found"
+  exit
+fi
+
+## REMOVE BELOW TO GET OLD FUNCTIONALITY BACK ##
+exec $BLACKHOLE -setup
+## REMOVE ABOVE TO GET REST OF SCRIPT TO RUN ##
+
+${BLACKHOLE} -I 1>/tmp/bh_config.$$
+if [ -f "/tmp/bh_config.$$" ]; then
+  . /tmp/bh_config.$$
+else
+  echo "Error running blackhole"
+  exit
+fi
+rm -f /tmp/bh_config.$$
+
+MYSQLHOST="$MYSQL_SERVER"
+MYSQLUSER="$MYSQL_USER"
+MYSQLPASS="$MYSQL_PASS"
+MYSQLDOMAIN="$MYSQL_DOMAIN"
+
+if [ "$1" = "queue" ]; then
+  BFILE="$2"
+  EDITPROG="$EDITPROG -f $BFILE"
+elif [ "$QMAIL_QUEUE" = "1" ]; then
+  BFILE="$QUEUE_CONFIG"
+elif [ -f "$BH_CONFIG" ]; then
+  BFILE="$BH_CONFIG"
+else
+  >$BH_CONFIG
+  ${EDITPROG} add level 7
+  BFILE="$BH_CONFIG"
+fi
+
+if [ ! -f "$BFILE" ]; then
+  if [ ! -f ".blackhole" ]; then
+    if [ ! -f "/etc/blackhole.conf" ]; then
+      echo "Error, no $BFILE exists"
+      exit 
+    else
+      BFILE="/etc/blackhole.conf"
+    fi
+  else
+    BFILE=".blackhole"
+  fi
+fi
+
+if [ "$SENDMAIL" = "0" -a "$QMAIL_QUEUE" = "0" ]; then
+  if [ ! -d "${MAIL_DIR}/${SPAM_MAIL_DIR}" ]; then
+    mkdir -p ${MAIL_DIR}/${SPAM_MAIL_DIR}/new
+    mkdir -p ${MAIL_DIR}/${SPAM_MAIL_DIR}/tmp
+    mkdir -p ${MAIL_DIR}/${SPAM_MAIL_DIR}/cur
+    chmod -R 700 ${MAIL_DIR}/${SPAM_MAIL_DIR}
+  fi
+  if [ ! -d "${MAIL_DIR}/${VIRUS_MAIL_DIR}" ]; then
+    mkdir -p ${MAIL_DIR}/${VIRUS_MAIL_DIR}/new
+    mkdir -p ${MAIL_DIR}/${VIRUS_MAIL_DIR}/tmp
+    mkdir -p ${MAIL_DIR}/${VIRUS_MAIL_DIR}/cur
+    chmod -R 700 ${MAIL_DIR}/${VIRUS_MAIL_DIR}
+  fi
+fi
+
+# BIG WHILE LOOP
+while [ "$ACTION" != "99" ]; do
+
+while [ -z "$ACTION" ]; do
+  echo "BlackHole Configuration Main Menu:"
+  echo " 1.  [ADD]           Add Options to Sections."
+  echo " 2.  [DELETE]        Delete Options from Sections."
+  echo " 3.  [LIST CONFIG]   List Current Config."
+  echo " 4.  [LIST RBLS]     List RBL Lists in order used."
+  echo " 5.  [BOUNCES]       Activate/Deactivate Bounce messages"
+  echo " 6.  [VIRUSES]       Activate/Deactivate Virus Check w/Sophos|McAfee."
+  echo " 7.  [MAILBOXES]     Read Spam/Virus Email Box."
+  echo " 8.  [TURN OFF]      Turn BlackHole Off (DeActivate)"
+  echo " 9.  [TURN ON]       Turn BlackHole On  (Activate)"
+  echo " 11. [WHITE LIST]    Turn into a White List, good email/relay only"
+  echo " 12. [VALID SENDER]  Only allow if return sender is a valid domain/host"
+  echo " 19. [RESET CONFIG]  Reset Config to default, erase all!"
+  echo " 20. [RAZOR CHECK]   Activate/Deactivate Razor Check for email."
+  echo " 99. [EXIT]          Exit Config"
+  echo -n "Choice> "
+  read ACTION
+  if [ "$ACTION" = "99" ]; then
+    echo "Exiting..."
+  elif [ "$ACTION" -gt "20" -o "$ACTION" -lt "0" ]; then
+    ACTION=
+  fi 
+done
+
+# List Config
+if [ "$ACTION" = "3" ]; then
+  $BLACKHOLE -c
+  echo "<push enter>"
+  read GO
+  GO=
+  ACTION=
+  continue 
+elif [ "$ACTION" = "4" ]; then
+  $BLACKHOLE -l
+  ACTION=
+  continue 
+elif [ "$ACTION" = "7" ]; then
+  echo "Read Spam or Virus mailbox? "
+  echo " 1. Spam"
+  echo " 2. Virus"
+  echo -n "Choice> "
+  read CHOICE
+  if [ "$CHOICE" = "1" ]; then
+    ${BIN_DIR}/spam
+  elif [ "$CHOICE" = "2" ]; then
+    ${BIN_DIR}/virus
+  fi
+  CHOICE=
+  ACTION=
+  continue
+elif [ "$ACTION" = "20" ]; then
+  echo "Use Razor to check against a distributed Spam database "
+  echo " 1. No"
+  echo " 2. Yes"
+  echo -n "Choice> "
+  read CHOICE
+  if [ "$CHOICE" = "1" -o "$CHOICE" = "off" ]; then
+    $EDITPROG add razor -1
+    CHOICE=
+    ACTION=
+    continue
+  elif [ "$CHOICE" = "2" -o "$CHOICE" = "on" ]; then
+    $EDITPROG add razor 1
+  fi
+  CHOICE=
+  ACTION=
+  continue
+elif [ "$ACTION" = "8" ]; then
+  echo "Deactivate BlackHole? "
+  echo " 1. No"
+  echo " 2. Yes"
+  echo -n "Choice> "
+  read CHOICE
+  if [ "$CHOICE" = "1" ]; then
+    CHOICE=
+  elif [ "$CHOICE" = "2" ]; then
+    ${BIN_DIR}/bhinstall uninstall
+  fi
+  CHOICE=
+  ACTION=
+  continue
+elif [ "$ACTION" = "9" ]; then
+  if [ "$SENDMAIL" = "0" ]; then
+    ${BIN_DIR}/bhinstall install
+  else
+    ${BIN_DIR}/bhinstall install
+  fi
+  ACTION=
+  continue
+elif [ "$ACTION" = "99" ]; then
+  echo "Exiting Config"
+  continue
+elif [ "$ACTION" = "11" ]; then
+  echo "Turn into a White List? (you will only allow good email/relays)"
+  echo " 1. off"
+  echo " 2. on"
+  echo -n "Choice> "
+  read CHECKING
+  if [ "$CHECKING" = "1" -o "$CHECKING" = "off" ]; then
+    $EDITPROG add white_list -1
+    CHECKING=
+    ACTION=
+    continue
+  elif [ "$CHECKING" = "2" -o "$CHECKING" = "on" ]; then
+    $EDITPROG add white_list 1
+  fi
+  CHECKING=
+  ACTION=
+  continue 
+elif [ "$ACTION" = "12" ]; then
+  echo "Only accept valid return addresses? (will test through DNS check)"
+  echo " 1. off"
+  echo " 2. on"
+  echo -n "Choice> "
+  read CHECKING
+  if [ "$CHECKING" = "1" -o "$CHECKING" = "off" ]; then
+    $EDITPROG add check_dns -1
+    CHECKING=
+    ACTION=
+    continue
+  elif [ "$CHECKING" = "2" -o "$CHECKING" = "on" ]; then
+    $EDITPROG add check_dns 1
+  fi
+  CHECKING=
+  # Reverse DNS Section
+  echo "Only allow valid reverse DNS on Relay IP? (resolves host->ip, ip->host)"
+  echo " 1. off" 
+  echo " 2. on"
+  echo -n "Choice> "
+  read CHECKING
+  if [ "$CHECKING" = "1" -o "$CHECKING" = "off" ]; then
+    $EDITPROG add check_reverse -1
+    CHECKING=  
+    ACTION=
+    continue
+  elif [ "$CHECKING" = "2" -o "$CHECKING" = "on" ]; then
+    $EDITPROG add check_reverse 1       
+  fi
+  CHECKING=
+  ACTION=
+  continue 
+elif [ "$ACTION" = "5" ]; then
+  echo "Turn Bounce errors? (this sends back a No User error to Spammer)"
+  echo " 1. off"
+  echo " 2. on"
+  echo -n "Choice> "
+  read CHECKING
+  if [ "$CHECKING" = "1" ]; then
+    $EDITPROG add bounce -1
+    CHECKING=
+    ACTION=
+    continue
+  elif [ "$CHECKING" = "2" ]; then
+    $EDITPROG add bounce 1
+  fi
+  CHECKING=
+  echo "What message to send back? (or just enter for default 550 bounce)"
+  echo -n "Message> "
+  read CHECKING
+  if [ -z "$CHECKING" -o "$CHECKING" = "" ]; then
+    CHECKING=
+  else
+    $EDITPROG add bounce_msg $CHECKING
+  fi
+  CHECKING=
+  ACTION=
+  continue 
+elif [ "$ACTION" = "6" ]; then
+  echo "Turn Virus Checking? (You must check your .Virus mailbox)"
+  echo " 1. off"
+  echo " 2. on"
+  echo -n "Choice> "
+  read CHECKING
+  if [ "$CHECKING" = "1" ]; then
+    $EDITPROG add vscan -1
+  elif [ "$CHECKING" = "2" ]; then
+    $EDITPROG add vscan 1
+  fi
+  CHECKING=
+  echo "Send Alerts to source of viruses?"
+  echo " 1. no"
+  echo " 2. yes"
+  echo -n "Choice> "
+  read CHECKING
+  if [ "$CHECKING" = "1" ]; then
+    $EDITPROG add valert -1
+  elif [ "$CHECKING" = "2" ]; then
+    $EDITPROG add valert 1
+  fi
+  CHECKING=
+  echo "Clean/Remove Infected attachments?"
+  echo " 1. no"
+  echo " 2. yes"
+  echo -n "Choice> "
+  read CHECKING
+  if [ "$CHECKING" = "1" ]; then
+    $EDITPROG add vclean -1
+  elif [ "$CHECKING" = "2" ]; then
+    $EDITPROG add vclean 1
+  fi
+  if [ "$SENDMAIL" = "0" ]; then
+    if [ ! -d "${MAIL_DIR}/.Virus" ]; then
+      mkdir -p ${MAIL_DIR}/.Virus/new
+      mkdir -p ${MAIL_DIR}/.Virus/tmp
+      mkdir -p ${MAIL_DIR}/.Virus/cur
+      chmod -R 700 ${MAIL_DIR}/.Virus
+    fi
+  fi
+  ACTION=
+  CHECKING=
+  continue 
+elif [ "$ACTION" = "19" ]; then
+  while [ -z "$CONFIRM" ]; do
+    echo -n " Are You Sure [y/n]: "
+    read CONFIRM
+  done
+  if [ "$CONFIRM" = "y" ]; then
+    while [ -z "$LEVEL" ]; do
+      echo 
+      echo " Their are 7 levels, 6 is good, 7 can be pretty strict."
+      echo " When on 7 you will really wan't to check and add "
+      echo " to the good email/relays variables."
+      echo
+      echo -n "Level> "
+      read LEVEL
+    done
+    echo "Copying ${QUEUE_CONFIG} to ${BFILE}"
+    cp -f ${QUEUE_CONFIG} ${BFILE}
+    echo "Adding level ${LEVEL}"
+    ${EDITPROG} add level ${LEVEL}
+  fi
+  LEVEL=
+  ACTION=
+  CONFIRM=
+  CHECKING=
+  continue 
+fi
+
+while [ -z "$METHOD" ]; do
+  echo
+  echo "Choose a Method:"
+  echo " 1. From Input"
+  echo " 2. From Email File"
+  echo " 3. Back to Main"
+  echo -n "Choice> "
+  read METHOD
+  if [ "$METHOD" -gt "3" -o "$METHOD" -lt "0" ]; then
+    METHOD= 
+  fi 
+done
+
+if [ "$METHOD" = "1" ]; then
+  while [ -z "$CATEGORY" ]; do
+    echo
+    echo "Category to Edit:"
+    echo " 1.  [my_relays]          Local relays to skip that forward your email"
+    echo " 2.  [good_email]         Good Email Addresses/Domains to allow by default"
+    echo " 3.  [bad_email]          Bad Email Addresses/Domains to disallow by default"
+    echo " 4.  [good_relay]         Good IP Relay Hosts/Networks to allow by default"
+    echo " 5.  [bad_relay]          Bad IP Relay Hosts/Networks to disallow by default"
+    echo " 6.  [bad_subject]        Subject lines to block, using ^ and $ anchors"
+    echo " 7.  [level]              RBL Level to Check by, 0-7"
+    echo " 8.  [rbl_hosts]          RBL Servers to use (Warning, do not change this)"
+    echo " 9.  [body_check_spam]    Check email body for known Spam patterns"
+    echo " 10. [body_check_porn]    Check email body for known Porn patterns"
+    echo " 11. [body_check_racist]  Check email body for known spam patterns"
+    echo " 12. [my_email]           Strict list of email addresses you except email to"
+    echo " 13. [one_box]            Keep all mail in main mailbox, just tag Subjects"
+    echo " 14. [body_check]         Check email body for Custom List of matches"
+    echo " 15. [my_body]            Custom List of matches for above option"
+    echo " 16. [charsets]           Only allow these charsets through"
+    echo " 17. [ascii_128]          Threshhold of non-latin characters to let through"
+    echo " 18. [expire]             Days before deleting email in .Spam and .Virus"
+    echo " 19. [excluded_relay]     Excluded relays, avoid ip checks but do rest."
+    echo " 20. [bad_headers]        Custom headers to block"
+    echo "<push enter to continue>"
+    read GO
+    GO=
+    echo " 21. [no_spam_check]      Users email to skip Spam Checking for."
+    echo " 22. [no_virus_check]     Users email to skip Virus Checking for."
+    echo " 23. [bad_ctype]          Content Types to block."
+    echo " 24. [bad_encoding]       Content Encodings to block."
+    echo " 25. [smtp_relay]         SMTP Relay used for fowarding email."
+    echo " 26. [spam_fwd]           Forward Spam to this email address."
+    echo " 27. [virus_fwd]          Forward Viruses to this email address."
+    echo " 28. [ok_fwd]             Forward OK mail to this email address."
+    echo
+    echo " 29. Upload .blackhole config to MySQL database, initialize or update"
+    echo "     (do this if changing config and already have a mysql setup)"
+    echo "     (you can also do this to start using the mysql config too)"
+    echo
+    echo " 30. [LIST]       Show current config"
+    echo " 0.  [MAIN]       Back to Main Menu"
+    echo -n "Choice> "
+    read CATEGORY
+    if [ "$CATEGORY" -gt "30" -o "$CATEGORY" -lt "0" ]; then
+      CATEGORY= 
+    fi 
+  done
+  if [ "$CATEGORY" = "1" ]; then
+    Q="My Relay IP"
+    SECTION="my_relay"
+  elif [ "$CATEGORY" = "2" ]; then
+    Q="Good Address or Domain"
+    SECTION="good_email"
+  elif [ "$CATEGORY" = "3" ]; then
+    Q="Bad Email Address or Domain"
+    SECTION="bad_email"
+  elif [ "$CATEGORY" = "4" ]; then
+    Q="Good Relay IP or Network"
+    SECTION="good_relay"
+  elif [ "$CATEGORY" = "5" ]; then
+    Q="Bad Relay IP or Network"
+    SECTION="bad_relay"
+  elif [ "$CATEGORY" = "6" ]; then
+    Q="Subject, using ^ and $ anchors for begin/end matches"
+    SECTION="bad_subject"
+  elif [ "$CATEGORY" = "7" ]; then
+    Q="Blocking Level"
+    SECTION="level"
+  elif [ "$CATEGORY" = "8" ]; then
+    Q="RBL List"
+    SECTION="rbl_hosts"
+  elif [ "$CATEGORY" = "9" ]; then
+    Q="Use body checking for Spam [on/off]:"
+    SECTION="body_check_spam"
+  elif [ "$CATEGORY" = "10" ]; then
+    Q="Use body checking for Porn [on/off]:"
+    SECTION="body_check_porn"
+  elif [ "$CATEGORY" = "11" ]; then
+    Q="Use body checking for Racism [on/off]:"
+    SECTION="body_check_racist"
+  elif [ "$CATEGORY" = "12" ]; then
+    Q="email exclusive addresses/domains allowed to you (your valid addresses):"
+    SECTION="my_email"
+  elif [ "$CATEGORY" = "13" ]; then
+    Q="Only use main mailbox, Subject: tags are used instead [on/off]:"
+    SECTION="one_box"
+  elif [ "$CATEGORY" = "14" ]; then
+    Q="Body Checking by custom pattern[on/off]:"
+    SECTION="body_check"
+  elif [ "$CATEGORY" = "15" ]; then
+    Q="Body Pattern to check for, worth 1.0 as score or use X.X: pattern:"
+    SECTION="my_body"
+  elif [ "$CATEGORY" = "16" ]; then
+    Q="charset to allow through, any not on this list will be blocked:"
+    SECTION="charsets"
+  elif [ "$CATEGORY" = "17" ]; then
+    Q="Max amount of ASCII characters above 128 to allow, usually non-latin:"
+    SECTION="ascii_128"
+  elif [ "$CATEGORY" = "18" ]; then
+    Q="Days to keep blocked email, 0 is the default, which keeps it forever:"
+    SECTION="expire"
+  elif [ "$CATEGORY" = "19" ]; then
+    Q="Relays to not check against RBL and other IP checks but still check:"
+    SECTION="excluded_relay"
+  elif [ "$CATEGORY" = "20" ]; then
+    Q="Custom headers to block, Syntax is X-Header: String:"
+    SECTION="bad_headers"
+  elif [ "$CATEGORY" = "21" ]; then
+    Q="Users addr/domain or name to not Spam check for, can have username@:"
+    SECTION="no_spam_check"
+  elif [ "$CATEGORY" = "22" ]; then
+    Q="Users addr/domain or name to not Virus check for, can have username@:"
+    SECTION="no_virus_check"
+  elif [ "$CATEGORY" = "23" ]; then
+    Q="Bad Content types, like text/html, which you want to block:"
+    SECTION="bad_ctype"
+  elif [ "$CATEGORY" = "24" ]; then
+    Q="Bad Content Encoding types, like base64, which you want to block:"
+    SECTION="bad_encoding"
+  elif [ "$CATEGORY" = "25" ]; then
+    Q="SMTP Relay to use for Forwarding email to other servers (default 127.0.0.1):"
+    SECTION="smtp_relay"
+  elif [ "$CATEGORY" = "26" ]; then
+    Q="Email Address for Forwarding Spam to (leave blank for none):"
+    SECTION="spam_fwd"
+  elif [ "$CATEGORY" = "27" ]; then
+    Q="Email Address for Forwarding Spam to (leave blank for none):"
+    SECTION="virus_fwd"
+  elif [ "$CATEGORY" = "28" ]; then
+    Q="Email Address for Forwarding OK Email to (leave blank for none):"
+    SECTION="ok_fwd"
+  elif [ "$CATEGORY" = "29" ]; then
+    $EDITPROG upload $MYSQLHOST $MYSQLPASS $MYSQLDOMAIN
+    echo "If not compiled in as active you will want to do that for MySQL."
+    SECTION=
+    CATEGORY=
+    OPTION=
+    continue
+  elif [ "$CATEGORY" = "30" ]; then
+    $BLACKHOLE -c
+    echo "<push enter>"
+    read GO
+    GO=
+    SECTION=
+    CATEGORY=
+    OPTION=
+    continue 
+  else
+    echo "Returning to Main Menu"
+    ACTION=
+    SECTION=
+    CATEGORY=
+    METHOD=
+    OPTION=
+    continue 
+  fi
+
+  # Get Option
+  while [ -z "$OPTION" ]; do
+    echo
+    echo "Enter $Q"
+    echo -n "> "
+    read OPTION
+  done
+
+  if [ "$OPTION" = "on" ]; then
+    OPTION="1";
+  elif [ "$OPTION" = "off" ]; then
+    OPTION="-1";
+  fi
+
+  if [ "$ACTION" = "1" ]; then
+    ACTION="add"
+  elif [ "$ACTION" = "2" ]; then
+    ACTION="delete"
+  fi
+
+  # Run Command
+  echo
+  $EDITPROG $ACTION $SECTION $OPTION
+  echo "Return Status: $?"
+  if [ "$?" = "0" ]; then
+    echo "Command was sucessful [OK]"
+  else
+    echo "Command Failed        [ERROR]"
+  fi
+  CATEGORY=
+  SECTION=
+  OPTION=
+  continue
+elif [ "$METHOD" = "2" ]; then
+  echo
+  echo "Choose what to block/allow this email by:"
+  echo " 1. From Address (user@dot.com)"
+  echo " 2. Domain       (@dot.com)"
+  echo " 3. IP Address   (X.X.X.X)"
+  echo -n "> "
+  read BLOCKBY
+
+  echo
+  echo "Enter the full path to an email to use:"
+  echo -n "> "
+  read EMAIL
+  if [ ! -f "$EMAIL" ]; then
+    echo "Error, no such file $EMAIL"
+    METHOD=
+    continue
+  fi
+  if [ "$BLOCKBY" = "1" ]; then
+    cat $EMAIL | grep -i ^Return-Path:
+  elif [ "$BLOCKBY" = "2" ]; then
+    cat $EMAIL | grep -i ^Return-Path: 
+  elif [ "$BLOCKBY" = "3" ]; then
+    cat $EMAIL | grep -i ^Recieved:\ from |head -1
+  fi
+  cat $EMAIL | $BLACKHOLE -d -D
+  METHOD=
+else
+  echo "ERROR, no such method"
+  METHOD=1
+fi
+
+# END OF BIG WHILE LOOP
+done
+

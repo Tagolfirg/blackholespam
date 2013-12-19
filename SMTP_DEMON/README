@@ -1,0 +1,64 @@
+SMTP DEMON:
+===========
+This is something you can use on a Linux Server with the ip route2 
+utilities, you can stop SMTP flooding with it, it can help add some
+guarentee a server won't crash ever from blackhole, if some host starts
+sending Spam so fast you couldn't handle it anyways.  This program on
+it's own is useful, including it with blackhole is an initial release,
+but it may be separated out someday, it seems like something people who
+need blackhole would also be interested in.
+
+General Requirements:
+=====================
+Basically you run the demon piping a tail command of the qmail smtpd
+log.
+
+the demon.init script is a basic startup script.
+the demon.whois script will look up all the currently blocked hosts,
+ if using the ip routing blackhole mode, or nullroute option.
+
+You need linux, or else port it and send me the diffs ;).
+You need the whois from debian, it is able to look up IP Blocks.
+You need the IP Route2 utilities with the ip/tc commands.
+
+startup_rules can add/delete initialize the linux traffic control commands
+for the TC utility with the IP Route2 package.
+
+Usage:
+======
+Usage: demon [-debug][-btime NUM][-tcount NUM][-pcount NUM][-shape][-nullroute]
+        -shape          Activate Traffic Shaping
+        -nullroute      Activate Null Routing
+        -btime NUM      Bucket Expiration time
+        -tcount NUM     Min connections to Shape at
+        -pcount NUM     Min connections to Print info at
+        -rcount NUM     Max Seconds between each email before blocking
+
+The -shape option using the tc tool from iproute2, you can change the
+ defaults in demon.c, the -nullroute option uses the ip utility from 
+ iproute2, -btime is the time a host is inactive before removing from
+ the 'buckets', the -tcount is when to shape/nullroute a host at this
+ amount of connections while staying in the bucket which must also meet
+ the -rcount option which is the lowest number of seconds between each
+ email from the host, the -pcount is when the logging starts, so if 
+ lower that -tcount you can start to log before blocking...
+
+Internal Default Settings:
+==========================
+int max_bucket_time = 20;
+int min_print_count = 10;
+int min_shape_count = 30;
+int max_rate = 3;
+
+#define TC      "/sbin/tc"
+#define INT     "eth0"
+#define BW      "10Mbit"
+#define PENALTY "1Kbit"
+
+#define IP      "/sbin/ip"
+#define BHADD   "route add blackhole"
+#define BHDEL   "route del blackhole"
+
+--
+Chris 
+getdown (at) groovy.org

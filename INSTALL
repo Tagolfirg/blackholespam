@@ -1,0 +1,119 @@
+#!/bin/sh
+#/*
+#   Copyright (C) 2002
+#        Chris Kennedy, The Groovy Organization.
+#
+#   The Blackhole is free software; you can redistribute it and/or
+#   modify it under the terms of the GNU Library General Public License as
+#   published by the Free Software Foundation; either version 2 of the
+#   License, or (at your option) any later version.
+#
+#   The Blackhole is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+#   Library General Public License for more details.
+#
+#   For a copy of the GNU Library General Public License
+#   write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+#   Boston, MA 02111-1307, USA.  or go to http://www.gnu.org
+#*/
+
+#
+# Read the README file for installation instructions
+#
+
+PREFIX=$1
+
+./blackhole -I 1>/tmp/bh_config.$$
+if [ -f "/tmp/bh_config.$$" ]; then
+  . /tmp/bh_config.$$
+else
+  echo "Error running blackhole"
+  exit
+fi
+rm -f /tmp/bh_config.$$
+
+SPOOLDIR="$BH_SPOOL_DIR"
+
+# Copy default config
+if [ ! -f "${QUEUE_CONFIG}" ]; then
+  cat etc/dot-blackhole.temp | sed -e s/LEVEL/7/g > ${QUEUE_CONFIG}
+fi
+
+if [ ! -d "${PREFIX}" ]; then
+  mkdir ${PREFIX}
+  if [ "$?" != "0" ]; then
+    echo "Error, no ${PREFIX} directory, please create first."
+    exit
+  fi
+fi
+
+if [ ! -d "${PREFIX}/bin" ]; then
+  mkdir ${PREFIX}/bin
+fi
+
+if [ ! -d "${PREFIX}/man" ]; then
+  mkdir ${PREFIX}/man
+fi
+
+if [ ! -d "${PREFIX}/man/man1" ]; then
+  mkdir ${PREFIX}/man/man1
+fi
+
+if [ ! -d "${PREFIX}/man/man5" ]; then
+  mkdir ${PREFIX}/man/man5
+fi
+
+if [ ! -d "${PREFIX}/doc" ]; then
+  mkdir ${PREFIX}/doc
+fi
+
+if [ ! -d "${PREFIX}/share/blackhole" ]; then
+  mkdir ${PREFIX}/share
+  mkdir ${PREFIX}/share/blackhole
+fi
+
+# Make Spool Dir
+if [ ! -d "${SPOOLDIR}" -a -n "${SPOOLDIR}" ]; then
+  mkdir ${SPOOLDIR}
+  mkdir ${SPOOLDIR}/msg
+  mkdir ${SPOOLDIR}/mime
+  mkdir ${SPOOLDIR}/scanner
+  mkdir ${SPOOLDIR}/msg/${SPAM_MAIL_DIR}
+  mkdir ${SPOOLDIR}/msg/${SPAM_MAIL_DIR}/tmp
+  mkdir ${SPOOLDIR}/msg/${SPAM_MAIL_DIR}/new
+  mkdir ${SPOOLDIR}/msg/${SPAM_MAIL_DIR}/cur
+  mkdir ${SPOOLDIR}/msg/${VIRUS_MAIL_DIR}
+  mkdir ${SPOOLDIR}/msg/${VIRUS_MAIL_DIR}/cur
+  mkdir ${SPOOLDIR}/msg/${VIRUS_MAIL_DIR}/new
+  mkdir ${SPOOLDIR}/msg/${VIRUS_MAIL_DIR}/tmp
+  mkdir ${SPOOLDIR}/msg/tmp
+  mkdir ${SPOOLDIR}/msg/new
+  mkdir ${SPOOLDIR}/msg/cur
+  mkdir ${SPOOLDIR}/conf
+fi
+
+if [ -n "${SPOOLDIR}" ]; then
+  chmod -R 0755 ${SPOOLDIR}/
+  chmod -R 0755 ${SPOOLDIR}/conf
+  chmod -R 1777 ${SPOOLDIR}/msg
+  chmod -R 1777 ${SPOOLDIR}/scanner
+  chmod -R 1777 ${SPOOLDIR}/mime
+  if [ "${QMAIL_QFILTER}" = "1" ]; then
+    chmod -R 0750 ${SPOOLDIR}/msg/
+    chown -R qmaild.nofiles ${SPOOLDIR}/msg/
+  else
+    chmod -R 1777 ${SPOOLDIR}/msg/
+    chgrp -R mail ${SPOOLDIR}/msg/tmp
+    chmod g+s ${SPOOLDIR}/msg/tmp
+  fi
+fi
+
+# Install setup script info
+echo
+echo
+echo "Now installed in ${PREFIX}/bin/ , you can run ${PREFIX}/bin/bhinstall"
+echo "as a user to install BlackHole, you should also run "
+echo "${PREFIX}/bin/bhconf later to get back into the config interface"
+echo
+

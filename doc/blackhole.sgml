@@ -1,0 +1,26 @@
+ <!DOCTYPE refentry  PUBLIC "-//OASIS//DTD DocBook V4.1//EN">
+<refentry id="blackhole">
+  <refmeta>  
+    <refentrytitle>blackhole</refentrytitle>
+    <manvolnum>1</manvolnum>
+  </refmeta>
+  <refnamediv>
+    <refname>blackhole</refname>
+    <refpurpose>block spam</refpurpose>
+  </refnamediv>
+<refsynopsisdiv>
+    <cmdsynopsis>
+      <command>/usr/bin/blackhole</command>
+      <arg>[level] [-d [log]][-h][-li][-L][-c][-b][-t][-S][-C][-V][-A][-B{SRPC}][-m maildir][-D][-Q][-E][-W][-lo [type] [-M [host]] [-s spooldir][-O][-HA max][-Res][-Rev][-r][-nor][-nos][-Ma][-I]
+</arg>
+    </cmdsynopsis>
+<refsect1><title>Description</title>
+<para>
+<indexterm><primary>functions</primary>
+<secondary>printf</secondary></indexterm>
+<indexterm><primary>printing function</primary></indexterm>
+
+<function>printf</function> places output on the standard
+output stream stdout.
+</para>
+</refentry>

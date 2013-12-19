@@ -1,0 +1,43 @@
+#!/bin/sh
+#
+# Generate the Makefiles and configure files
+# Code contributed by Bastian Kleineidam <reflexionsniveau@web.de>
+#
+rm -f Makefile scripts/Makefile
+echo "all:" >Makefile
+echo "	exec ./Setup"  >>Makefile
+
+if ( aclocal --version ) </dev/null > /dev/null 2>&1; then
+        echo "Building macros"
+        aclocal
+else
+        echo "aclocal not found -- aborting"
+        exit
+fi
+
+if ( autoheader --version ) </dev/null > /dev/null 2>&1; then
+        echo "Building config header template"
+        autoheader
+else
+        echo "autoheader not found -- aborting"
+        exit
+fi
+
+if ( automake --version ) </dev/null > /dev/null 2>&1; then
+        echo "Building Makefiles"
+        automake -a
+else
+        echo "automake not found -- aborting"
+        exit
+fi
+
+if ( autoconf --version ) </dev/null > /dev/null 2>&1; then
+        echo "Building configure"
+        autoconf
+        echo 'run "./Setup"'
+else
+        echo "autoconf not found -- aborting"
+        exit
+fi
+
+

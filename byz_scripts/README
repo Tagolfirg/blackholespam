@@ -1,0 +1,62 @@
+How to use Bayesian classification with these scripts
+
+NOTE: These are able to create the DB files and all the needed
+stats, but blackhole can't use this yet besides for putting them
+into the custom body check and scoring them there, with a max
+threshhold.  Any one wanting to help me implement this better is
+welcome, I may get it done quickly, depending on how much of a
+task this actually is, and time I have.
+
+Ideas From:
+Paul Graham's "A Plan for Spam" <http://www.paulgraham.com/spam.html>.  
+
+Here's the help for the byz_parse.pl program, which is the first thing
+you'll run, it has a feature of allowing bounce/double bounce messages
+(from Qmail currently) to be treated as normal email, so it ignores the
+top portions, also you need to tell it to use headers if you really want
+to.
+
+Usage: ./byz_parse.pl location failures_mode show_headers eat_headers debug
+        location [dir]: is a directory of email to parse.
+        failures_mode [0/1]: if your parsing double bounce messages.
+        show_headers  [0/1]: show email headers too.
+        eat_headers   [0/1]: use the email headers in stats
+        debug         [0/1]: debug level, -1 is good
+
+Instructions on how to use:
+
+1) First: put good email into ./good/ and bad email into ./bad/
+
+2)
+Parse good and bad mail directory...
+ ./byz_parse.pl  good/ 0 0 0 -1
+Move the .stats to .statsGood
+ mv .stats .statsGood
+ ./byz_parse.pl  bad/ 0 0 0 -1
+Move the .stats to .statsBad
+ mv .stats .statsBad
+
+3)
+Create the .statsNew DB...
+ ./byz_compare.pl .statsGood .statsBad .statsNew
+
+4)
+Manually check an email...
+ ./byz_checker.pl .statsNew good/email_file
+
+5)
+Way to check many emails once the .statsNew DB is created...
+for test in good/*; do ./byz_checker.pl .statsNew $test;done
+
+6)
+To read the DB, use the dbmmanage program which is included,
+originally from the Apache Software Foundation (http://www.apache.org/).
+./dbmmanage .statNew view | more
+
+
+Please report bugs, this is still a work in progress, but it should
+be a start towards getting this to work for blackhole, for now it
+is a great way to find the words to block.
+
+Chris
+getdown@groovy.org

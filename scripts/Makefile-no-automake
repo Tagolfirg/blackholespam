@@ -1,0 +1,37 @@
+include ../MCONFIG
+QPROGRAM := $(PREFIX)/bin/blackhole
+QSPOOL_DIR := $(BH_SPOOL_DIR)/msg
+
+
+DEFINES := -DQPROGRAM=\"$(QPROGRAM)\" \
+	-DQSPOOL_DIR=\"$(QSPOOL_DIR)\" \
+
+all: qmail-queue
+
+qmail-queue: qmail-queue.c
+	$(CC) $(CFLAGS) $(OPT) -o qmail-queue qmail-queue.c $(DEFINES)
+	strip qmail-queue
+
+queue-install:
+	cat ../etc/dot-blackhole.temp | sed -e s/LEVEL/7/g > $(QUEUE_CONFIG)
+	@if [ ! -f "/var/qmail/qmail-queue-old" ]; then \
+		cp -pa /var/qmail/bin/qmail-queue /var/qmail/bin/qmail-queue-old; \
+		cp -pa /var/qmail/bin/qmail-queue /var/qmail/bin/qmail-queue-backup; \
+	fi
+	cp -fap qmail-queue /var/qmail/bin/qmail-queue-new
+
+queue-replace:
+	cp -fap /var/qmail/bin/qmail-queue-new /var/qmail/bin/qmail-queue
+
+queue-undo:
+	cp -fap /var/qmail/bin/qmail-queue-old /var/qmail/bin/qmail-queue
+	rm -f /var/qmail/bin/qmail-queue-old
+
+queue-clean:
+	rm -f qmail-queue
+
+install:
+	echo
+
+clean: queue-clean
+

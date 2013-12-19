@@ -1,0 +1,208 @@
+# Blackhole Config Setup
+##########################
+# Base directory for installation
+PREFIX = /opt/blackhole
+
+# When in use with qmail-qfilter separately, use the QFILTER option also below
+# to just copy blackhole as the qmail-queue and copy the old qmail-queue to
+# qmail-queue-old
+QMAIL_QUEUE = 0
+
+# Inegrated QMAIL-QFILTER support, YOU MUST ENABLE the option above this one
+# too and not need qmail-qfilter separately.
+QFILTER = 0
+
+# Directory with .Spam and .Virus maildir's when using Qmail/Sendmail/Postfix
+MAIL_DIR = Maildir
+
+# Spam Directory name, inside the MAIL_DIR
+SPAM_MAIL_DIR = .Spam
+
+# Virus Directory name, inside the MAIL_DIR
+VIRUS_MAIL_DIR = .Virus
+
+# Using with Sendmail
+SENDMAIL = 0 
+
+# Using with Courier
+COURIER = 0
+
+# This is used in Postfix Content Filtering
+SENDMAIL_BIN = /usr/sbin/sendmail
+
+# Use Maildir with Sendmail or Postfix (in Qmail it is used by default)
+USE_MAILDIR = 0
+
+# Sendmail global mbox/spool directory, can use a relative path
+# like "Inbox" for an mbox in ~/Inbox or "Mail/" for ~/Mail/Inbox.
+# It uses Inbox if a / is at the end, inside that directory, while if
+# specifying without the / on the end then that is the file it uses.
+SM_SPOOL_DIR = /var/spool/mail
+
+# Sendmail, this directory will be used for Inbox.Virus and Inbox.Spam
+SM_LOCAL_SPOOL =
+
+# Sendmail Virus Mailbox
+VIRUS_MAIL_BOX = Inbox.Virus
+
+# Sendmail Spam Mailbox
+SPAM_MAIL_BOX = Spam.Virus
+
+# Sendmail, lockfile program location
+LOCKFILE = /usr/bin/lockfile
+
+# If notworking on sendmail this may need to be set 
+SETGID_SENDMAIL = 0
+#
+# First location searched for config
+BH_CONFIG = .blackhole
+
+# Global config used if local doesn't exist, good for qmail-queue option
+QUEUE_CONFIG = /etc/blackhole.conf
+
+# enable mysql support, uncomment the MYSQL_LIBS and MYSQL_INCLUDES, possibly
+# adjust them to your locations
+WITH_SQL = 0
+WITH_MYSQL = 0
+MYSQL_LIBS= -L/usr/lib/mysql/ -lmysqlclient
+MYSQL_INCLUDES = -I/usr/include/mysql
+
+# WARNING!!! POSTGRESS SQL NOT FUNCTIONAL YET, ONLY FOR DEVELOPERS RIGHT NOW
+# HELP TEST AND FIX BUGS IN IT IF YOU ARE ABLE :)
+WITH_PQSQL = 0
+#PQSQL_LIBS = 
+#PQSQL_INCLUDES =
+
+HAVE_LIBPCRE = 1
+# Use a sql server for config storage?
+SQL_CONFIG = 0
+SQL_USER = blackhole
+SQL_PASS = 
+SQL_SERVER = 127.0.0.1
+# This can be set different for multiple servers w/duplicate usernames
+SQL_DOMAIN = default
+
+# Days before removing email in the .Spam and .Virus maildir, only in Qmail.
+EXPIRE_TIME = 0
+
+# Maximum options allowed in .blackhole per section
+MAXOPTION = 500
+
+# CPU Priority, can be from 0-19, the higher the less CPU resources used
+PRIORITY = 0
+
+# Path to Razor script razor-check, also set Perl binary path if incorrect
+RAZOR_BIN = /usr/bin/razor-check
+PERL_BIN = /usr/bin/perl
+
+# McAfee binary and dat locations
+MCAFEE_DAT_DIR = /opt/uvscan
+MCAFEE_UVSCAN = /opt/uvscan/uvscan
+# McAfee Args
+MCAFEE_ARGS = \"--unzip\",\"--exit-on-error\",\"--noboot\",\"--norename\",\"--noexpire\",\"--ignore-links\",\"--mime\",
+
+# Logging, set to 1 to log
+USE_LOG = 0
+# 0 = error, 1 = output, 2 = syslog, 3 = mysql
+LOG_TYPE = 2
+# Log Successful messages too, not just blocked and deferals
+LOG_OK = 0
+# Log other things when logging
+LOG_SCORE = 0
+LOG_SIZE = 0
+LOG_IPRELAY = 0
+LOG_SENDER = 0
+LOG_RECIPIENT = 0
+
+# Keep all email in your main email box, just tag the Subject lines
+ALLINONE = 0
+# Keep the email that is blocked, Spam/Viruses.
+STORE_EMAIL = 1
+# Virus Scan
+VIRUS_SCAN = 0
+# Send an alert to senders of viruses with the virus name they sent.
+VIRUS_ALERT = 0
+# Remove the attachments from an infected email.
+DISINFECT = 0
+# RBLs, use the RBL lists to check the relays.
+SPAM_SCAN = 1
+# Send back a message to Spammers blocked, can change the message in the cfg.
+BOUNCE_MSG = 0
+# Check senders domain/hostname for DNS resolution
+CHECK_SENDER = 0
+# Turn the Good Relays and Addr lists into the only allowed email.
+WHITE_LIST = 0
+# Make sure the relay ip resolves for reverse DNS.
+CHECK_REVERSE = 0
+# Make sure the relay ip resolves both directions, reverse DNS and the hostname
+STRICT_REVERSE = 0
+
+# Body checking default Threshholds, when set to 1 or 'on' or 'true' in config
+CUSTOM_BODY_THRESHHOLD = 1
+SPAM_BODY_THRESHHOLD = 5
+PORN_BODY_THRESHHOLD = 3
+RACIST_BODY_THRESHHOLD = 3
+# Whether or not to check after the signature of the bodys of email.
+NO_BODY_CHECK_SIGNATURE = 0
+
+# Virus Scanner, this just makes McAfee the default, change to 2 for SOPHOS
+# and 3 for Trend Micro, and 4 for clamscan.
+VIRUS_SCANNER = 4
+
+# Clam Scanner
+CLAMSCAN_BIN = /usr/local/bin/clamscan
+# Clam Args  (must be in \"--arg=arg\",\"--arg2=arg\", syntax)
+CLAMSCAN_ARGS = \"--unzip=/usr/bin/unzip\",\"--tar=/bin/tar\",
+
+# when not using clam scanner you can comment this out
+RIPMIME_LIBS = ripmime/ripmime.a
+
+# Sophos
+#SOPHOS_LIBS    = -L/opt/sophos/lib -lsavi
+#SOPHOS_INCLUDES  = -I./sav_if
+#SOPHOS_SRC = sophos.c
+SOPHOS_RIPMIME = 1
+
+# Trend Micro
+#TMICRO_LIBS = -L/lib/ -lvsapi
+
+# Blackhole uses this directory for email processing
+BH_SPOOL_DIR = /var/spool/blackhole
+
+# DNS Server used for RBL Lookups, if defined other than NULL it overrides 
+# the system defaults, use quotes escaped with backslashes, or use ./configure
+# for the easiest setup.
+DNS_SRV = NULL
+#DNS_SRV = \"127.0.0.1\"
+
+# Program to run with iprelay and email message as arguments
+# good to run a reporting program, will run against matched spam
+EXEC_PROG = 0
+PROGEXEC = /usr/local/bin/spamcomplain
+# must be in the format of \"-arg\",\"XXXX\",\"-arg2\",\"YYYY\",
+#PROGEXEC_ARGS = \"\",
+
+# Program to run with iprelay and email message as arguments
+# and use to custom check for spam, must tell what the return
+# value is for spam, defaults to 1.
+EXEC_CHECK_RET = 1
+EXEC_CHECK_PROG = /opt/blackhole/bin/spamcheck
+# must be in the format of \"-arg\",\"XXXX\",\"-arg2\",\"YYYY\",
+#EXEC_CHECK_ARGS = \"\",
+
+# This makes debugging extra verbose
+WITH_DEBUG = 1
+
+# Optimization, add more specific switches, default is '-O2'
+OPT= -g -Wall
+
+# Can turn of Include File support for configuration.
+WITH_INCLUDE_FILE = 1
+
+# Can turn off individual exec reports in blackhole config
+WITH_EXEC_REPORT_ACTION = 1
+
+# Don't change this
+USE_MCONFIG = 1
+
+

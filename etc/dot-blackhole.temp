@@ -1,0 +1,287 @@
+# Level is the maximum RBL host to check against, these are in a list from
+# 0-7 by default, you can change the default ones using the [rbl_hosts] option.
+[level]
+LEVEL
+# Expire is the number of days to keep email in .Spam and .Virus email maildir,
+# this currently is only useable when using in the .qmail file for normal Qmail
+[expire]
+-1
+# delete Spam email instead of keeping (also deletes viruses unless vdelete set)
+[sdelete]
+0
+# delete virus email instead of keeping (way to delete only viruses, not spam)
+[vdelete]
+0
+# Maximum bytes email can be before blocking
+[maxbytes]
+0
+# When delivering blocked maxbytes email to the spam folder, when this is set
+# the message will be truncated to the maxbytes size and the rest discarded.
+[maxbytes_trunc]
+0
+# This is a score to match before blocking, if set to 0 it is inactive, if it
+# is 1 or greater the blackhole changes behavior and will go through each check
+# even if one matches, and then check the score and orders them in that order,
+# so that some checks can have precidence over others and some not make the
+# email get deleted unless others match.
+[maxscore]
+0
+# Spam Header tags, control the subject tags, and also X-BlackHole headers,
+# 1 equals the ones you want, and 0 the ones you don't want.
+[spam_header]
+subject_tag = 1
+subject_msg = SPAM
+subject_info = 1
+subject_score = 0
+version = 1
+sender = 1
+relay = 1
+match = 1
+type = 1
+status = 1
+# Virus Header Tags
+[virus_header]
+subject_tag = 1
+subject_msg = VIRUS
+subject_type = 1
+subject_clean = 0
+version = 1
+sender = 1
+relay = 1
+match = 1
+type = 1
+status = 1
+# For Body Checking, will skip body checks after the ^--$ common signature line
+[nosignature]
+-1
+# This changes the delivery of email to just the main email box, and no longer
+# separates out the Spam and Viruses, it will just tag the Subject line instead
+[one_box]
+-1
+# Email addresses the email is addressed to that you want to accept by default
+[good_rcptto]
+# Email addresses the email is addressed to that you want to block
+[bad_rcptto]
+# SMTP Server used when forwarding email to another server, for spam/virus/ok
+# email, default is 127.0.0.1.
+[smtp_relay]
+# Forward Spam to this address rather than storing locally.
+[spam_fwd]
+# Forward Viruses to this address rather than storing locally.
+[virus_fwd]
+# Forward OK email, that isn't infected or Spam, to this address rather than
+# keeping them locally.
+[ok_fwd]
+# This will bounce the spam back to the Sender, check the bounce_msg option
+# for the message to send back, you can also set this for each check 
+# individually through the [*_action] sections for each one.
+[bounce]
+-1
+# takes bounces and manually performs them, sends the same bounce message set 
+# from [bounce_msg] and uses the [smtp_server] ip to send it, will
+# only send the original headers, which can avoid any really
+# odd mail loops, and looks much better for Sendmail bounces.
+[smtp_bounce]
+-1
+# This activates using the RBL lists
+[rbl_check]
+1
+# This changes the behavior of BlackHole to use the good_email and good_relay
+# sections and only allow email from addresses/ip relays/nets that are in them.
+[white_list]
+-1
+# no_spam_check is a list of users who don't want Spam checking at all
+# blackhole will skip all Spam Checks.  This is good for use with Qmail Queue
+# so all users are not forced into using blackhole.  It takes the syntax of
+# good_email, with the additional username@ which will match any email address
+# with that username.  This would be more used in non-qmail-queue setups, since
+# in qmail-queue that would also avoid checking for sending to remote users of
+# that username too, but in .dot file setups it would be fine since sending
+# email isn't ran through blackhole.
+[no_spam_check]
+# no_virus_check is a list of users who don't want Virus checking at all
+# blackhole will skip all Virus Checks. This is good for use with Qmail Queue
+# so all users are not forced into using blackhole.  The syntax is the same
+# as above for the no_spam_check option.
+[no_virus_check]
+# You can specify a custom bounce message, each individual checks action section
+# can also contain one of these.
+[bounce_msg]
+# You can specify a custom bounce message for Viruses, which is sent to the
+# person with the virus and below it will list the Virus Name caught.
+[virus_bounce_msg]
+# This is a list of host names to use for RBL checking.
+# The default list uses bl.spamcop.net, which is a very effective and
+# if you are able to please go to http://news.spamcop.net/cgi-bin/fom?file=299
+# and give them a donation so they can keep up the service.
+[rbl_hosts]
+# These are the relays your email is forwarded through, so they would be the
+# servers you possibly have forwarding to this email account, which you can
+# put here and skip them, and check the next one before them, since your email
+# will not ever match RBLs if being forwarded through your own relay.
+[my_relay]
+127.0.0.1
+# These are ip addresses/networks that you don't want to run through the 
+# checking, instead skip the ip checks for the email.
+[excluded_relay]
+# These are the email addresses/domains you allow to recieve email for yourself
+# if you have multiple aliases then you can choose which ones, or multiple 
+# domains to one mailbox.
+[my_email]
+# Subjects that you don't want, can use ^ and $ anchors to specify the beginning
+# and ending strings, or just any expression without them, this is case 
+# sensitive.
+# Also you can use the following syntax for case insensitivity
+# Xheader: (i)pattern or Xheader: (i)^pattern$.
+[bad_subject]
+# These are headers you choose to block, the syntax is 'X-Header: BLOCK THIS',
+# you can put as many headers here to do that with, and can use the ^ and $
+# anchors just like the subject blocking, this is case sensitive.
+# Also you can use the following syntax for case insensitivity
+# Xheader: (i)pattern or Xheader: (i)^pattern$.
+[bad_headers]
+# These are the email addresses you want to block, can be domains with either
+# @domain.com or .domain.com or domain.com or user@domain.com
+[bad_email]
+# These are the email addresses to always let the email through if sent by,
+# can be domains with either @domain.com or .domain.com or domain.com 
+# or user@domain.com
+[good_email]
+# These are the ip addresses of relays you want to block, can be in CIDR 
+# notation or dot notation for hosts or networks, like 1.1.1.1 or 1.1.1.0/24
+# or 1.1.1.
+[bad_relay]
+# These are the ip addresses of relays you want to allow the email for if they
+# sent it, can be in CIDR notation or dot notation for hosts or networks, like 
+# 1.1.1.1 or 1.1.1.0/24 or 1.1.1.
+[good_relay]
+# This is the threshhold (1 gives the current recommended default) of matches
+# from the body patterns in blackhole, which were designed by SpamAssassin,
+# to judge if email is Spam, the default is 5 when 1 is set below, but if the
+# number is greater than 1 it will use that threshhold.
+[body_check_spam]
+-1
+# Same as Body Check Spam, but for Porn words and general Sex email.
+[body_check_porn]
+-1
+# Same as Body Check Spam, but for Racist words and general discrimination.
+[body_check_racist]
+-1
+# Same as Body Check Spam, but with your own custom list, which is setup in the
+# [my_body] section below, the default is 1 for the threshhold, so one custom
+# pattern matched will block the email, but you can change it here like the
+# other body checks.
+[body_check]
+-1
+# This is used by the Body Check [body_check] option as the list of regex
+# patterns to check, the syntax is '1.0: PATTERN', which allows you to set
+# each patterns score (without this the default is 1.0 per pattern), and that
+# will allow regular expressions (read the pcre manpage for syntax).
+[my_body]
+# Spam Scan the email, this will activate spam scanning (on by default)
+[sscan]
+1
+# Virus Scan the email, this will activate virus scanning
+[vscan]
+-1
+# Virus Clean the email, this will remove attachments from infected emails,
+# when vcheck is setup.
+[vclean]
+-1
+# Virus Alert, this will send alerts containing the name of the virus sent
+# to email senders of viruses.
+[valert]
+1
+# BCC Address for virus alerts to be sent to, separate from normal virus
+# alerts, if NULL no BCC alerts are sent, put an administrator address here
+# for them to be sent.
+[virus_bcc_to]
+# These are the character sets allowed, if this list has any members then the
+# email you get with a charset specified will be checked against this list,
+# and blocked if not on it, it is case insensitive and also will match loosly,
+# so that 'Windows' will match 'WINDOWS-1234'.
+[charsets]
+# This is the number of characters you allow from non latin charsets, or any
+# bytes greater than 128 in value.
+[ascii_128]
+-1
+# Check the SENDER address domain of the email against DNS to see if it is a
+# valid email and that bounces would work.
+[check_dns]
+-1
+# Check the Relay ip of the email for reverse and forward DNS resolution which
+# matches each other, if it is not setup in Reverse DNS or the reverse doesn't
+# match forward lookup, then the email is blocked.
+[check_reverse]
+-1
+# Perform this check on the helo address too, pretty good check, but some
+# false positives from misconfigured mailhosts, although rare.
+[strict_reverse]
+-1
+# Razor check, must have Razor installed (razor-check), this uses Razor to
+# see if the email is Spam.
+[razor]
+-1
+# Check the content type of messages, the 'Content-Type: text/plain' parts,
+# put the types you want to block here.
+[bad_ctype]
+# Check the encoding of messages, the 'Content-Transfer-Encoding: base64' parts,
+# put the encodings you want to block here.
+[bad_encoding]
+# Attachments to filter, can be .exe or filename.exe or filename
+# Regular expressions are able to be used
+[bad_attachment]
+# Program, which is chosen when compiling blackhole, that spam should 
+# cause to execute with the iprelay and spamfile as args to the program.
+# The number here is the same as maxscore, so anything > 1 needs maxscore
+# to meet that number before sending a report.  You get to create the program ;)
+[sreport]
+-1
+# Custom program that you compile the name and 
+# args into blackhole which checks if email is 
+# spam and recieves the args of 'ipaddr' and 'spammsg', 
+# you also must tell blackhole the expected return 
+# value when the message is spam.
+[exec_check]
+-1
+# individual actions, for each check type
+# These can have settings for the following options...
+#
+#  active = 1
+#  delete = 0  
+#  bounce = 0
+#  bounce_msg = NULL
+#  spam_fwd = NULL
+#  one_box = 0
+#  passthru = 0
+#  accumulative = 1
+#  isolated = 0
+#  score = 1.0
+#  exec_report = 0
+#  exec_report_prog = NULL
+#  exec_report_args = NULL
+#
+# The options allow each check to have different outcomes instead of the global
+# defaults, delete will not save it, bounce can activate bounces, bounce_msg
+# can send a customized bounce message for the action, one_box will just
+# subject tag it instead of using .Spam or .Virus mailboxes separately, passthru
+# will skip a check if another check has already matched, to conserve resources
+# when [maxscore] is greater than 0, and the score option gives each an amount
+# to add up to maxscore plus is the order the options take precidence.
+#   
+[bad_subject_action]
+[bad_email_action] 
+[bad_relay_action]
+[rbl_check_action]
+[body_check_spam_action]
+[body_check_porn_action]
+[body_check_racist_action]
+[white_list_action]
+[my_email_action]
+[check_dns_action]
+[body_check_action]
+[charsets_action]
+[ascii_128_action]
+[check_reverse_action]
+[razor_action]
+[bad_headers_action]

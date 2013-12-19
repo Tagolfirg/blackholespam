@@ -1,0 +1,114 @@
+# Colors
+#
+color	hdrdefault	green black
+color	quoted		yellow black
+color	signature	red black
+color	indicator	white blue
+color	attachment	magenta black
+color	error		red black
+color	status		white blue
+color	tree		yellow black
+color	normal		white black
+color	body		cyan black	(http|ftp)://[_a-zA-Z0-9\./~\-]+
+color	body		green black	"gpg: Good signature"
+color	body		yellow black	"gpg: Bad signature"
+
+###----------------------------------------------------------------------------
+### headers
+###----------------------------------------------------------------------------
+
+
+###----------------------------------------------------------------------------
+### header config
+###----------------------------------------------------------------------------
+
+		# quench unwanted headers in reader
+ignore 		*
+unignore	from to cc bcc subject resent-by date authenticated-sender
+unignore        X-BlackHole
+unignore	apparently-from x-address x-organisation reply-to
+unignore	x-spammer
+
+		# sort headers
+hdr_order	From From: Resent-By: Reply-To: X-Organisation: \
+		X-Address: To: Cc: Bcc: \
+		Date: Subject:
+
+set	forw_format="Fwd: %s"			# traditional Fwd: subject
+set	include=yes				# include original in reply
+set	mime_forward_decode			# decode fwd to text/plain
+set	mime_forward_rest			# forward the rest of mime msg
+
+# Pine Bindings
+bind index v display-message
+bind index p previous-undeleted
+bind index n next-undeleted
+bind index ' ' next-page
+bind index c mail
+bind index o change-folder
+bind index g group-reply
+bind index r reply
+bind index w search
+bind index y print-message
+bind index x sync-mailbox
+bind index $ sort-mailbox
+bind index a tag-prefix
+bind index \; tag-entry
+macro index z "<limit>~T<enter>"
+#
+bind pager p previous-undeleted
+bind pager n next-undeleted
+bind pager ' ' next-page
+bind pager g group-reply 
+bind pager r reply 
+bind pager o change-folder
+bind pager c mail
+bind pager w search
+bind pager y print-message
+bind pager \n noop      # PINE prints "No default action for this menu."
+bind pager <up> previous-line
+bind pager <down> next-line
+bind compose \cx send-message
+#
+#bind index I imap-fetch-mail
+#
+#set folder=~/Mail
+set record=+sent-mail
+set nosave_name
+set postponed=~/Mail/postponed-msgs
+set hdr_format="%Z %3C %{%b %d} %-19.19L (%5c) %s"
+##
+# My Variables
+##
+#set mbox_type="Maildir"
+#set spoolfile="+spool"
+#set mbox="+mbox"
+set sort=threads
+#set sort=mailbox-order
+set beep="no"
+set beep_new="yes"
+#set check_new="yes"
+set editor="vi"
+set indent_string="> "
+set postpone=ask-yes
+set delete=ask-yes
+set print=ask-yes
+set quit=yes
+set edit_headers=yes
+#set fast_reply=yes
+set ispell="/usr/bin/ispell"
+set timeout=30
+
+set from="failures@iland.net"
+set hidden_host="yes"
+set hostname="iland.net"
+set realname="Virus Inbox"
+set signature="~/.signature"
+#set mark_old="no"
+unset metoo
+#unset weed
+set pager_stop="yes"
+set help=no
+set move=no
+#set askcc=yes
+

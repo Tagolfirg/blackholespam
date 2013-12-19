@@ -1,0 +1,24 @@
+#!/bin/sh
+#
+# Start up SMTP Demon
+# Chris Kennedy (C) 2002
+
+PROG=demon
+LOG=/var/log/smtpd.log
+ARGS="-nullroute"
+TAIL="tail --follow=name --retry -n1 -q -s1"
+SMTPLOG=/var/log/qmail/smtpd/current
+
+killall ${PROG}
+killall ${PROG}
+
+
+if [ "$1" = "clear" ]; then
+  cp -f ${LOG} ${LOG}.`date +%s`
+  >${LOG}
+  ip r|grep blackhole|sed -e s/^/'ip route delete '/g >/tmp/run.$$
+  sh /tmp/run.$$
+  rm -f /tmp/run.$$
+fi
+
+${TAIL} ${SMTPLOG}|./${PROG} ${ARGS} >${LOG} 2>&1 &

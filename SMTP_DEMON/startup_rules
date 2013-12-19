@@ -1,0 +1,49 @@
+#!/bin/sh
+
+TC=/sbin/tc
+INT=eth0
+BW=10Mbit
+PENALTY=1Kbit
+
+if [ "$1" = "stop" ]; then
+  # Delete root
+  $TC qdisc del dev $INT root handle 1:0 cbq \
+        bandwidth $BW avpkt 1000 mpu 64
+
+elif [ "$1" = "start" ]; then
+  # Delete root
+  $TC qdisc del dev $INT root handle 1:0 cbq \
+        bandwidth $BW avpkt 1000 mpu 64 >/dev/null 2>&1
+
+  # Add root
+  $TC qdisc add dev $INT root handle 1:0 cbq \
+        bandwidth $BW avpkt 1000 mpu 64
+
+  $TC class add dev $INT parent 1:0 classid 1:1 cbq \
+        bandwidth $BW rate 1.0Mbit weight 100Kbit \
+        prio 8 maxburst 20 avpkt 1000 bounded isolated
+
+  $TC class add dev $INT parent 1:1 classid 1:101 cbq \
+        bandwidth $BW rate $PENALTY weight $PENALTY \
+        prio 1 maxburst 1 avpkt 1000 bounded 
+
+  $TC qdisc add dev $INT parent 1:101 sfq quantum 1514b perturb 10 
+elif [ "$1" = "add" -a -n "$2" ]; then
+  # Add Host
+  $TC filter add dev $INT parent 1:0 protocol ip prio 1 u32 \
+        match ip dst $2 flowid 1:101
+elif [ "$1" = "del" -a -n "$2" ]; then
+  # Delete Host
+  $TC filter delete dev $INT parent 1:0 protocol ip prio 1 u32 \
+        match ip dst $2 flowid 1:101
+elif [ "$1" = "del" -a "$2" = "all" ]; then
+  # Delete Host
+  $TC filter delete dev $INT parent 1:0 protocol ip prio 1 u32 \
+        match ip dst 0/0 flowid 1:101
+elif [ "$1" = "list" ]; then
+  /etc/rc.d/fw/fw cbq cl
+else
+  echo "Illegal Input! $1"
+  echo "Usage: $0 [start|stop] [[add|del] [ipaddress/cidr|all]]"
+fi
+

@@ -1,0 +1,4 @@
+#!/bin/sh
+
+mutt -f ~/MAILDIR/.Virus -F PREFIX/share/blackhole/dot-muttrc-virus
+

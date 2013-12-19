@@ -1,0 +1,50 @@
+LOCATION=/usr/local
+VERSION=0.1.11
+#CC= ccmalloc gcc
+#CC=gcc
+
+# PERFORMANCE RELATED FLAG SETS
+#CFLAGS=-Wall -O3 -march=i686
+#CFLAGS= -Wall -O3 -march=k6
+#CFLAGS= -Wall -O2
+
+#  DEBUGGING Related Flags
+#CFLAGS= -Wall -ggdb -pg
+
+OBJ=ripmime 
+OFILES= mime.o ffget.o strlower.o XAM_strtok.o MIME_headers.o tnef/tnef.o rawget.o zstr.o logger.o
+
+default: tnef/tnef.o ripmime 
+
+
+tnef/tnef.o:
+	./build_tnef
+
+.c.o:
+	${CC} ${CFLAGS} -c $*.c
+	
+all: ${OBJ} 
+
+
+mimelib: ${OFILES}
+	ar ruvs ripmime.a ${OFILES}
+
+ripl: ripmime.a
+	${CC} ${CFLAGS} ripmime.c ripmime.a -o ripmime
+
+sco: ${OFILES}
+	${CC} ${CFLAGS} ripmime.c ${OFILES} -o ripmime -lsocket
+
+ripmime: ${OFILES}
+	${CC} ${CFLAGS} ripmime.c ${OFILES} -o ripmime
+		
+install: ${OBJ}
+	strip ripmime
+	cp ripmime ${LOCATION}/bin/
+
+clean:
+	rm -f *.o *core ${OBJ}
+	rm -f tnef/*.o
+
+MIMEH: MIME_headers.o strlower.o
+	${CC} ${CFLAGS} MIMEH_test.c MIME_headers.o strlower.o -o MIMEH_test

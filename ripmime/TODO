@@ -1,0 +1,20 @@
+--ripMIME 1.2.x----------TO DO LIST---------------
+
+This list is for anyone who wishes to help out with the ripMIME
+development, and is wondering what there needs to be done.
+
+I'm always looking out for mailpacks which fail to extract
+correctly with ripMIME.  Send them along to pldaniels@pldaniels.com
+gzip'd or bzip2'd.  I only have a MODEM/56K connection, so,
+dont send anything > 500K (please).
+
+- 11 Oct 2002 
+	- Improve the ISO encoded filename decoding routines... add them!
+	- Rectify quote encoding handling of CRLF / linebreak sequences as per RFC
+		and Kshitij Gupta's email.
+
+
+
+
+--ripMIME 1.2.x----------TO DO LIST---------------
+

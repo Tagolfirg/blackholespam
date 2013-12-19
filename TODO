@@ -1,0 +1,44 @@
+# These are the current things I'm planning on doing in BlackHole,
+# there may be other things I don't have here, or some things here
+# that won't be done.  The order is from bottom up, so the things 
+# at the bottom of this file are probably going to get done first.
+
+Version 1.1.0+:
+==============
+binary cache file for .blackhole config file, to speed up slightly,
+involve hashing the data once retrieved also to internally speed up
+usage of lists.
+
+hash spooldirs like in procmail, like... /var/spool/mail/s/o/something
+
+Make domain/hostname for individual configs be able to look at all .*.*.
+possibilties to enable filtering .com and such with separate configs.
+
+Version 1.0.?:
+=============
+Postgres SQL support needs to be made to work and tested, most code merged
+in but needs some finishing up to actually work.
+
+AVP Virus support http://www.kaspersky.com
+AVG Virus Scanner from grisoft.com
+Command Virus Scanner Support http://www.commandondemand.com/eval/index.cfm
+Vexira Virus Scanner Support http://www.centralcommand.com
+http://www.hbedv.com/ Virus scanner support
+
+Redo the way Setup works, and general configuration.
+
+Courier MTA athentication support, will allow the mysql/ldap modules
+to be used for gaining user information, instead of the normal UNIX
+method.
+
+Race condition on SMP machines using clamscan
+
+Put in a header if passed through blackhole and checked, one for Virus
+scanning and one for Spam scanning.
+
+length of file names when reading a directory, in sophos.c, expire.c and
+mimeparse.c
+
+Add environment variables allowing setting spam/virus checking in 
+qmail-queue mode, like VIRUS_CHK, SPAM_CHK or similar.
+

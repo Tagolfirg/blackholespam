@@ -1,0 +1,21 @@
+Received: (qmail 12884 invoked from network); 30 Jun 2001 07:38:10 -0000
+Received: from ns.towntel.co.jp (HELO towntel.co.jp) (195.143.56.2)
+  by wey.me.net with SMTP; 30 Jun 2001 07:38:10 -0000
+Received: from localhost (HELO towntel.co.jp) (10.0.0.2)
+  by wey.me.net with SMTP; 30 Jun 2001 07:38:10 -0000
+Date: Sat, 30 Jun 2001 16:33:24 +0900
+From: failures@me.net
+Subject: test Virus
+Message-Id: <200106300733.QAA04141@towntel.co.jp>
+
+test 6
+
+
+X5O!P%@AP[4\PZX54(P^)7CC)7}$EICAR-STANDARD-ANTIVIRUS-TEST-FILE!$H+H*
+
+begin 644 EICAR.COM
+M6#5/(5`E0$%06S1<4%I8-30H4%XI-T-#*3=])$5)0T%2+5-404Y$05)$+4%.
+85$E625)54RU415-4+49)3$4A)$@K2"H*
+`
+end
+

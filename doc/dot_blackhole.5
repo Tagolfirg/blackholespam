@@ -1,0 +1,559 @@
+.TH \f3dot_blackhole\f1 5
+.SH NAME
+dot_blackhole \- blackhole dotfile examples
+.SH SYNOPSIS
+.BR .blackhole \ examples
+
+.SH CONCEPTION
+
+.B blackhole
+allows spam checks based on 
+.IP \(bu
+the relay or sender IP
+.IP \(bu
+the email address of the sender
+.IP \(bu
+the header content
+.IP \(bu
+distributed spam checksum database
+.B razor 
+.IP \(bu
+and the email body content 
+
+.P
+Additionally, you may choose fine grained actions for every type of match. 
+
+.SH EXAMPLES
+
+.P
+.SS GENERAL OPTIONS
+
+.P
+.Sx 2
+[level]
+ 7
+
+.Ex
+Amount of RBL ("Real time Black hole List") hosts to use.
+
+
+.Sx 2 
+[expire]
+ 0
+
+.EX
+No expiration.
+
+(Give the number of days before removing email in .Spam and .Virus
+maildir directories, only works currently for Maildir setups, not for
+Sendmail with mbox formats.)
+
+.Sx
+[maxbytes]
+
+.Ex
+Maximum bytes or size of an email to allow through.
+
+.Sx
+[maxbytes_trunc]
+
+.Ex
+Message will be truncated to the maxbytes size if exceeded, otherwise
+the message is just put into your spam folder even if over.
+
+.Sx
+[smtp_relay]
+
+.Ex
+SMTP Server used when forwarding email to another server, for spam/virus/ok
+email, default is 127.0.0.1
+
+.Sx
+[spam_fwd]
+ spam@yourdomain.net
+
+.Ex
+Forward Spam to this address rather than storing locally.
+
+.Sx
+[virus_fwd]
+
+.Ex
+ Forward Viruses to this address rather than storing locally.
+
+.Sx
+[virus_bcc_to]
+ 
+.Ex
+BCC Address for virus alerts to be sent to,separate from normal virus
+alerts, if NULL no BCC alerts are sent, put an administrator address
+here for them to be sent.
+
+.Sx
+[ok_fwd]
+
+.Ex
+ Forward OK email, that isn't infected or Spam, to this address rather than
+ keeping them locally.
+
+.Sx  
+[one_box]
+ 0
+
+.Ex
+Divert spam (and viruses);therefore 0 is: create separate boxes for
+spam and virus   
+.P
+
+(1 changes the delivery of email to just the main email box, and no longer
+separates out the Spam and Viruses, it will just tag the Subject line instead)
+
+.Sx
+[white_list]
+ 0
+
+.Ex
+No white_list
+.P
+(This changes the behavior of BlackHole to use the good_email and good_relay
+sections and 
+.B only 
+allow email from addresses/ip relays/nets that are in them.)
+
+.Sx
+[nosignature]
+ 1
+
+.Ex
+Don't include signatures in body checks. Useful for ascii art
+signatures with a lot of $$$$$$$$$
+
+
+.SS IP RELATED CHECKS
+.P
+.Sx 
+[my_relay]
+ 192.168.0.0/16
+
+.Ex
+Don't check internal IPs
+.P
+(This is a list of relays you don't want to use in the header,
+so it will skip them and go to the next one, instead of doing the
+checks against the most recent one.  Takes either classful notation
+like 192.168. or CIDR of 192.168.0.0/16.  By default 127.0.0.1 is
+included in the config.)
+
+.Sx 
+[excluded_relay]
+ 65.125.64.135
+ 65.125.64.134
+ 192.25.206.10
+
+.Ex
+Don't check debian's list servers again and again
+.P
+Header and body will be checked if proceeding, but no RBL check.
+
+.Sx
+[check_dns]
+ 0
+
+.Ex
+No DNS checks
+.P
+(Check the SENDER address domain of the email against DNS to see if it is a
+valid email and that bounces would work.)
+
+.Sx
+[check_reverse]
+ 0 
+
+.Ex
+No reverse DNS checks
+.P
+(Check the Relay ip of the email for reverse and forward DNS resolution which
+matches each other, if it is not setup in Reverse DNS or the reverse doesn't
+match forward lookup, then the email is blocked.)
+
+.Sx
+[bad_relay]
+ nnn.nnn.nnn.nnn
+
+.Ex
+No discussion about that one.
+
+.Sx
+[good_relay]
+ 62.178.97.17
+
+.Ex
+Absolutely accept anything from there.
+.P
+(No further checks will be done.) 
+
+.SS SENDER RELATED CHECKS
+.P
+[my_email] 
+
+.Ex
+(List of email addresses you allow email to, anything else used
+to address you in the To: envelope will be classified as Spam.)
+
+.Sx
+[good_email] 
+ friend@outlook_hell_suffering_from_technophobia
+.Ex
+(Good place for html obsessed people you nevertheless want to have
+news from, but want to exclude the remaining html junk - see below.)
+
+.Sx
+[bad_email]
+ spammer@spammerparadise.com
+ @spammerparadise.com		
+ spammerparadise.com
+
+.Ex
+(The last one matches both spammerparadise.com and limbo.spammerparadise.com)
+
+.SS HEADER RELATED CHECKS
+.P
+.Sx
+[bad_subject]
+  ks_c_5601
+ ^ADV:
+ JOIN FREE
+
+.Ex
+Get rid of some junk with charset indication in the subject;
+accepting the invitation of some "ethical" spammers (note: you may
+use the anchors "^" and "$"); ...
+
+.Sx
+[bad_headers]
+
+.Ex
+(These are headers you choose to block, the syntax is 'X-Header: BLOCK THIS',
+you can put as many headers here to do that with, and can use the ^ and $
+anchors just like the subject blocking, this is case sensitive.)
+
+.Sx
+[charsets]
+ us-ascii
+ iso-8859-1
+ iso-8859-2
+ iso-8859-9
+ iso-8859-15
+ utf-8
+ iso-2022-jp
+ 
+.Ex
+Charsets to let through. Everything else will be blocked.
+.P
+(Fuzzy matching is possible: "windows" matches a lot of them)
+
+.Sx
+[bad_ctype]
+ text/html
+
+.Ex
+Content Type to block. Sort of drastic measure, works fine in
+conjunction with [good_email] though.
+
+.Sx 
+[bad_encoding]
+ base64
+
+.Ex
+Another drastic one.
+
+.SS BODY RELATED CHECKS
+.P
+.Sx
+[razor]
+ 1
+
+.Ex
+Use razor, definitely - especially for mailing lists.
+.P
+(You have to get it first
+.UR 
+http://razor.sourceforge.net/ 
+.UE 
+or
+.IR apt-get 
+it)
+
+.Sx
+[ascii_128]
+ 100
+
+.Ex
+100 characters above ascii 128 is usually fine with me.
+
+.Sx
+[body_check_spam]
+ 1
+
+.Ex
+Check body against some predefined patterns 
+
+.Sx
+[body_check] 
+ 5
+
+.Ex
+Same as Body Check Spam, but with your own custom list, which is setup in the
+[my_body] section below, the default is 1 for the threshold, so one custom
+pattern matched will block the email, but you can change it here like the
+other body checks.
+
+
+.Sx
+[my_body]
+ 5.0: Nigerian Government
+ 3.5: MSHTML
+ 5.0: FREE search engine
+ 5.0: saved from url=
+ 5.0: www.avez-vousoublie.org
+ 5.0: e-mail has reached you in error
+ 5.0: your investment
+ 3.0: 0.000.00
+ 5.0: AKDENIZ GOZ MERKEZI
+ 3.5: ask for your assistance
+ 5.0: Pour ne plus recevoir des emails, cliquez
+ 5.0: investment program 
+ 5.0: YOU WON
+ 2.0: FREE
+ 5.0: one time message
+ 5.0: Microsoft FrontPage 
+
+.Ex
+Check against my custom patterns (RE are now supported (read the pcre
+manpage for syntax).  Threshold is set to "5".
+
+"MSHTML" and "Microsoft FrontPage" are my favorites.
+
+
+.Sx
+[vscan]
+ 1
+
+.Ex
+Virus Scan the email, this will activate virus scanning
+.P
+
+.Sx
+[vclean]
+ 1
+
+.Ex
+(Virus Clean the email, this will remove attachments from infected emails,
+when vcheck is setup.)
+
+
+
+.Sx
+[valert]
+ 1
+
+.Ex
+(Virus Alert, this will send alerts containing the name of the virus sent
+to email senders of viruses.)
+
+.SS ACTIONS
+.P
+.Sx 
+[maxscore]
+ 1
+
+.Ex
+Use scores for each check to choose action.
+
+This is a score to match before blocking, if set to 0 it is inactive, if it
+is 1 or greater the blackhole changes behavior and will go through each check
+even if one matches, and then check the score and orders them in that order,
+so that some checks can have precedence over others and some not make the
+email get deleted unless others match.  
+
+.Sx
+[bad_subject_action]
+ active = 1
+ passthru = 1
+ score = 1
+ spam_fwd = NULL
+ delete = 0
+ bounce = 0
+.Ex
+Check for bad subjects, don't try this check if other checks already
+gave positive, let the score at 1 (this score will decide which action
+takes precedence when there is more than one match); don't forward
+spam; don't delete it yet; don't bounce.
+ 
+
+.Sx
+[bad_email_action]
+ active = 1
+ bounce = 1
+ delete = 1
+ passthru = 0
+ accumulative = 1	
+
+.Ex
+
+Now, bounce, delete and have this check happen, even if other checks
+succeded and allows the actions settings be enabled even if this action
+is not the highest in score, or first met (on by default).
+
+.Sx
+	[bad_subject_action]
+.Ex
+
+.Sx
+	[bad_email_action]
+.Ex
+
+.Sx
+	[bad_relay_action]
+.Ex
+
+.Sx
+	[rbl_check_action]
+.Ex
+
+.Sx
+	[body_check_spam_action]
+.Ex
+
+.Sx
+	[body_check_porn_action]
+.Ex
+
+.Sx
+	[body_check_racist_action]
+.Ex
+
+.Sx
+	[white_list_action]
+.Ex
+
+.Sx
+	[my_email_action]
+.Ex
+
+.Sx
+	[check_dns_action]
+.Ex
+
+.Sx
+	[body_check_action]
+.Ex
+
+.Sx
+	[charsets_action]
+.Ex
+
+.Sx
+	[ascii_128_action]
+.Ex
+
+.Sx
+	[check_reverse_action]
+.Ex
+
+.Sx
+	[razor_action]
+.Ex
+
+.Sx
+	[bad_headers_action]
+.Ex
+
+.Sx
+	[bad_ctype_action]
+.Ex
+
+.Sx
+	[bad_encoding_action]
+.Ex
+
+.Sx
+	[bad_maxbytes_action]
+.Ex
+
+.Sx
+	[bad_rcptto_action]
+
+.Ex
+List of available action frames
+
+.SS Custom Header Tags
+
+.Sx
+ [spam_header]
+  subject_tag = 1
+  subject_msg = SPAM
+  subject_info = 1
+  subject_score = 0
+  version = 1
+  sender = 1
+  relay = 1
+  match = 1
+  type = 1
+  dUmMy= 1
+ 
+.Ex
+
+Spam Header tags, control the subject tags, and also X-BlackHole headers,
+1 equals the ones you want, and 0 the ones you don't want.
+
+.Sx
+ [virus_header]
+  subject_tag = 1
+  subject_msg = VIRUS
+  subject_type = 1
+  subject_clean = 0
+  version = 1
+  sender = 1
+  relay = 1
+  match = 1
+  type = 1
+  dUmMy= 1
+
+.Ex
+
+virus header tags
+
+.SH NOTES
+
+.BI blackhole \ -I
+let you check the compile time defaults.  
+.P
+You may want to use
+.BR bhconf (1)
+to create and maintain your .blackhole file.
+.P
+Check the examples directory for additional information and dotfiles.
+
+.SH SEE ALSO
+
+.BR bhconf (1),
+.BR bhinstall (1),
+.BR blackhole (1),
+.BR razor-check (1)
+
+.PP
+For a verbose intro see the 
+.B blackhole
+info entry.
+.SH AUTHOR
+.SB Chris Kennedy
+
+.I <getdown@groovy.org>
+.P
+This manual page was written by 
+.SB Michael Hummel 
+.SM <mhummel@debian.org>,
+.SM for the 
+.SB Debian GNU/Linux system
+.SM (but may be used by others). 

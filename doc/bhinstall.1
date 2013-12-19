@@ -1,0 +1,96 @@
+.TH \f3bhinstall\f1 1 "Time-stamp: <2002-05-19 05:17:24 fip>"
+.SH NAME
+bhinstall \- setup script for the 
+.B blackhole
+spam blocker.
+.SH SYNOPSIS
+.B bhinstall
+.SM  install 
+| 
+.SM remove 
+|
+.SM queue_install
+.I [queue add|del <domain> <user>]
+
+.SH DESCRIPTION
+
+.P
+.B bhinstall
+facilitates the setup of your personal
+.BR blackhole (1)
+settings
+
+.B bhinstall
+is a shell script that
+.IP 1.
+generates a convenient 
+.I ~/.forward
+or
+.I ~/.qmail
+or
+.I ~/.courier
+file
+.IP 2.
+calls 
+.BR bhconf (1)
+for the 
+.BR blackhole (1)
+rules setup which should give you at least a working skeleton. 
+
+
+.SH OPTIONS
+.PP
+.TP 20
+.B queue_install
+.I [queue add|del <domain> <user>]
+.P
+This option is only for installing Blackhole for qmail-queue from the source directory.
+.P
+User will either:
+.IP \(bu 
+.B bhinstall
+install 
+.PP
+or
+.IP \(bu
+.B bhinstall
+remove
+.PP
+ the 
+.B blackhole
+spam filter.
+
+
+.SH NOTES
+
+.IP \(bu
+The examples directory (
+.I /usr/share/doc/blackhole/examples
+for Debian ) contains a complete set of specific MTA dot-files. You can just copy the corresponding one in your home
+directory (backing up the old one, of course).   
+.IP \(bu
+There you can find a 
+.I .blackhole
+skeleton, too.
+
+
+
+.SH SEE ALSO
+.BR blackhole (1),
+.BR bhconf (1),
+.BR dot_blackhole (5),
+.PP
+For a verbose intro see the 
+.B blackhole
+info entry.
+.SH AUTHOR
+.SB Chris Kennedy
+
+.I <getdown@groovy.org>
+.P
+This manual page was written by 
+.SB Michael Hummel 
+.SM <mhummel@debian.org>,
+.SM for the 
+.SB Debian GNU/Linux 
+.SM system (but may be used by others).

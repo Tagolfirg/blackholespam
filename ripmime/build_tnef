@@ -1,0 +1,4 @@
+#!/bin/sh
+cd tnef
+make -f Makefile-no-automake
+

@@ -1,0 +1,419 @@
+#!/usr/bin/env perl
+#/*
+#   Copyright (C) 2002
+#        Chris Kennedy, The Groovy Organization.
+#
+#   The Blackhole is free software; you can redistribute it and/or
+#   modify it under the terms of the GNU Library General Public License as
+#   published by the Free Software Foundation; either version 2 of the
+#   License, or (at your option) any later version.
+#
+#   The Blackhole is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+#   Library General Public License for more details.
+#
+#   For a copy of the GNU Library General Public License
+#   write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+#   Boston, MA 02111-1307, USA.  or go to http://www.gnu.org
+#*/
+$PREFIX = "BASEPREFIX";
+$BIN_DIR = "BASEPREFIX/bin";
+$BLACKHOLE = "BASEPREFIX/bin/blackhole";
+
+%internals = ();
+
+if(! -f "$BLACKHOLE") {
+  if( -f "./blackhole") {
+    $BLACKHOLE = "./blackhole";
+  }
+} 
+
+if( -f "$BLACKHOLE") {
+  open(BHOLE,"|$BLACKHOLE -I 1> /tmp/blackhole.$$");
+  close(BHOLE);
+  open(BHOLE,"</tmp/blackhole.$$");
+  while(<BHOLE>) {
+    $setting = $_;
+    chomp($setting);
+    if($setting ne '') {
+      $setting =~ s/\"//g;
+      ($name, $value) = split(/=/, $setting);
+      $internals{$name} = $value;
+    }
+  }
+  close(BHOLE);
+  unlink("/tmp/blackhole.$$");
+} else {
+  printf("Error, can't find blackhole program!\n");
+  exit;
+}
+# action [add|delete] section [] variable
+if($ARGV[0] eq "-f" && -f "$ARGV[1]") {
+  ($FLAG, $CONFIG_FILE, $ACTION, $SECTION, @OPTION) = @ARGV;
+} elsif($ARGV[0] eq "-h") {
+  &usage;
+  exit;
+} else {
+  ($ACTION, $SECTION, @OPTION) = @ARGV;
+  $CONFIG_FILE = $internals{'BH_CONFIG'};
+  if(! -f "$CONFIG_FILE") {
+    $CONFIG_FILE = $internals{'QUEUE_CONFIG'};
+    if(! -f "$CONFIG_FILE") {
+      if( -f "./.blackhole") {
+        $CONFIG_FILE = "./.blackhole";
+      }
+    }
+  }
+  $mysql_domain = $internals{'SQL_DOMAIN'};
+}
+
+$mysql_host = $internals{'SQL_SERVER'};
+$mysql_user = $internals{'SQL_USER'};
+$mysql_pass = $internals{'SQL_PASS'};
+
+@actions = ('add','delete','list','upload','listsections');
+my $newoption;
+my $section;
+my $count;
+my %current_config;
+my @sections = ('level','my_relay','excluded_relay','bad_email','good_email',
+		'good_relay','bad_headers','maxscore','nosignature',
+		'bad_relay','bad_subject','rbl_hosts','rbl_check','vscan',
+		'bounce', 'valert','vclean','bounce_msg','body_check_spam',
+		'white_list','my_email','check_dns', 'one_box','body_check',
+		'body_check_porn','body_check_racist','expire','check_reverse',
+		'my_body','charsets','ascii_128','razor', 'bad_subject_action',
+ 		'bad_email_action',
+		'bad_relay_action',
+ 		'rbl_check_action',
+ 		'body_check_spam_action',
+ 		'body_check_porn_action',
+ 		'body_check_racist_action',
+ 		'white_list_action',
+ 		'my_email_action',
+ 		'check_dns_action',
+ 		'body_check_action',
+ 		'charsets_action',
+ 		'ascii_128_action',
+ 		'check_reverse_action',
+ 		'razor_action', 
+                'bad_headers_action',
+                'bad_ctype_action',
+                'bad_encoding_action',
+                'bad_maxbytes_action',
+                'bad_rcptto_action',
+                'no_spam_check', 'no_virus_check', 'bad_ctype',
+		'bad_encoding', 'smtp_relay', 'spam_fwd', 'virus_fwd', 'ok_fwd',
+		'delete', 'sdelete', 'vdelete', 'maxbytes', 'maxbytes_trunc',
+                'virus_bcc_to', 'spam_header', 'virus_header', 'bad_rcptto',
+                'good_rcptto', 'pyzor', 'sreport', 'strict_reverse', 'smtp_bounce'
+);
+
+if(! -f "$CONFIG_FILE") {
+  printf("Error, no %s file found!\n", $CONFIG_FILE);
+  exit 1;
+}
+&read_config();
+
+if($ACTION eq 'listsections') {
+  $i=0;
+  printf("\n===\n Current Sections in BlackHole Config\n===\n");
+  foreach(@sections) {
+    $i++;
+    if($i % 3 == 0) {
+      printf("%s\n", $_);
+    } else {
+      printf("%s, ", $_);
+    }
+  }
+  printf("\n");
+  exit 0; 
+} elsif($ACTION eq 'list') {
+  &list_config;
+  exit 0;
+} elsif($ACTION eq 'add') {
+  if($OPTION[0]) {
+    foreach(@OPTION) {
+      $newoption .= "$_ ";
+    }
+    $newoption =~ s/\s+$//;
+  } else {
+    &usage;
+    exit 1;
+  } 
+} elsif($ACTION eq 'delete') {
+  if($OPTION[0]) {
+    foreach(@OPTION) {
+      $newoption .= "$_ ";
+    }
+    $newoption =~ s/\s+$//;
+  } else {
+    &usage;
+    exit 1;
+  } 
+} elsif($ACTION eq 'upload') {
+  use DBI; # MySQL Support
+  #my $username = getpwent();
+  my $username = '';
+  my $domain = $mysql_domain;
+  my $confirm;
+  if($SECTION ne '') {
+    $mysql_host = $SECTION;
+    chomp($mysql_host);
+  }
+  if($OPTION[0] ne '') {
+    $mysql_pass = $OPTION[0];
+    chomp($mysql_pass);
+  }
+  if($OPTION[1] ne '') {
+    $mysql_domain = $OPTION[1];
+    chomp($mysql_domain);
+  }
+  # need username, domain (use default for default)
+  while($username eq '') {
+    printf("Enter username: ");
+    $username = <STDIN>;
+    chomp($username);
+  }
+  if($mysql_domain eq '') {
+    printf("Enter domain (or just leave blank for default): ");
+    $domain = <STDIN>;
+    chomp($domain);
+    if($domain eq '') { 
+      $domain = 'default';
+    }
+  } else {
+    $domain = $mysql_domain;
+  }
+  printf("Confirm user %s domain %s upload of %s [y/n]: ",
+	$username, $domain, $CONFIG_FILE);
+  $confirm = <STDIN>;
+  chomp($confirm);
+  if($confirm eq 'y') {
+    printf("using mysql host %s\n", $mysql_host);
+    $dbh=DBI->connect("DBI:mysql:BlackHole:$mysql_host", 
+	$mysql_user, $mysql_pass);
+    $sth=$dbh->prepare("select username from BlackHole where username='$username' and domain='$domain'");
+    $sth->execute();
+
+    my $i=0;
+    while (($row = $sth->fetchrow_arrayref))
+    {
+      $ConfListing[$i]="$row->[0]";
+      $i++;
+    }
+    if($i == 0) {
+      $dbh->do("insert into BlackHole set username='$username',domain='$domain'");
+    }
+
+    # create new entry if not in db and upload, otherwise just upload
+    &upload_config($username,$domain);
+    # increment timestamp entry
+    $dbh->do("update BlackHole set timestamp=UNIX_TIMESTAMP() where username='$username' and domain='$domain'");
+    $dbh->disconnect;
+  }
+  exit 1;
+} else {
+  &usage;
+  exit 1;
+}
+if(!$SECTION) {
+  &usage;
+  exit 1;
+}
+
+# Main Program Body
+#printf("ACTION: %s SECTION: %s OPTION: %s\n", $ACTION, $SECTION, $newoption); 
+
+if($ACTION eq 'add') {
+  if($SECTION eq 'level') {
+    $current_config{$SECTION}{options}[0] = $newoption;
+    &write_config();
+  } elsif($SECTION eq 'vscan') {
+    $current_config{$SECTION}{options}[0] = $newoption;
+    &write_config();
+  } elsif($SECTION eq 'valert') {
+    $current_config{$SECTION}{options}[0] = $newoption;
+    &write_config();
+  } elsif($SECTION eq 'vclean') {
+    $current_config{$SECTION}{options}[0] = $newoption;
+    &write_config();
+  } elsif($SECTION eq 'bounce') {
+    $current_config{$SECTION}{options}[0] = $newoption;
+    &write_config();
+  } elsif($SECTION eq 'bounce_msg') {
+    $current_config{$SECTION}{options}[0] = $newoption;
+    &write_config();
+  } elsif($SECTION eq 'rbl_check') {
+    $current_config{$SECTION}{options}[0] = $newoption;
+    &write_config();
+  } elsif($SECTION eq 'body_check_spam') {
+    $current_config{$SECTION}{options}[0] = $newoption;
+    &write_config();
+  } elsif($SECTION eq 'body_check_porn') {
+    $current_config{$SECTION}{options}[0] = $newoption;
+    &write_config();
+  } elsif($SECTION eq 'body_check_racist') {
+    $current_config{$SECTION}{options}[0] = $newoption;
+    &write_config();
+  } elsif($SECTION eq 'white_list') {
+    $current_config{$SECTION}{options}[0] = $newoption;
+    &write_config();
+  } elsif($SECTION eq 'one_box') {
+    $current_config{$SECTION}{options}[0] = $newoption;
+    &write_config();
+  } elsif($SECTION eq 'check_dns') {
+    $current_config{$SECTION}{options}[0] = $newoption;
+    &write_config();
+  } elsif($SECTION eq 'check_reverse') {
+    $current_config{$SECTION}{options}[0] = $newoption;
+    &write_config();
+  } elsif($SECTION eq 'body_check') {
+    $current_config{$SECTION}{options}[0] = $newoption;
+    &write_config();
+  } elsif($SECTION eq 'ascii_128') {
+    $current_config{$SECTION}{options}[0] = $newoption;
+    &write_config();
+  } elsif($SECTION eq 'expire') {
+    $current_config{$SECTION}{options}[0] = $newoption;
+    &write_config();
+  } elsif($SECTION eq 'razor') {
+    $current_config{$SECTION}{options}[0] = $newoption;
+    &write_config();
+  } elsif($SECTION eq 'smtp_relay') {
+    $current_config{$SECTION}{options}[0] = $newoption;
+    &write_config();
+  } elsif($SECTION eq 'spam_fwd') {
+    $current_config{$SECTION}{options}[0] = $newoption;
+    &write_config();
+  } elsif($SECTION eq 'virus_fwd') {
+    $current_config{$SECTION}{options}[0] = $newoption;
+    &write_config();
+  } elsif($SECTION eq 'delete') {
+    $current_config{$SECTION}{options}[0] = $newoption;
+    &write_config();
+  } elsif($SECTION eq 'vdelete') {
+    $current_config{$SECTION}{options}[0] = $newoption;
+    &write_config();
+  } elsif($SECTION eq 'ok_fwd') {
+    $current_config{$SECTION}{options}[0] = $newoption;
+    &write_config();
+  } elsif($SECTION eq 'virus_bcc_to') {
+    $current_config{$SECTION}{options}[0] = $newoption;
+    &write_config();
+  } else {
+    for($i=0;$current_config{$SECTION}{options}[$i];$i++) {
+     ;;   
+    }
+    #printf("%s\n", $current_config{$SECTION}{options}[$i]); 
+    $current_config{$SECTION}{options}[$i] = $newoption;
+    &write_config();
+  }
+} elsif($ACTION eq 'delete') {
+  for($i=0;$current_config{$SECTION}{options}[$i];$i++) {
+    if($current_config{$SECTION}{options}[$i] eq $newoption) {
+      for($j=$i;$current_config{$SECTION}{options}[$j];$j++) {
+        $current_config{$SECTION}{options}[$j] = 
+		$current_config{$SECTION}{options}[$j+1];
+      }
+      $current_config{$SECTION}{options}[$j] = '';
+      &write_config();
+    }
+  }
+}
+exit 0;
+
+# Functions
+sub usage() {
+  printf("$0: [-h] [-f config_file] add|delete|list section option\n");
+  printf("$0: upload [mysql_host] [mysql_pass] [mysql_domain]\n");
+  printf("$0: listsections\n");
+}
+
+sub read_config()
+{
+  # Read in config
+  open(CONFIG,"$CONFIG_FILE");
+  while($line = <CONFIG>) {
+    # Skip blank lines
+    if($line =~ /^\s+/ || $line =~ /^$/) {
+      next;
+    }
+
+    # Section found
+    if($line =~ /^\[/) {
+      $section = $line;
+      $section =~ s/[\]\[\n\s]+//g; 
+      if($current_config{$section}{current} == 1) {
+        $current_config{$section}{current} = 0;
+      }
+      #printf("Found section: %s\n", $section);
+      $current_config{$section}{current} = 1; 
+      $count = 0;
+
+      next;
+    }
+    # Check if inside section
+    if($section) {
+      if($current_config{$section}{current} == 1) {
+        chomp($line);
+        $current_config{$section}{options}[$count] = "$line";
+        $count++;
+      } 
+    }
+  }
+  close(CONFIG);
+}
+
+sub write_config() {
+  # Write out config
+  open(CONFIG,">$CONFIG_FILE");
+  foreach $section (@sections) {
+    if($current_config{$section}{options}[0] || 
+	(("$SECTION" eq "$section") && ("$ACTION" eq 'add'))) 
+    {
+      printf(CONFIG "[%s]\n", $section);
+      for($i=0;$current_config{$section}{options}[$i];$i++) {
+        printf(CONFIG "%s\n", $current_config{$section}{options}[$i]);
+      }
+    }
+  }
+  close(CONFIG);
+}
+
+sub list_config() {
+  # Write out config
+  foreach $section (@sections) {
+    if($current_config{$section}{options}[0]) {
+      printf("[%s]\n", $section);
+      for($i=0;$current_config{$section}{options}[$i];$i++) {
+        printf("%s\n", $current_config{$section}{options}[$i]);
+      }
+    }
+  }
+}
+
+sub upload_config($$) {
+  my $username = $_[0];
+  my $domain = $_[1];
+
+  # Upload config to MySQL Database
+  foreach $section (@sections) {
+    if($current_config{$section}{options}[0]) {
+      printf("[%s]\n", $section);
+      my $this_option;
+      for($i=0;$current_config{$section}{options}[$i];$i++) {
+        if($current_config{$section}{options}[$i+1] ne '') {
+          $this_option.="$current_config{$section}{options}[$i]\n";
+        } else {
+          $this_option.="$current_config{$section}{options}[$i]";
+        }
+      }
+      printf("%s\n", $this_option);
+      $dbh->do("update BlackHole set $section='$this_option' where username='$username' and domain='$domain'");
+    } else {
+      $dbh->do("update BlackHole set $section='' where username='$username' and domain='$domain'");
+    }
+  }
+}

@@ -1,0 +1,49 @@
+Small C program which blocks Spam/Viruses for Sendmail Qmail Postfix Exim or
+Courier.
+
+The Blackhole is written in C and designed to scale high for large SMTP servers
+and work over NFS mounted home directories, and also can work on small servers
+too :).  There are over 15 Spam blocking techniques employed and also the
+options to become a 'white list'.  The storage of the blocked email is flexible
+and able to be diverted to another mailbox or use Subject line tags.  The
+removal of old storage of spam and viruses can be configured for any number
+of days before deletion, or no deleting.  All three main unix mailservers
+Sendmail, Qmail and Postfix are supported and the email storage type can
+be mbox or Maildir for Postfix and Sendmail.  The setup install and 
+configuration is real easy and allows for an individual user to do it if
+having control of their .forward or .qmail file in the home directory.  You
+can use the blackhole for Virus scanning, alerting senders and removing the
+viruses.  It has the Sophos engine built in and only needs you to license 
+and install the Sophos shared library and scanner.  It also supports the
+McAfee uvscan virus scanner to do the scanning.  The configuration can be
+done through the bhconf utility which writes to the .blackhole config file,
+it also can store the config in a MySQL database and caches it till changes
+locally for less of a performance hit.  You can log through Syslog, MySQL DB
+or stderr/stdout methods the username and actions taken when blocking email.
+The list of optional blocking/Spam checks are bad email address/domains,
+bad email relays/networks, bad subject lines, allowed charsets, asci > 128
+(non-latin charsets), RBL Lists, Razor, SpamAssassin body check/scoring system,
+custom body checking phrases, SENDER dns, relay reverse DNS.  It also can have
+a list of relays to skip and check the one before it (or more if all local)
+and has good email address/relays lists for exceptions.  It tags Spam and 
+Viruses with X-BlackHole-* Headers telling why the email was blocked.
+BlackHole can have individual actions taken for each check active, checks
+can be scored different to give a precidence to order and actions taken.
+The score system can also make more than one check possibly require positive
+results before blocking email.  The custom header checking and custom body
+checking give blackhole a very flexible amount of user optional blocks without
+changing the source code for new checking, since a body or header check
+could do about anything.  You can also filter messages by content type or
+content encoding, listing the types you want to block.  If used in qmail-queue
+mode, it is useful to use the options to skip virus or spam checking for
+certain users that don't want to have blackhole check their email, this can
+be used in the dot-config methods but is less usefull.  You can also think
+of the qmail-queue method as having both remote and local blocking, for both
+sending and recieving email, which turns the bad/good email lists into more
+than just for local users if not a user email on the machine.  
+
+Any one want to actually do some of the documentation and installation scripts, I no longer have time and since I have devoted 8 straight months of 12 hour days often to blackholes core C code, and my job is now happy with the outcome (since we now can use it for what we need, and that is the simplest qmail .dotfile setup, all the other stuff I have done for others actually).  I can't really find the time for all the extra stuff anymore, I am mainly working on the core stability of blackhole for most of the simpler modes, or would like to integrate patches people send me to fix their needs in blackhole.  So if my goal is met, then more will begin developing and helping me on blackhole and it can move again at a fast speed, I can no longer donate all my time to this.  I know people say the documentation is bad, and my configure options are not what they should be, and they aren't, I know.  These things take many people working on them to come up with global understandable solutions, I am more technical oriented to the core blackhole code, I am not good at documentation.  I am happy to explain anything to someone wanting to write or make patches that improve this for everyone, so if it is felt you won't know where to start that shouldn't be a problem, I will happily point you to the meanings of the options when coming up with a better layout.  It is fun working on blackhole and I intend to keep it that way, so I can't be expected as the only developer and documentor, etc...  I am only one person and unfortunately no longer work on this at my job (yes, I work at a job doing other things 8 hours a day, I don't work at the blackhole factory :)  It is interesting that sometimes I get the feeling people think that I owe them a perfect product, like they paid for it and deserve all the documentation and support as a product would give you, but I haven't anything at all from the blackhole actually, which is ok, I wanted to give what I did, but I have other goals in life besides giving my time for free to one software project, I may even want to build something else now, the core is there and I know there are many who can work on improving that.  So send me patches, documents and any other contributions to add to blackhole, I want this to be like the linux kernel, Linus doesn't solely develop it, and I'm certain that documentation that comes with it isn't his writings ;)  Hopefully others can start answering questions to the message board, and figure out the patches that are needed and send them to me, I really can't debug setups I don't use and only added to help someone else while not intending to support them, hoping someone that needed them could give better support.  Good luck, don't think this is a bad thing at all, I'm quite happy, but not able to carry the weight of this alone, but have faith there are others that will begin helping if I open that space for them (figure if I step back, there will be people that pop up and fill that place I may have hogged being the sole developer for most of the code.
+
+Thanks,
+Chris
+

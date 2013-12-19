@@ -1,0 +1,10 @@
+spamcomplain is a email complaint generator, initially designed to
+work with the blackhole spam detection program.  How to use it is
+described in the man page.
+
+To install, look at the defines at top of spamcomplain.c and the
+PREFIX setting in the Makefile.  I recommend that you install or have
+the gnu whois client, jwhois, and have installed the DSBL test
+programs found at http://dsbl.org.  If you don't have the latter, make
+sure to undefine DO_DSBL.
+

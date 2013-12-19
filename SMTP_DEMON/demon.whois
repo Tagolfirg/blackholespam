@@ -1,0 +1,15 @@
+#!/bin/sh
+
+ip r|grep blackhole|sed -e s/\\/.*$//g|sed -e s/^blackhole/whois/g | \
+	sed -e s/$/'|head -9;echo --'/g >> /tmp/whois.$$
+
+sh /tmp/whois.$$ | \
+	grep -v ^'To single out one record' | \
+	grep -v ^'handle, shown' | \
+	grep -v ^'The ARIN Registration Services' | \
+	grep -v ^'Network Information: ' | \
+	grep -v ^'%' | \
+	grep -v ^$
+
+rm -f /tmp/whois.$$
+

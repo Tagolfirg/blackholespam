@@ -1,0 +1,245 @@
+#/*
+#   Copyright (C) 2002
+#        Chris Kennedy, The Groovy Organization.
+#
+#   The Blackhole is free software; you can redistribute it and/or
+#   modify it under the terms of the GNU Library General Public License as
+#   published by the Free Software Foundation; either version 2 of the
+#   License, or (at your option) any later version.
+#
+#   The Blackhole is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+#   Library General Public License for more details.
+#
+#   For a copy of the GNU Library General Public License
+#   write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+#   Boston, MA 02111-1307, USA.  or go to http://www.gnu.org
+#*/
+
+include ./MCONFIG
+
+DEFINES := -DMAIL_DIR=\"$(MAIL_DIR)\" \
+	-DBH_SPOOL_DIR=\"$(BH_SPOOL_DIR)\" \
+	-DSM_SPOOL_DIR=\"$(SM_SPOOL_DIR)\" \
+	-DLOCKFILE=\"$(LOCKFILE)\" \
+	-DQUEUE_CONFIG=\"$(QUEUE_CONFIG)\" \
+	-DBH_CONFIG=\"$(BH_CONFIG)\" \
+	-DMCAFEE_DAT_DIR=\"$(MCAFEE_DAT_DIR)\" \
+	-DMCAFEE_UVSCAN=\"$(MCAFEE_UVSCAN)\" \
+	-DSQL_USER=\"$(SQL_USER)\" \
+	-DSQL_PASS=\"$(SQL_PASS)\" \
+	-DSQL_SERVER=\"$(SQL_SERVER)\" \
+	-DSQL_DOMAIN=\"$(SQL_DOMAIN)\" \
+	-DQMAIL_QUEUE=$(QMAIL_QUEUE) \
+	-DSENDMAIL=$(SENDMAIL) \
+	-DSQL_CONFIG=$(SQL_CONFIG) \
+	-DALLINONE=$(ALLINONE) \
+	-DSTORE_EMAIL=$(STORE_EMAIL) \
+	-DVIRUS_SCAN=$(VIRUS_SCAN) \
+	-DVIRUS_ALERT=$(VIRUS_ALERT) \
+	-DDISINFECT=$(DISINFECT) \
+	-DSPAM_SCAN=$(SPAM_SCAN) \
+	-DBOUNCE_MSG=$(BOUNCE_MSG) \
+	-DCHECK_SENDER=$(CHECK_SENDER) \
+	-DWHITE_LIST=$(WHITE_LIST) \
+	-DMAXOPTION=$(MAXOPTION) \
+	-DEXPIRE_TIME=$(EXPIRE_TIME) \
+	-DCHECK_REVERSE=$(CHECK_REVERSE) \
+	-DCHECK_HELO=$(STRICT_REVERSE) \
+	-DSETGID_SENDMAIL=$(SETGID_SENDMAIL) \
+	-DPRIORITY=$(PRIORITY) \
+	-DSM_LOCAL_SPOOL=\"$(SM_LOCAL_SPOOL)\" \
+	-DCUSTOM_BODY_THRESHHOLD=$(CUSTOM_BODY_THRESHHOLD) \
+	-DSPAM_BODY_THRESHHOLD=$(SPAM_BODY_THRESHHOLD) \
+	-DPORN_BODY_THRESHHOLD=$(PORN_BODY_THRESHHOLD) \
+	-DRACIST_BODY_THRESHHOLD=$(RACIST_BODY_THRESHHOLD) \
+	-DUSE_MAILDIR=$(USE_MAILDIR) \
+	-DVIRUS_SCANNER=$(VIRUS_SCANNER) \
+	-DRAZOR_BIN=\"$(RAZOR_BIN)\" \
+	-DUSE_LOG=$(USE_LOG) \
+	-LOG_OK=$(LOG_OK) \
+	-DLOG_TYPE=$(LOG_TYPE) \
+	-DUSE_MCONFIG=$(USE_MCONFIG) \
+	-DNO_BODY_CHECK_SIGNATURE=$(NO_BODY_CHECK_SIGNATURE) \
+	-DWITH_SQL=$(WITH_SQL) \
+	-DWITH_MYSQL=$(WITH_MYSQL) \
+	-DWITH_PQSQL=$(WITH_PQSQL) \
+	-DHAVE_LIBPCRE=$(HAVE_LIBPCRE) \
+	-DWITH_DEBUG=$(WITH_DEBUG) \
+	-DPERL_BIN=\"$(PERL_BIN)\" \
+	-DSPAM_MAIL_DIR=\"$(SPAM_MAIL_DIR)\" \
+	-DVIRUS_MAIL_DIR=\"$(VIRUS_MAIL_DIR)\" \
+	-DSPAM_MAIL_BOX=\"$(SPAM_MAIL_BOX)\" \
+	-DVIRUS_MAIL_BOX=\"$(VIRUS_MAIL_BOX)\" \
+	-DSENDMAIL_BIN=\"$(SENDMAIL_BIN)\" \
+	-DCOURIER=$(COURIER) \
+	-DDNS_SRV=$(DNS_SRV) \
+	-DQFILTER=$(QFILTER) \
+	-DBH_EDIT_PROG=\"$(PREFIX)/bin/bhedit\" \
+	-DCLAMSCAN_BIN=\"$(CLAMSCAN_BIN)\" \
+	-DEXEC_PROG=$(EXEC_PROG) \
+	-DPROGEXEC=\"$(PROGEXEC)\" \
+	-DPROGEXEC_ARGS=$(PROGEXEC_ARGS) \
+	-DCLAMSCAN_ARGS=$(CLAMSCAN_ARGS) \
+	-DMCAFEE_ARGS=$(MCAFEE_ARGS) \
+	-DLOG_SCORE=$(LOG_SCORE) \
+	-DLOG_SIZE=$(LOG_SIZE) \
+	-DLOG_IPRELAY=$(LOG_IPRELAY) \
+	-DLOG_SENDER=$(LOG_SENDER) \
+	-DLOG_RECIPIENT=$(LOG_RECIPIENT) \
+	-DSOPHOS_RIPMIME=$(SOPHOS_RIPMIME) \
+	-DEXEC_CHECK_RET=$(EXEC_CHECK_RET) \
+	-DEXEC_CHECK_PROG=\"$(EXEC_CHECK_PROG)\" \
+	-DEXEC_CHECK_ARGS=$(EXEC_CHECK_ARGS) \
+	-DWITH_INCLUDE_FILE=$(WITH_INCLUDE_FILE) \
+	-DWITH_EXEC_REPORT_ACTION=$(WITH_EXEC_REPORT_ACTION)
+
+#fix by David Ronis <ronis@montroll.chem.mcgill.ca>
+SED_PREFIX=`echo $(PREFIX) | sed -e 's/\//\\\\\//g'`
+
+# Optimization
+OPT := -O2 $(OPT)
+#
+# Debugging
+#DB= -g
+# Assembly code
+#ASFLAG= -S
+
+# Remove -lresolv for FreeBSD
+LIBS := -L/usr/lib -lresolv -lpcre $(MYSQL_LIBS) -lz -lm $(SOPHOS_LIBS) $(TMICRO_LIBS) $(RIPMIME_LIBS)
+INCLUDES := -I/usr/include/pcre $(MYSQL_INCLUDES) $(SOPHOS_INCLUDES)
+CFLAGS := $(CFLAGS) $(OPT) $(DB) $(ASFLAG)
+
+# Uncomment for static compilation
+#CFLAGS := $(CFLAGS) -static
+
+CC= gcc
+
+SRC= blackhole.c virusscan.c rblcheck.c rbllookup.c ipcalc.c logging.c \
+	checkreverse.c checkascii128.c checkcharset.c razorcheck.c \
+	regexip.c checkmyrelay.c checkbadrelay.c checkgoodrelay.c nocheck.c \
+	checkbademail.c checkgoodemail.c expire.c checkheader.c checkattach.c \
+	checkbody.c checkmyemail.c checkdns.c sqlconfig.c checkexcluded.c \
+	checkctype.c checkencoding.c tmicro.c mimeparse.c execute.c \
+	string.c snprintf.c qmail-qfilter.c extract_tstamp.c pyzorcheck.c \
+	$(SOPHOS_SRC)
+
+OBJ=$(subst .c,.o,$(SRC))                                                       
+                                                                                
+%.o : %.c                                                                       
+	$(CC) $(CFLAGS) $(INCLUDES) -c $< $(DEFINES)                            
+
+all: ripmime blackhole
+
+blackhole: $(OBJ) blackhole.h body_patterns.h max.h my_string.h \
+	execute.h  MCONFIG
+	$(CC) $(CFLAGS) $(INCLUDES) -o blackhole $(OBJ) $(LIBS) 
+
+ripmime: ripmime/ripmime.o ripmime/MIME_headers.c ripmime/MIME_headers.h \
+	ripmime/MIME_headers_api.h ripmime/XAM_strtok.c ripmime/XAM_strtok.h \
+	ripmime/ffget.c ripmime/ffget.h ripmime/logger.c ripmime/logger.h \
+	ripmime/mime.c ripmime/mime.h ripmime/rawget.c ripmime/rawget.h \
+	ripmime/ripmime.c ripmime/strlower.c ripmime/strlower.h \
+	ripmime/zstr.c ripmime/zstr.h
+		cd ripmime && $(MAKE) $(AM_MAKEFLAGS) mimelib
+
+clean:
+	rm -f *.o
+	rm -f blackhole
+	rm -f ripmime/*.[ao]
+
+strip: blackhole
+	strip blackhole
+
+setup: install
+
+install: ripmime blackhole
+	sh ./INSTALL $(PREFIX) 
+	cp -f  blackhole $(PREFIX)/bin/blackhole
+	chmod 755 $(PREFIX)/bin/blackhole
+	chown root $(PREFIX)/bin/blackhole
+	strip $(PREFIX)/bin/blackhole
+	cp -f doc/*.1 $(PREFIX)/man/man1/
+	cp -f doc/*.5 $(PREFIX)/man/man5/
+	cp -f doc/*.sgml $(PREFIX)/doc/
+	cat scripts/bhconf | \
+		sed -e s/BASEMAILDIR/$(MAIL_DIR)/g | \
+		sed -e s/BASEPREFIX/$(SED_PREFIX)/g \
+	> $(PREFIX)/bin/bhconf
+
+	cat scripts/bhedit | \
+		sed -e s/BASEMAILDIR/$(MAIL_DIR)/g | \
+		sed -e s/BASEPREFIX/$(SED_PREFIX)/g \
+	> $(PREFIX)/bin/bhedit
+
+	cat scripts/bhinstall | \
+		sed -e s/BASEMAILDIR/$(MAIL_DIR)/g | \
+		sed -e s/BASEPREFIX/$(SED_PREFIX)/g \
+	> $(PREFIX)/bin/bhinstall
+
+	cat scripts/bhtest | \
+		sed -e s/BASEMAILDIR/$(MAIL_DIR)/g | \
+		sed -e s/BASEPREFIX/$(SED_PREFIX)/g \
+	> $(PREFIX)/bin/bhtest
+
+	chmod 755 $(PREFIX)/bin/bhconf
+	chmod 755 $(PREFIX)/bin/bhedit
+	chmod 755 $(PREFIX)/bin/bhinstall
+	chmod 755 $(PREFIX)/bin/bhtest
+
+	cp -f etc/dot-blackhole.temp \
+		$(PREFIX)/share/blackhole/dot-blackhole.temp
+	cp -f etc/dot-muttrc-spam \
+		$(PREFIX)/share/blackhole/dot-muttrc-spam
+	cp -f etc/dot-muttrc-virus \
+		$(PREFIX)/share/blackhole/dot-muttrc-virus
+
+	cat scripts/spam | \
+		sed -e s/MAILDIR/$(MAIL_DIR)/g | \
+		sed -e s/PREFIX/$(SED_PREFIX)/g > $(PREFIX)/bin/spam
+	chmod 755 $(PREFIX)/bin/spam
+
+	cat scripts/virus | \
+		sed -e s/MAILDIR/$(MAIL_DIR)/g | \
+		sed -e s/PREFIX/$(SED_PREFIX)/g > $(PREFIX)/bin/virus
+	chmod 755 $(PREFIX)/bin/virus
+
+install_queue:
+	cat QUEUE_INSTALL|more	
+
+upgrade: all
+	cp -f $(PREFIX)/bin/blackhole $(PREFIX)/bin/blackhole.old
+	cp -f  blackhole $(PREFIX)/bin/blackhole
+	chmod 755 $(PREFIX)/bin/blackhole
+	chown root $(PREFIX)/bin/blackhole
+	strip $(PREFIX)/bin/blackhole
+	cp -f doc/*.1 $(PREFIX)/man/man1/
+	cp -f doc/*.5 $(PREFIX)/man/man5/
+	cp -f doc/*.sgml $(PREFIX)/doc/
+	cat scripts/bhconf | \
+		sed -e s/BASEMAILDIR/$(MAIL_DIR)/g | \
+		sed -e s/BASEPREFIX/$(SED_PREFIX)/g \
+	> $(PREFIX)/bin/bhconf
+
+	cat scripts/bhedit | \
+		sed -e s/BASEMAILDIR/$(MAIL_DIR)/g | \
+		sed -e s/BASEPREFIX/$(SED_PREFIX)/g \
+	> $(PREFIX)/bin/bhedit
+
+	cat scripts/bhinstall | \
+		sed -e s/BASEMAILDIR/$(MAIL_DIR)/g | \
+		sed -e s/BASEPREFIX/$(SED_PREFIX)/g \
+	> $(PREFIX)/bin/bhinstall
+
+	cat scripts/bhtest | \
+		sed -e s/BASEMAILDIR/$(MAIL_DIR)/g | \
+		sed -e s/BASEPREFIX/$(SED_PREFIX)/g \
+	> $(PREFIX)/bin/bhtest
+
+	chmod 755 $(PREFIX)/bin/bhconf
+	chmod 755 $(PREFIX)/bin/bhedit
+	chmod 755 $(PREFIX)/bin/bhinstall
+	chmod 755 $(PREFIX)/bin/bhtest
+
+

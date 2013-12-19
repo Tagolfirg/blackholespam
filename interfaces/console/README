@@ -1,0 +1,12 @@
+This has been replaced by simply running blackhole with -setup as an arg
+
+Goals:
+
+X 1. Make users maildir for user.
+X 2. Make users mailbox dir in sendmail if non existant.
+  3. Setup .qmail, .courier or .forward file for user.
+  4. Undo .qmail, .courier or .forward file changes for user.
+  5. Change .blackhole settings or /etc/blackhole.conf settings. 
+  6. Write out changes back to the config file.
+  7. Ability to work with the mysql DB and directly alter it.
+

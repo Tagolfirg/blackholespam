@@ -1,0 +1,234 @@
+.TH \f3blackhole\f1 1 "Time-stamp: <2002-04-21 16:49:47 fip>"
+.SH NAME
+blackhole \- spam blocker
+.SH SYNOPSIS
+.B blackhole
+[
+.I options
+]
+
+.SH DESCRIPTION
+
+.P
+.B blackhole
+is a email spam (and virus) blocker.
+.SS FEATURES
+.IP  \(bu 6
+Works with Qmail (in .qmail or as a qmail-queue replacement).
+.IP  \(bu 6
+Works with Sendmail or Postfix in the .forward file, and can write either mbox or maildir formats for both.
+.IP  \(bu 6
+highly efficient in memory and CPU usage from being in C.
+.IP  \(bu 6
+Lower priority process so it will keep from hogging the CPU.
+.IP  \(bu 6
+Configuration tools included to install and setup all options (
+.BR bhinstall (1)
+,
+.BR bhconf (1)
+)
+.IP  \(bu 6
+Separate email that is virus to one mailbox, and spam to another, which are checkable with Imap clients.
+.IP  \(bu 6
+One box option will not send them to a separate mailbox, but tag the
+Subject: lines with what it is, SPAM, VIRUS and the reason + orig sub.
+.IP  \(bu 6
+X-BlackHole headers added to messages blocked to give the reasons and types of viruses etc.
+.IP  \(bu 6
+Option to expire messages in the .Spam and .Virus folders after X number of days.
+.IP  \(bu 6
+Can choose individual actions per check, for deleting/Subject tags/ bouncing/bounce message sent.
+.PP
+
+.SS SETUP
+After a successful installation (which should be passed at the time
+reading you this manual page) there are 2 steps left to be able to
+use 
+.B blackhole
+in a sensible way:
+.IP 1. 
+Connect to your MTA/MDA through the correspondent dot_file
+(~/.forward or ~/.qmail). In Debian you can find a set of dotfiles in
+.I /usr/share/doc/blackhole-MTAVERSION/examples/
+(see also 
+.BR bhinstall (1) 
+.BR dot_blackhole (5)
+ and the info entry)
+.IP 2.
+Set up your personal preferences in $Maildir/.blackhole (see the
+examples provided in 
+.I /usr/share/doc/blackhole/examples/ 
+and the info entry. 
+.BR bhconf (1)
+is a script for the maintenance of such a file.  
+
+
+ 
+.SH COMMAND LINE OPTIONS
+.PP
+Usually you won't invoke 
+.B blackhole
+on the command line -- unless
+you are testing (see 
+.B TESTING
+).
+.P
+.SM (The control over
+.SB blackhole's
+.SM options can/should be done through the $Maildir/.blackhole file)  
+
+.TP 20
+.B \-help
+Print the usage (``help'') message and exit.
+.TP
+.B \-version
+Print the current version number
+.TP
+.B \-debug [logfile]
+Very verbose output for testing.
+.TP
+.BI \-Internal
+Show internal settings from compile time..
+.TP
+.BI \-config
+Show current config from .blackhole file.
+.TP
+.BI \-Level
+Show maximum possible level and current one.
+.TP
+.BI \-list
+List current RBL Lists in order of levels.
+.TP
+.BI \-log [type]
+Print out logging info when actions happen
+.TP
+.B \-log_ok
+Log successful deliveries.
+.TP
+.B \-log_score
+ Log score too.
+.TP
+.B \-log_size
+Log size too.
+.TP
+.B \-log_iprelay
+ Log relay ip too.
+.TP
+.B \-log_sender
+Log sender too.
+.TP
+.B \-log_recipient
+Log recipient too.
+.TP
+.B \-bounce
+Bounce messages blackholed back to sender.
+.TP
+.B \-Delete
+Delete all Spam and Virus email, don't store.
+.TP
+.B \-norbl
+No RBL Lists, skip using them for checking.
+.TP
+.B \-nosig
+Stop body checking at messages signature.
+.TP
+.B \-total
+Use level for maxnumber of RBL Lists matched.
+.TP
+.B \-BSpam
+Check body for known Spam patterns.
+.TP
+.B \-BRacist
+Check body for known Racist patterns.
+.TP
+.B \-BPorn
+Check body for known Porn/Sex patterns.
+.TP
+.B \-BCustom
+Check body for [my_body] custom patterns.
+.TP
+.B \-Virus
+Check for viruses, use .Virus mbox.
+.TP
+.B \-Alert
+Send an alert back to the virus sender.
+.TP
+.B \-Clean
+Remove viruses from email, disinfect.
+.TP
+.BI \-maildir\ dir
+Change Maildir (default is mail).
+.TP
+.B \-Queue
+Use with qmail-qfilter to run in Qmail queue.
+.TP
+.B \-Sendmail
+Use with Sendmail, writes to Inbox.Spam.
+.TP
+.BI \-Pfilter {sender} {recipient}
+Postfix Content Filter
+.TP 
+.BI \-spool \ "dir \ [mbox]"
+('-spool Mail' gets ~/Mail/Inbox.Spam).
+.TP
+.B \-Resolve
+Check that senders return address is valid.
+.TP
+.B \-Reverse
+Check reverse vs forward DNS match for relay.
+.TP
+.B \-SReverse
+Strict Reverse DNS Checking, helo etc.
+.TP
+.B \-Whitelist
+Only allow good email/relay, deny all other.
+.TP
+.B \-Onebox
+Change Subject: sends to the main mail box instead of .Spam or .Virus, works on all servers.
+.TP
+.BI \-Hascii \ n
+ASCII characters above 128, max allowed.
+.TP
+.BI \-Expire \ n
+n Days to delete .Spam and .Virus mail.
+.TP
+.B \-razor
+Use Razor.
+.TP
+.BI \-Maxscore
+Use scores for each check to choose action.
+.P
+
+.SH TESTING
+.P
+You can run the following type of syntax to get debug info on parsing
+any email file...
+.P
+.SB cat EMAIL_FILE | blackhole -d -D [output_file]
+.TP
+The -D option doesn't write out the email, and -d is debug.
+.P
+Also there is a Perl script to run whole
+directories of separate qmail messages through and watch the
+output( 
+.I /usr/share/doc/blackhole/examples/testing.pl
+).
+.SH SEE ALSO
+.BR bhinstall (1),
+.BR bhconf (1),
+.BR dot_blackhole (5),
+.PP
+For a verbose intro see the 
+.B blackhole
+info entry.
+.SH AUTHOR
+.SB Chris Kennedy
+
+.I <getdown@groovy.org>
+.P
+This manual page was written by 
+.SB Michael Hummel 
+.SI <mhummel@debian.org>,
+.SM for the 
+.SB Debian GNU/Linux system
+.SM (but may be used by others).

@@ -1,0 +1,268 @@
+#!/bin/sh
+##
+## BlackHole Installation
+## Chris Kennedy (C) 2002
+#/*
+#   Copyright (C) 2002
+#        Chris Kennedy, The Groovy Organization.
+#
+#   The Blackhole is free software; you can redistribute it and/or
+#   modify it under the terms of the GNU Library General Public License as
+#   published by the Free Software Foundation; either version 2 of the
+#   License, or (at your option) any later version.
+#
+#   The Blackhole is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+#   Library General Public License for more details.
+#
+#   For a copy of the GNU Library General Public License
+#   write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+#   Boston, MA 02111-1307, USA.  or go to http://www.gnu.org
+#*/
+PREFIX=BASEPREFIX
+BIN_DIR=BASEPREFIX/bin
+
+if [ ! -d "$BIN_DIR" ]; then
+  if [ -f "./blackhole" ]; then
+    BIN_DIR="."
+  else
+    echo "ERROR with BINDIR input! $BIN_DIR"
+    exit
+  fi
+fi
+
+if [ ! -f "${BIN_DIR}/blackhole" ]; then
+  echo "Can't find blackhole, not under ${BIN_DIR}/blackhole"
+  exit
+fi
+
+${BIN_DIR}/blackhole -I 1>/tmp/bh_config.$$
+if [ -f "/tmp/bh_config.$$" ]; then
+  . /tmp/bh_config.$$
+else
+  echo "Error running blackhole"
+  exit
+fi
+rm -f /tmp/bh_config.$$
+
+BFILE="$BH_CONFIG"
+
+MODE=$1
+if [ -z "$MODE" ]; then
+  echo "Usage: $0 install|remove|queue_install| [queue add|del <domain> <user>]"
+  exit
+fi
+if [ "$MODE" = 'remove' -o "$MODE" = 'uninstall' ]; then
+  if [ "$SENDMAIL" = "1" ]; then
+    echo "I guess you're configured to use Sendmail or Postfix";
+    if [ ! -f ".forward" ]; then
+      echo "Not Installed"
+      echo "|${BIN_DIR}/blackhole" > .forward
+    else
+      if [ ! -f "forward.backup" ]; then
+        rm -f .forward
+      else
+        mv -f forward.backup .forward
+      fi
+    fi 
+  elif [ ! -f ".qmail" -a ! -f ".courier" -a "$QMAIL_QUEUE" = "0" ]; then
+    echo "ERROR, not in home directory or no .qmail file"
+    exit 
+  elif [ "$QMAIL_QUEUE" = "1" ]; then
+#    if [ -f "/var/qmail/bin/qmail-queue-old" ]; then
+#      cp -f /var/qmail/bin/qmail-queue-old /var/qmail/bin/qmail-queue
+#    fi
+    echo "Remove manually, generally just copy "
+    echo "/var/qmail/bin/qmail-queue-old to /var/qmail/bin/qmail-queue"
+  else
+    echo "Removing Blackhole for $USER"
+    if [ -f "qmail.backup" ]; then
+      mv -f qmail.backup .qmail
+      chmod 644 .qmail
+    elif [ -f "courier.backup" ]; then
+      mv -f courier.backup .courier
+      chmod 644 .courier
+    else
+      echo "Error, no qmail.backup file to move back to .qmail"
+    fi 
+    exit 
+  fi
+elif [ "$MODE" = 'install' ]; then
+  echo "Installing Blackhole for $USER"
+elif [ "$MODE" = 'queue' ]; then
+  QDOMAIN=$3
+  QUSER=$4
+  if [ "$2" = 'add' ]; then
+    if [ ! -d "$BH_SPOOL_DIR/conf/$QDOMAIN" ]; then
+      mkdir $BH_SPOOL_DIR/conf/$QDOMAIN
+    fi
+    if [ ! -d "$BH_SPOOL_DIR/conf/$QDOMAIN/$QUSER" ]; then
+      mkdir $BH_SPOOL_DIR/conf/$QDOMAIN/$QUSER
+      cp -f $QUEUE_CONFIG $BH_SPOOL_DIR/conf/$QDOMAIN/$QUSER/.blackhole
+    else
+      cp -f $QUEUE_CONFIG $BH_SPOOL_DIR/conf/$QDOMAIN/$QUSER/.blackhole
+    fi
+    BFILE="$BH_SPOOL_DIR/conf/$QDOMAIN/$QUSER/.blackhole"
+    echo "Created $BFILE config"
+    echo
+    echo
+    echo "Finished Setting Up BlackHole, edit ~${BFILE} to tune setup."
+    echo "You can run the command ${PREFIX}/bin/blackhole -setup, which"
+    echo "is a full menu system to every config option."
+    echo
+    echo "To upload your config to a mysql server run the command..."
+    echo "${PREFIX}/bin/bhedit upload"
+    echo
+    echo "Press enter to run ${PREFIX}/bin/blackhole -setup, or CTL+C to Exit."
+    read ENTER
+    if [ -f "${PREFIX}/bin/blackhole" ]; then
+      ${PREFIX}/bin/blackhole -setup 
+    fi
+  else
+    if [ -d "$BH_SPOOL_DIR/conf/$QDOMAIN/$QUSER" ]; then
+      rm -f "$BH_SPOOL_DIR/conf/$QDOMAIN/$QUSER/.blackhole"
+      rmdir $BH_SPOOL_DIR/conf/$QDOMAIN/$QUSER/
+    fi
+    echo "Removed $BH_SPOOL_DIR/conf/$QDOMAIN/$QUSER/.blackhole config"
+  fi
+  echo
+  exit
+elif [ "$MODE" = 'queue_install' ]; then
+  echo "Installing Blackhole for Queue"
+  if [ ! -f "scripts/Makefile" ]; then
+    echo "You must be in the source directory for this"
+  else
+    cd scripts/
+    if [ ! -f "qmail-queue" ]; then
+      make 
+    fi
+    cd ..
+  fi
+
+  echo
+  echo "Read the HOWTO for qmail-queue on the website:"
+  echo "http://groovy.org/source/docs/blackhole/"
+  echo
+
+  exit
+else
+  echo "Usage: $0 [install|remove|queue_install]"
+  exit
+fi
+
+if [ -d "$HOME" ]; then
+  cd $HOME
+elif [ -d "~/" ]; then
+  cd ~/
+else
+  cd 
+fi
+
+if [ -f ".qmail" ]; then
+  if [ ! -d "${MAIL_DIR}/new" ]; then
+    echo "Error, ./${MAIL_DIR} exists, but isn't a qmail dir"
+    echo " You should resolve this by changing the MAIL_DIR variable"
+    echo " at the top of this script '$0' and then rerun the install."
+    exit 
+  fi
+  # Copy over new .qmail if not already, backup old
+  if [ ! -f "qmail.backup" ]; then
+    echo "Backing up old .qmail file to qmail.backup"
+    cp -f .qmail qmail.backup
+  fi
+  echo "Creating .qmail file"
+  echo "|${PREFIX}/bin/blackhole" > .qmail
+  echo "./${MAIL_DIR}/" >> .qmail
+  chmod 644 .qmail
+else
+  if [ "$SENDMAIL" = "1" ]; then
+    echo "I guess you're configured to use Sendmail or Postfix";
+    if [ ! -f ".forward" ]; then
+      echo "Creating .forward"
+      echo "|${BIN_DIR}/blackhole" > .forward
+    else
+      echo "Replace .forward with \"|${BIN_DIR}/blackhole > .forward\" [y/n]?"
+      read CONFIRM
+      if [ "$CONFIRM" = "y" ]; then
+        if [ ! -f "forward.backup" ]; then
+          cp -f .forward forward.backup
+        fi
+        echo "|${BIN_DIR}/blackhole" > .forward
+      fi
+    fi 
+  else
+    echo "No .qmail or .courier found, which are you using?"
+    echo -n "SMTP Server, Default is qmail [qmail/courier]> "
+    read SMTPSERVER
+    if [ "$SMTPSERVER" = "courier" ]; then
+      SMTPSERVER=courier
+    else
+      SMTPSERVER=qmail
+    fi
+    if [ ! -d "${MAIL_DIR}/new" ]; then
+      echo "Error, ./${MAIL_DIR} exists, but isn't a Maildir"
+      echo " You should resolve this by changing the MAIL_DIR variable"
+      echo " at the top of this script '$0' and then rerun the install."
+      exit 
+    fi
+    # Copy over new .${SMTPSERVER} if not already, backup old
+    if [ ! -f "${SMTPSERVER}.backup" ]; then
+      echo "Backing up old .${SMTPSERVER} file to ${SMTPSERVER}.backup"
+      cp -f .${SMTPSERVER} ${SMTPSERVER}.backup
+    fi
+    echo "Creating .${SMTPSERVER} file"
+    echo "|${PREFIX}/bin/blackhole" > .qmail
+    echo "./${MAIL_DIR}/" >> .${SMTPSERVER}
+    chmod 644 .qmail
+  fi
+fi
+
+if [ ! -d "${MAIL_DIR}/${SPAM_MAIL_DIR}" -a "$SENDMAIL" != "1" ]; then
+  echo "Making ${MAIL_DIR}/${SPAM_MAIL_DIR}/ qmail mailbox"
+  mkdir ${MAIL_DIR}/${SPAM_MAIL_DIR}
+  mkdir ${MAIL_DIR}/${SPAM_MAIL_DIR}/new
+  mkdir ${MAIL_DIR}/${SPAM_MAIL_DIR}/cur
+  mkdir ${MAIL_DIR}/${SPAM_MAIL_DIR}/tmp
+  chmod -R 700 ${MAIL_DIR}/${SPAM_MAIL_DIR}
+  mkdir ${MAIL_DIR}/${VIRUS_MAIL_DIR}
+  mkdir ${MAIL_DIR}/${VIRUS_MAIL_DIR}/new
+  mkdir ${MAIL_DIR}/${VIRUS_MAIL_DIR}/cur
+  mkdir ${MAIL_DIR}/${VIRUS_MAIL_DIR}/tmp
+  chmod -R 700 ${MAIL_DIR}/${VIRUS_MAIL_DIR}
+fi
+
+if [ ! -f "$BFILE" ]; then
+  while [ -z "$LEVEL" ]; do
+    echo "Their are 7 levels, 6 is good,  7 can be pretty strict."
+    echo "When on 7 you will really want to check and add "
+    echo "to the good email/relays variables."
+    echo
+    echo -n "Enter Blocking Strength (0-7): "
+    read LEVEL
+  done
+
+  echo "Copying over .blackhole configuration file"
+  cp -f ${QUEUE_CONFIG} $BFILE
+  
+  ${PREFIX}/bin/bhedit add level ${LEVEL}
+else
+  echo "** .blackhole already exists, keeping old one!"
+fi
+
+echo
+echo "Finished Setting Up BlackHole, edit ~${BFILE} to tune setup."
+echo "You can edit this with the command ${PREFIX}/bin/blackhole -setup, which"
+echo "is a full menu system to every config option."
+echo
+echo "To upload your config to a mysql server run the command..."
+echo "${PREFIX}/bin/bhedit upload"
+echo
+echo "Press enter to start ${PREFIX}/bin/blackhole -setup, or CTL+C to Exit."
+read ENTER
+
+if [ -f "${PREFIX}/bin/blackhole" ]; then
+  ${PREFIX}/bin/blackhole -setup
+fi
+
+

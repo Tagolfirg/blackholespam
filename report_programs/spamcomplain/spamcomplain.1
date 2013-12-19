@@ -1,0 +1,177 @@
+.TH SPAMCOMPLAIN "1" "August 2002" "spamcomplain" "User Commands"
+.SH NAME
+spamcomplain \- Spam complaint generator
+.SH SYNOPSIS
+.B spamcomplain
+[\fIOPTION\fR]... \fIhostname|IP\fR \fIEMAIL-FILE\fR
+.SH DESCRIPTION
+.\" Add any additional description here
+.PP
+Generate complaint spam messages for a the mail hostname|IP contained
+in EMAIL-FILE.  This is callable from the anti-spam program blackhole.
+Complaint messages are prepared, and optionally sent, to root, abuse,
+and postmaster at the spammer's host, as well as to subdomains (if the
+-p flag is set) and contact people found by whois lookups on the
+sender's hostname as well as to subdomains (see the -p option below).
+Also any email addresses are checked for relaying and if so are
+reported to the DSBL blacklist.
+.PP
+All messages and needed files are contained in a the directory .spamcomplain 
+in the user's home directory.  If the needed directories
+don't exist, they are created.
+.PP
+Mandatory arguments to long options are also mandatory for short options.
+.TP
+\fB-a, --aggressive-whois\fR  
+Turns on more aggressive e-mail addressing based on emails derived
+from whois hits.  In addition to contact e-mail addresses found in the
+whois lookup, copies are also sent to root, abuse, and postmaster at
+those hosts.
+.TP
+\fB-c, --with-copy\fR  
+Creates a copy of the message in Copies subdirectory of the .spamcomplain
+directory.
+.TP
+\fB-d, --debug\fR  
+Turns on debug. Keeps message if force is set, otherwise make
+operation verbose.
+.TP
+\fB-f, --force\fR  
+Forces e-mail to be sent.(USE WITH CAUTION!)
+.TP
+\fB-e, --with-exclude-file=file\fR  
+Overrides default exclusion file.  The exclusion file contains one
+regular expression pattern per line. Any hostname regex matching any
+pattern in the exclude file (.spamcomplain/exclusions by default) will
+not have mail sent to it, nor will it be included in the spammers list
+(see below).
+.TP
+\fB-h, --help\fR  
+Gets this help message and exits.
+.TP
+\fB-l, --with-log-file=file\fR  
+Overrides default log file, \.spamcomplain/log.
+.TP
+\fB-L, --log-only\fR
+Only create log entry.  (whois and dsbl tests are
+run, but the resulting complaint message is not saved).
+.TP
+\fB-p, --subdomain-depth=#\fR 
+Will try to send mail to subdomains also. For example, for a message
+from hostname www.xxx.yyy.zzz -p2 would end up with complaints being
+sent to www.xxx.yyy.zzz, xxx.yyy.zzz, and yyy.zzz.  For IP numbers, it
+works from the right.  In either case, it will not send to a single
+word (e.g, to net).  This can be further controlled by adding regex
+patterns to the exclusions file.
+.TP
+\fB-r, --make-spammer-file=#\fR Use to create a summary file of IP
+numbers of spammers for >=# spams. This is useful with a program like
+blackhole which can use this file to dynamically maintain a list of
+banned sites.  By default, this is output to .spamcomplain/spammers.
+In preparing this list, each host or domain is used to launch a whois
+query, who's results are displayed, and the user is queried whether or
+not to include this IP.  Note that -r implies -S.  In addition, the
+existing spammers file is first read in before processing the current
+log, and only new entries are queried for.
+.TP
+\fB-s, --send-messages\fR   
+Preview and send messages. By default, no mail is sent. Rather it is
+stored in the .spamcomplain directory.  Running from a terminal with
+the -s flag will go through all the saved complaints, preview them
+using less or the program the \fBPAGER\fR environment variable is set
+to, and query for sending or deleting the message.
+.TP
+\fB-v, --verbose\fR  
+Makes operation verbose.
+.TP
+\fB-H, --include-header-count\fR  
+Normally the log will contain the full header as well as some number
+of characters from the message.  This option includes the header in
+log message count (giving smaller logs).
+.TP
+\fB-S, --summary[=#]\fR  
+Generates summary of complaints and exits. Argument controls how the
+results are sorted:
+.br
+1:  Sort by # of complaints (default). 
+.br
+2:  Sort by IP. 
+.br
+3:  Sort by # of RBL complaints. 
+.TP
+\fB-D, --disable-dsbl\fR  
+Don't run the DSBL test program (spamtrap). In the default operation,
+a relaying check is performed on all internet addresses found in the
+e-mail message using programs available at the DSBL site
+(http://dsbl.org), and is only available if DO_DSBL was set in the
+source at compile time.
+.TP
+\fB-U, --use-sendmail\fP 
+Since many spammers run from systems that are
+designed to not accept incoming mail, thereby resulting in a flood of
+undeliverable mail return messages, spamcomplain normally uses a
+built-in SMTP protocol to send mail.  An attempt to connect to the
+destination SMTP daemon is made (this can take a while to time-out, so
+be patient).  If this is successful, an attempt is made to deliver the
+mail.  Any error, at any stage of the process, causes the mail to
+abort.  No bounce message, etc., is produced.  Of course, the
+disadvantage of this is that temporary failures will result in the
+message not getting through.  If you think this is a problem, you can
+override the built-in SMTP code by using this flag.
+.TP
+\fB-A, --send-anonymous\fP 
+Don't send your email address in the MAIL FROM: SMTP command.  This
+gives some extra anonymity, although some mail servers may block the
+mail.  Spamcomplain will add a Reply-To line to the outgoing message
+so that complaints can be responded to.  If you don't want the
+Reply-To line, repeat the -A flag.
+.TP
+\fB-X, --use-non-mx\fP
+If the MX record lookup fails, try using the recipient hostname as the mail 
+server.
+.TP
+\fB-W, --disable-whois 
+Suppresses\fR all whois queries.
+.TP
+\fB-M, --with-message-file=message|file\fR  
+Overrides default complaint message using the specified string or
+file.  The program determines if the argument corresponds to an
+existing file and, if so, uses it.  If the file doesn't exist, it
+assumes it is a string.
+.SH FILES
+All files are contained in the directory .spamcomplain in the user's
+HOME directory; in particular:
+.TP
+\fBlog\fR is the log file.
+.TP
+\fBexcludes\fR is the file containing REGEX exclusion patterns.
+.TP
+\fBspammers\fR is the file containing spammer sites generated with -r.
+.TP
+\fBCopies\fP is a directory for message copies.
+.TP
+\fBspamcomplain.lock\fP is a lock file.
+.TP
+\fBComplaintxxxxx\fP is a complaint message.
+.SH AUTHOR
+Written by David Ronis.
+.SH "REPORTING BUGS"
+Report bugs to <ronis@onsager.chem.mcgill.ca>
+.SH COPYRIGHT
+Copyright \(co 2002 David Ronis
+.br
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+.SH "SEE ALSO"
+See the top of the file spamcomplain.c for various user-settable
+defaults.  In addition, you should consider installing jwhois, the GNU
+version of the whois database lookup program (available at
+http://www.gnu.org) as well as the test-dsbl relaying test programs
+(available at http://dsbl.org).  If you don't have the latter, make sure you 
+undefine DO_DSBL in the source code.
+
+\"  LocalWords:  SPAMCOMPLAIN spamcomplain fIhostname IP fR fIEMAIL hostname TP
+\"  LocalWords:  blackhole spammer's subdomains whois DNSL spammers subdomain
+\"  LocalWords:  yyy zzz spammer fBPAGER RBL dsbl DSBL spamtrap internet br \f
+\"  LocalWords:  jwhois undefine Spam spam sender's regex sendmail settable
+\"  LocalWords:  Complaintxxxxx
